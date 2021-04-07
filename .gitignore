@@ -4,7 +4,7 @@
 .DS_Store/
 .venv/
 .pytest_cache/
-images/
+# images/
 venv/
 __pycache__/
 # migrations/
