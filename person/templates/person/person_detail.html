@@ -1,0 +1,93 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+{% include "person/elements/header.html" %}
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      class="btn btn-light text-warning" 
+      href="{% url 'person_update' object.id %}">
+      <i class="fas fa-edit"></i> 
+      Edit
+    </a>
+    {% if object.user.is_active %}
+    <a type="button" 
+      class="btn btn-light text-danger" 
+      href="{% url 'person_delete' object.id %}">
+      <i class="fas fa-trash-alt"></i> 
+      Delete
+    </a>
+    {% else %}
+    <a type="button" 
+      class="btn btn-light text-primary" 
+      href="{% url 'person_reinsert' object.id %}">
+      <i class="fas fa-sign-in-alt"></i> 
+      Reinsert
+    </a>
+    {% endif %}
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'person_home' %}">
+      <i class="fas fa-chevron-left"></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+<article class="media content-section">
+  <div class="media-body">
+
+    <ul class="nav nav-tabs mb-3">
+      {% if object.is_active %}
+      <li class="nav-item">
+        <a class="nav-link active" id="nav-person-tab" href="#">
+          <i class="fas fa-user"></i>
+          Person
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'historic_list' object.id %}">
+          <i class="fas fa-book"></i>
+          Historic
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'frequency_ps_list' object.id %}">
+          <i class="fas fa-list"></i>
+          Frequencies
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'membership_ps_list' object.id %}">
+          <i class="fas fa-users"></i>
+          Workgroups
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+
+    <div class="row">
+      <div class="col-md-3 text-center">
+
+        <img 
+          class="img-thumbnail rounded mx-auto d-block mb-4" 
+          src="{{ object.user.profile.image.url }}">
+
+      </div>
+      <div class="col-md-9">
+
+        <article class="media content-section">
+          <div class="media-body">
+            {% include "person/elements/person_info.html" %}
+          </div>
+        </article>
+
+      </div>
+
+    </div>
+    
+  </div>
+</article>
+
+{% endblock content %}

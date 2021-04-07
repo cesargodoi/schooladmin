@@ -1,0 +1,39 @@
+<div class="input-group">
+    <input type="date" name="date" class="form-control dateinput" id="date" {% if date %}value={{ date }}{% endif %}>
+    <span class="input-group-append">
+        <button class="btn btn btn-outline-success" type="submit">
+            <i class="fas fa-search"></i></button>
+    </span>
+    &nbsp;&nbsp;
+    <div class="form-check form-check-inline m-1">
+        <input class="form-check-input" type="checkbox" id="all" name="all" {% if all %}checked{% endif %}>
+        <label class="form-check-label" for="all">all</label>
+        &nbsp;&nbsp;
+        <input class="form-check-input" type="checkbox" id="d30" name="d30" {% if d30 %}checked{% endif %}
+            onclick="func30days()">
+        <label class="form-check-label" for="d30"> 30 days</label>
+        &nbsp;&nbsp;&nbsp;
+        <div class="form-check form-check-inline" id="last">
+            <input class="form-check-input" type="radio" name="lastNext" value="last"
+                {% if lastNext == 'last' %}checked{% endif %}>
+            <label class="form-check-label" for="last"> - </label>
+        </div>
+        <div class="form-check form-check-inline" id="next">
+            <input class="form-check-input" type="radio" name="lastNext" value="next"
+                {% if lastNext == 'next' %}checked{% endif %}>
+            <label class="form-check-label" for="next"> + </label>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function func30days() {
+        ln30d = document.getElementById('d30');
+        if (ln30d.checked == true) {
+            document.getElementById("last").style.display = 'block';
+            document.getElementById("next").style.display = 'block';
+        } else {
+            document.getElementById("last").style.display = 'none';
+            document.getElementById("next").style.display = 'none';
+        };
+    };
+</script>

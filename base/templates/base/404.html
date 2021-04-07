@@ -1,0 +1,11 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<h1>404</h1>
+<article class="media content-section">
+    <div class="media-body">
+        <h2><a class="article-title" href="#">Page not found</a></h2>
+        <p class="article-content"><a href="{% url 'home' %}">go to home page</a></p>
+    </div>
+</article>
+{% endblock content %}

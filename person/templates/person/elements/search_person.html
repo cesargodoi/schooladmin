@@ -1,0 +1,44 @@
+<div class="form-row align-items-center">
+  <div class="col-sm-3 mb-1">
+    <div class="input-group">
+      <input name="term"
+             class="dateinput form-control"
+             id="term"
+             placeholder="person"
+             {% if request.session.search.term %}value={{ request.session.search.term }}{% endif %}>
+    </div>
+  </div>
+  <div class="col-sm-3 mb-1">
+    <select class="form-control" name="aspect">
+      {% for asp in aspect_list %}
+      <option value="{% if asp.0 != '--' %}{{ asp.0 }}{% endif %}"
+              {% if asp.0 == request.session.search.aspect %}selected{% endif %}>
+        {% if asp.0 == "--" %}aspect{% else %}{{ asp.1 }}{% endif %}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-sm-3 mb-1">
+    <select class="form-control" name="status">
+      {% for stt in status_list %}
+      <option value="{% if stt.0 != '---' %}{{ stt.0 }}{% endif %}"
+              {% if stt.0 == request.session.search.status %}selected{% endif %}>
+        {% if stt.0 == "---" %}status{% else %}{{ stt.1 }}{% endif %}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-sm-3 mb-1">
+    <div class="input-group">
+      <div class="form-check form-check-inline m-1">
+        <input class="form-check-input"
+               type="checkbox"
+               id="all"
+               name="all"
+               {% if request.session.search.all %}checked{% endif %}>
+        <label class="form-check-label" for="all">all</label>
+      </div>
+      <button class="btn btn btn-outline-success ml-2" type="submit"><i class="fas fa-search"></i></button>
+    </div>
+  </div>
+</div>

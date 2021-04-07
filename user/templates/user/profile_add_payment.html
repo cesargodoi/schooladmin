@@ -1,0 +1,51 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include "user/elements/header.html" %}
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <button 
+      class="btn btn-light text-success" 
+      onclick="document.getElementById('form').submit();">
+      <i class="fas fa-plus"></i> 
+      Add payment
+    </button>
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'user_new_order' %}">
+      <i class="fas fa-chevron-left "></i> Go back
+    </a>
+  </div>
+</div>
+
+<article class="media content-section">
+  <div class="media-body">
+    <h4>Add payment</h4>
+
+    <form method="POST" enctype="multipart/form-data" id="form">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-sm-4">
+          {{ form.paytype | as_crispy_field }}
+        </div>
+        <div class="col-sm-4">
+          {{ form.ref_month | as_crispy_field }}
+        </div>
+        <div class="col-sm-4">
+          {{ form.value | as_crispy_field }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-5">
+          {{ form.event | as_crispy_field }}
+        </div>
+        <div class="col-sm-7">
+          {{ form.obs | as_crispy_field }}
+        </div>
+      </div>
+    </form>
+  </div>
+</article>
+{% endblock %}

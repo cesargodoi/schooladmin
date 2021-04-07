@@ -1,0 +1,24 @@
+# pastas
+.vscode/
+.idea/
+.DS_Store/
+.venv/
+.pytest_cache/
+images/
+venv/
+__pycache__/
+migrations/
+media/
+
+# arquivos
+*.pyc
+*.sqlite3
+
+geckodriver.log
+
+# Ignore dynaconf secret files /
+.secrets.*
+settings.yaml
+
+# /schooladmin
+settings.py

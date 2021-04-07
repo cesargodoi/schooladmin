@@ -1,0 +1,87 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include "person/elements/header.html" %}
+
+{% block buttons %}
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      href="{% url 'membership_ps_list' person.id %}" 
+      class="btn btn-light btn-sm text-info">
+      <i class="fas fa-chevron-left"></i>
+      Go back
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+<article class="media content-section">
+  <div class="media-body">
+    <div class="row">
+      <div class="col-6">
+        <h4>Insert Membership</h4>
+      </div>
+      <div class="col-6">
+        <div class="text-right">
+          <form class="form-control-sm" method="GET">
+            {% csrf_token %}
+            {% include "base/search_workgroup.html" %}
+          </form>
+        </div>
+      </div>
+    </div>
+
+    {% if object_list %}
+
+    {% if object_list.has_other_pages %}
+    {% include "base/paginator.html" %}
+    {% endif %}
+
+    <table class="table table-hover table-sm">
+      <thead>
+        <tr>
+          <th>workgroup</th>
+          <th>center</th>
+          <th>type</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for obj in object_list %}
+        <tr>
+          <td>{{ obj.name }}</td>
+          <td>{{ obj.center }}</td>
+          <td>
+            <span class="badge badge-pill badge-secondary">
+              {{ obj.get_workgroup_type_display }}
+            </span>
+          </td>
+          <td class="text-right">
+            <a type="button" 
+              href="{% url 'membership_ps_create' person.id %}?pk={{ obj.pk }}"
+              class="btn btn-outline-light btn-sm text-primary">
+              <i class="fas fa-plus"></i> Add
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if object_list.has_other_pages %}
+    {% include "base/paginator.html" %}
+    {% endif %}
+
+    {% else %}
+
+    <div class="alert alert-warning" role="alert">
+      <h4 class="alert-heading">workgroup not found</h4>
+    </div>
+
+    {% endif %}
+
+  </div>
+</article>
+{% endblock %}

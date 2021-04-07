@@ -1,0 +1,34 @@
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'center_home' %}">Centers</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'person_home' %}">Persons</a>
+</li>
+{% if request.user.groups.all.0.name == "office" or request.user.is_superuser %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'event_home' %}?d30=on&lastNext=last">Events</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'workgroup_home' %}">Workgroups</a>
+</li>
+{% endif %}
+{% if request.user.groups.all.0.name == "treasury" or request.user.groups.all.0.name == "treasury_jr" or request.user.is_superuser %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'treasury_home' %}">Treasury</a>
+</li>
+{% endif %}
+
+{% if request.user.is_superuser %}
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+        aria-haspopup="true" aria-expanded="false">Admin</a>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="{% url 'activity_home' %}">Activities</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{% url 'payments' %}">Payments</a>
+        <a class="dropdown-item" href="{% url 'forms_of_payments' %}">Forms of payments</a>
+        <a class="dropdown-item" href="{% url 'paytypes' %}">Payment types</a>
+        <a class="dropdown-item" href="{% url 'bankflags' %}">Banks or Flags</a>
+    </div>
+</li>
+{% endif %}

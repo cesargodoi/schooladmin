@@ -1,0 +1,53 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+{% include "center/elements/header.html" %}
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    {% if request.user.is_superuser %}
+    <a type="button" 
+      class="btn btn-light text-warning" 
+      href="{% url 'center_update' object.id %}">
+      <i class="fas fa-edit"></i> Edit
+    </a>
+    {% if object.is_active %}
+    <a type="button" 
+      class="btn btn-light text-danger" 
+      href="{% url 'center_delete' object.id %}">
+      <i class="fas fa-trash-alt"></i> Delete
+    </a>
+    {% else %}
+    <a type="button" 
+      class="btn btn-light text-primary" 
+      href="{% url 'center_reinsert' object.id %}">
+      <i class="fas fa-sign-in-alt"></i> Reinsert
+    </a>
+    {% endif %}
+    {% endif %}
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'center_home' %}">
+      <i class="fas fa-chevron-left"></i> Go back
+    </a>
+  </div>
+</div>
+
+<article class="media content-section">
+  <div class="media-body">
+    <div class="row">
+      <div class="col-md-3 text-center">
+        <img class="img-thumbnail rounded mx-auto d-block mb-4" src="{{ object.image.url }}">
+      </div>
+      <div class="col-md-9">
+        <article class="media content-section">
+          <div class="media-body">
+            {% include "center/elements/center_info.html" %}
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</article>
+
+{% endblock content %}

@@ -1,0 +1,58 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+{% include "user/elements/header.html" %}
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      class="btn btn-light text-primary" 
+      href="{% url 'scan_qrcode_event' %}">
+      <i class="fas fa-qrcode "></i> 
+      Scan QR-CODE
+    </a>
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'profile_detail' %}">
+      <i class="fas fa-chevron-left"></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+<article class="media content-section">
+  <div class="media-body">
+    <h4>Frequencies</h4>
+
+    {% if frequencies %}
+    {% if frequencies|length < count %} <p>
+      Here showing your last <strong>{{ frequencies|length }}</strong> occurrence(s) out of a total of
+      <strong>{{ count }}</strong>.<br>
+      To learn more, contact the <strong>{{ object.person.center.name }}</strong> secretariat.
+      </p>
+      {% endif %}
+      <table class="table table-hover table-sm">
+        <thead>
+          <tr>
+            <th>date</th>
+            <th>event</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for freq in frequencies %}
+          <tr>
+            <td>{{ freq.date | date:"d/m/Y" }}</td>
+            <td>{{ freq.activity }} {{ freq.center }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">no frequencies found</h4>
+      </div>
+      {% endif %}
+
+  </div>
+</article>
+{% endblock content %}

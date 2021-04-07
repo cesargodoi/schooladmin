@@ -1,0 +1,39 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include "person/elements/header.html" %}
+
+{% block buttons %}
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <button 
+      class="btn btn-light text-{% if to_create %}primary{% else %}warning{% endif %}"
+      onclick="document.getElementById('form').submit();">
+      {% if to_create %}
+      <i class="fas fa-plus"></i> Add
+      {% else %}
+      <i class="fas fa-edit"></i> Update
+      {% endif %}
+    </button>
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'historic_list' person.id %}">
+      <i class="fas fa-chevron-left "></i> 
+      Go back
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+<article class="media content-section">
+  <div class="media-body">
+    <h4>{% if to_create %}Create{% else %}Update{% endif %} Historic</h4>
+
+    <form method="POST" enctype="multipart/form-data" id="form">
+      {% csrf_token %}
+      {{ form | crispy }}
+    </form>
+  </div>
+</article>
+{% endblock %}

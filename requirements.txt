@@ -1,0 +1,6 @@
+django
+dynaconf
+django-crispy-forms
+pillow
+qrcode
+psycopg2

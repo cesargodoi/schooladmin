@@ -1,0 +1,60 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<article class="media content-section mb-1">
+  <div class="media-body">
+    <div class="row">
+      <div class="col-6">
+        <h2>Workgroup</h2>
+      </div>
+      <div class="floating-right">
+        <form class="form-control-sm" method="GET">
+          {% csrf_token %}
+          {% include "base/search_workgroup.html" %}
+        </form>
+      </div>
+    </div>
+  </div>
+</article>
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      class="btn btn-light text-primary" 
+      href="{% url 'workgroup_create' %}">
+      <i class="fas fa-plus"></i> 
+      Add
+    </a>
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'home' %}">
+      <i class="fas fa-chevron-left "></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+{% if object_list %}
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+{% for object in object_list %}
+{% include 'workgroup/elements/card.html' %}
+{% endfor %}
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+{% else %}
+
+<div class="alert alert-warning" role="alert">
+  <h4 class="alert-heading">workgroup not found</h4>
+</div>
+
+{% endif %}
+
+{% endblock content %}

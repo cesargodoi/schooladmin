@@ -1,0 +1,72 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<article class="media content-section mb-1">
+  <div class="media-body">
+    <h2>Treasury &nbsp;<small class="text-muted">{{ user.person.center }}</small> </h2>
+  </div>
+</article>
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'home' %}">
+      <i class="fas fa-chevron-left "></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+<div class="row row-col-3">
+  <div class="col-lg-4 mb-4">
+    {% include "treasury/elements/payments_summary.html" %}
+  </div>
+  <div class="col-lg-4 mb-4">
+    <div class="card bg-light mb-3">
+      <div class="card-header">Actions</div>
+      <ul class="list-group list-group-flush">
+        <a type="button" 
+          class="list-group-item list-group-item-action text-info" 
+          href="{% url 'orders' %}">
+          <i class="fas fa-shopping-bag"></i> 
+          Orders
+        </a>
+        <a type="button" 
+          class="list-group-item list-group-item-action text-primary" 
+          href="{% url 'order_create' %}">
+          <i class="fas fa-plus"></i> 
+          New order
+        </a>
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-4 mb-4">
+    <div class="card bg-light mb-3">
+      <div class="card-header">Reports</div>
+      <ul class="list-group list-group-flush">
+        <a type="button" 
+          class="list-group-item list-group-item-action text-info" 
+          href="{% url 'cash_balance' %}">
+          <i class="fas fa-eye"></i> 
+          Cash balance
+        </a>
+        <a type="button" 
+          class="list-group-item list-group-item-action text-info" 
+          href="{% url 'period_payments' %}">
+          <i class="fas fa-eye"></i> 
+          Period payments
+        </a>
+        <a type="button" 
+          class="list-group-item list-group-item-action text-info" 
+          href="{% url 'payments_by_person' %}">
+          <i class="fas fa-eye"></i> 
+          Payments by person
+        </a>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

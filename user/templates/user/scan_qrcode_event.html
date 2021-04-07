@@ -1,0 +1,68 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+{% include "user/elements/header.html" %}
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'user_frequencies' %}">
+      <i class="fas fa-chevron-left"></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <article class="media content-section">
+      <div class="media-body">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Scan the Event QR-CODE</legend>
+            <div class="input-group">
+              <input class="form-control" type="text" name="id" id="id">
+              <span class="input-group-append">
+                <button class="btn btn btn-outline-success" type="submit">
+                  <i class="fas fa-signature"></i> Sign in</button>
+              </span>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </article>
+  </div>
+  <div class="col-md-6">
+    <div class="text-center">
+      <video width="320" id="preview" visible="false"></video>
+    </div>
+  </div>
+  {% endblock %}
+
+  {% block scripts %}
+  {% load static %}
+  <script type="text/javascript" src="{% static 'js/instascan.min.js' %}"></script>
+  <script>
+    // function scanQrCode() {
+    let preview = document.getElementById('preview')
+    let scanner = new Instascan.Scanner({ video: preview });
+    let _id = document.getElementById('id');
+
+    scanner.addListener('scan', function (content) {
+      _id.value = content;
+      preview.style.display = 'none';
+      scanner.stop();
+    });
+
+    Instascan.Camera.getCameras().then(cameras => {
+      if (cameras.length > 0) {
+        scanner.start(cameras[cameras.length - 1]);
+      } else {
+        console.error("There is no camera on the device.");
+      }
+    });
+    // };
+  </script>
+  {% endblock %}

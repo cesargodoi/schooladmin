@@ -1,0 +1,84 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include "person/elements/header.html" %}
+
+{% block buttons %}
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      href="{% url 'frequency_ps_list' person.id %}" 
+      class="btn btn-light btn-sm text-info">
+      <i class="fas fa-chevron-left"></i>
+      Go back
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+<article class="media content-section">
+  <div class="media-body">
+    <div class="row">
+      <div class="col-6">
+        <h4>Insert Frequency</h4>
+      </div>
+      <div class="col-6">
+        <div class="text-right">
+          <form class="form-control-sm" method="GET">
+            {% csrf_token %}
+            {% include "base/search_event.html" %}
+          </form>
+        </div>
+      </div>
+    </div>
+
+    {% if object_list %}
+
+    {% if object_list.has_other_pages %}
+    {% include "base/paginator.html" %}
+    {% endif %}
+
+    <table class="table table-hover table-sm">
+      <thead>
+        <tr>
+          <th width="15%">date</th>
+          <th>event</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for obj in object_list %}
+        <tr>
+          <td>{{ obj.date|date:'d/m/Y'}}</td>
+          <td>
+            {{ obj.activity.name }}
+            <small class="text-muted">{{ obj.center }}</small>
+          </td>
+          <td class="text-right">
+            <a type="button" 
+              href="{% url 'frequency_ps_insert' person.id %}?pk={{ obj.pk }}"
+              class="btn btn-outline-light btn-sm text-primary">
+              <i class="fas fa-plus"></i> Add
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if object_list.has_other_pages %}
+    {% include "base/paginator.html" %}
+    {% endif %}
+
+    {% else %}
+
+    <div class="alert alert-warning" role="alert">
+      <h4 class="alert-heading">frequencies not found</h4>
+    </div>
+
+    {% endif %}
+
+  </div>
+</article>
+{% endblock %}

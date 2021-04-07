@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <button 
+      class="btn btn-light text-{% if to_create %}primary{% else %}warning{% endif %}"
+      onclick="document.getElementById('form').submit();">
+      {% if to_create %}
+      <i class="fas fa-plus"></i> Create
+      {% else %}
+      <i class="fas fa-edit"></i> Update
+      {% endif %}
+    </button>
+    <a type="button" 
+      class="btn btn-light text-info"
+      href="{% if to_create %}{% url 'workgroup_home' %}{% else %}{% url 'workgroup_detail' pk %}{% endif %}">
+      <i class="fas fa-chevron-left "></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+
+<article class="media content-section">
+  <div class="media-body">
+    <h4>{% if to_create %}Create{% else %}Update{% endif %} Workgroup</h4>
+
+    <form method="POST" enctype="multipart/form-data" id="form">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-6">
+          {{ form.name | as_crispy_field }}
+          {{ form.center | as_crispy_field }}
+          {{ form.workgroup_type | as_crispy_field }}
+        </div>
+        <div class="col-6">
+          {{ form.aspect | as_crispy_field }}
+          {{ form.description | as_crispy_field }}
+          {{ form.is_active | as_crispy_field }}
+          {{ form.made_by | as_crispy_field }}
+        </div>
+      </div>
+    </form>
+
+  </div>
+</article>
+{% endblock %}
