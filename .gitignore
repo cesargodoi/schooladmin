@@ -7,7 +7,7 @@
 images/
 venv/
 __pycache__/
-migrations/
+# migrations/
 media/
 
 # arquivos
@@ -21,4 +21,4 @@ geckodriver.log
 settings.yaml
 
 # /schooladmin
-settings.py
+# settings.py
