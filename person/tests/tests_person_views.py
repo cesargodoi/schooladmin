@@ -3,8 +3,8 @@ from django.test import TestCase
 from django.contrib import auth
 
 from person.models import Person
+from event.models import Event
 from event.tests.dummy import EventDummy
-from user.models import User
 
 
 class TestViews(TestCase):
@@ -402,3 +402,205 @@ class TestViewsFromDummies(EventDummy):
         response = self.client.get(f"/person/{person.id}/reinsert/")  ########
         self.assertEqual(response.status_code, 302)
         self.assertIn("login", response.url)
+
+    ###########################################################################
+    #historic_view
+
+    def test_office_logged_in_can_access_historic_list_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
+        response = self.client.get(f"/person/{person.id}/historic")  ########
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "person/historic_list.html")
+    
+    def test_treasury_logged_in_can_not_access_historic_list_in_person(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Office One")  ######
+        response = self.client.get(f"/person/{person.id}/historic")  ########
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_logged_in_can_not_access_historic_list_in_person(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Office One")  ######
+        response = self.client.get(f"/person/{person.id}/historic")  ########
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_office_logged_in_can_access_historic_create_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
+        response = self.client.get(f'/person/{person.id}/historic/create/')  ########
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "person/historic_form.html")
+
+    def test_office_logged_in_can_access_historic_update_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
+        response = self.client.get(f'/person/{person.id}/historic/1/update/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "person/historic_form.html")  
+
+    def test_office_logged_in_can_access_historic_delete_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
+        response = self.client.get(f'/person/{person.id}/historic/1/delete/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "base/confirm_delete.html")
+
+    ###########################################################################
+    #frequency_ps_view
+
+    def test_office_logged_in_can_access_frequency_list_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
+        response = self.client.get(f"/person/{person.id}/frequencies")  ########
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "person/frequency_list.html")
+    
+    def test_treasury_logged_in_can_not_access_frequency_list_in_person(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Office One")  ######
+        response = self.client.get(f"/person/{person.id}/frequencies")  ########
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_logged_in_can_not_access_frequency_list_in_person(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Office One")  ######
+        response = self.client.get(f"/person/{person.id}/frequencies")  ########
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_office_logged_in_can_access_frequency_create_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
+        response = self.client.get(f'/person/{person.id}/frequency_insert')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "person/frequency_insert.html")
+
+    def test_office_logged_in_can_access_frequency_delete_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Treasury One")
+        event = get_object_or_404(Event, id=1)
+        response = self.client.get(f'/person/{person.id}/frequency/{event.id}/delete/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "person/elements/confirm_to_delete_freq.html")
+
+    ###########################################################################
+    #membership_ps_view
+
+    def test_office_logged_in_can_access_membership_list_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="User One")  ######
+        response = self.client.get(f"/person/{person.id}/membership_ps/")  ########
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "person/membership_ps_list.html")
+    
+    def test_treasury_logged_in_can_not_access_membership_list_in_person(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Office One")  ######
+        response = self.client.get(f"/person/{person.id}/membership_ps/")  ########
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_logged_in_can_not_access_membership_list_in_person(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Office One")  ######
+        response = self.client.get(f"/person/{person.id}/membership_ps/")  ########
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_office_logged_in_can_access_membership_create_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
+        response = self.client.get(f'/person/{person.id}/membership_ps/create/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "person/membership_ps_insert.html")
+
+    def test_office_logged_in_can_access_membership_delete_in_person(self):
+        self.client.login(
+            email="office1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        person = get_object_or_404(Person, name__icontains="Treasury One")
+        response = self.client.get(f'/person/{person.id}/membership_ps/{self.workgroup_membership_1.id}/delete/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "person/elements/confirm_to_delete_member.html")

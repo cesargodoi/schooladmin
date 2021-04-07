@@ -119,3 +119,6 @@ class PersonDummy(CenterDummy):
             occurrence=cls.occurrence_2,
             date=timezone.now(),
         )
+        
+
+

@@ -20,12 +20,14 @@ class EventDummy(WorkgroupDummy):
         )
         # events
         cls.event_1 = Event.objects.create(
+            id=1,
             activity=cls.activity_1,
             center=cls.center_1,
             date=timezone.now(),
             made_by=cls.office1,
         )
         cls.event_2 = Event.objects.create(
+            id=2,
             activity=cls.activity_2,
             center=cls.center_2,
             date=timezone.now(),

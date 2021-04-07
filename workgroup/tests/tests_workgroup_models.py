@@ -15,7 +15,7 @@ class TestWorkgroup(WorkgroupDummy):
             name="Group Four",
             center=self.center_2,
             workgroup_type=self.workgroup_type_1,
-            made_by=self.superuser,
+            made_by=self.office1,
         )
         Workgroup.objects.create(**new_workgroup)
         self.assertEqual(Workgroup.objects.count(), 4)

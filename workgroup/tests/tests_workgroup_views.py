@@ -34,22 +34,11 @@ class TestViews(TestCase):
 
 class TestViewsFromDummies(WorkgroupDummy):
     # workgroup_list
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_logged_in_can_access_workgroup_list(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/workgroup/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "workgroup/workgroup_home.html")
-        self.assertIn("Group One", response.content.decode())
+    ## testes de acessos
 
     def test_office_logged_in_can_access_workgroup_list(self):
         self.client.login(
-            email="office@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -61,7 +50,29 @@ class TestViewsFromDummies(WorkgroupDummy):
 
     def test_user_logged_in_cannot_access_workgroup_list(self):
         self.client.login(
-            email="user@rcad.min",
+            email="user1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasury_logged_in_cannot_access_workgroup_list(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_logged_in_cannot_access_workgroup_list(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -71,23 +82,11 @@ class TestViewsFromDummies(WorkgroupDummy):
         self.assertIn("login", response.url)
 
     # workgroup_detail
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_can_access_workgroups_from_any_center(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        response = self.client.get("/workgroup/1/detail/")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Group One", response.content.decode())
-        response = self.client.get("/workgroup/3/detail/")
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("Group Three", response.content.decode())
-        self.assertTemplateUsed(response, "workgroup/workgroup_detail.html")
+    ## testes de acessos
 
     def test_office_can_access_workgroup_from_any_center(self):
         self.client.login(
-            email="office@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         response = self.client.get("/workgroup/1/detail/")
@@ -99,31 +98,39 @@ class TestViewsFromDummies(WorkgroupDummy):
         self.assertTemplateUsed(response, "workgroup/workgroup_detail.html")
 
     def test_user_can_not_view_workgroup_detail(self):
-        # verificar! User não pode ver nada além de seu profile. Então user não pode ver workgroup_detail!
         self.client.login(
-            email="user@rcad.min",
+            email="user1@rcad.min",
             password="asdf1234",
         )
         response = self.client.get("/workgroup/1/detail/")
         self.assertEqual(response.status_code, 302)
         self.assertIn("login", response.url)
 
-    # workgroup_create
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_is_logged_in_can_access_workgroup_create(self):
+    def test_treasury_can_not_view_workgroup_detail(self):
         self.client.login(
-            email="superuser@rcad.min",
+            email="treasury1@rcad.min",
             password="asdf1234",
         )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/workgroup/create/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "workgroup/workgroup_form.html")
+        response = self.client.get("/workgroup/1/detail/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_can_not_view_workgroup_detail(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
+            password="asdf1234",
+        )
+        response = self.client.get("/workgroup/1/detail/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+
+    # workgroup_create
+    ## testes de acessos
 
     def test_office_is_logged_in_can_access_workgroup_create(self):
         self.client.login(
-            email="office@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -134,7 +141,29 @@ class TestViewsFromDummies(WorkgroupDummy):
 
     def test_user_logged_in_can_not_access_workgroup_create(self):
         self.client.login(
-            email="user@rcad.min",
+            email="user1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/create/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasury_logged_in_can_not_access_workgroup_create(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/create/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_logged_in_can_not_access_workgroup_create(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -144,21 +173,11 @@ class TestViewsFromDummies(WorkgroupDummy):
         self.assertIn("login", response.url)
 
     # workgroup_update
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_logged_in_can_access_workgroup_update(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/workgroup/1/update/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "workgroup/workgroup_form.html")
+    ## testes de acessos
 
     def test_office_logged_in_can_access_workgroup_update(self):
         self.client.login(
-            email="office@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -169,7 +188,29 @@ class TestViewsFromDummies(WorkgroupDummy):
 
     def test_user_logged_in_can_not_access_workgroup_update(self):
         self.client.login(
-            email="user@rcad.min",
+            email="user1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/update/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasury_logged_in_can_not_access_workgroup_update(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/update/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_logged_in_can_not_access_workgroup_update(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -179,23 +220,11 @@ class TestViewsFromDummies(WorkgroupDummy):
         self.assertIn("login", response.url)
 
     # workgroup_delete
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_logged_in_can_delete_workgroup(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/workgroup/1/delete/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(
-            response, "workgroup/workgroup_confirm_delete.html"
-        )
+    ## testes de acessos
 
     def test_office_logged_in_can_delete_workgroup(self):
         self.client.login(
-            email="office@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -203,12 +232,34 @@ class TestViewsFromDummies(WorkgroupDummy):
         response = self.client.get("/workgroup/2/delete/")
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
-            response, "workgroup/workgroup_confirm_delete.html"
+            response, "workgroup/elements/confirm_to_delete_workgroup.html"
         )
 
     def test_user_logged_in_cannot_delete_workgroup(self):
         self.client.login(
-            email="user@rcad.min",
+            email="user1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/delete/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasury_logged_in_cannot_delete_workgroup(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/delete/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_logged_in_cannot_delete_workgroup(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -218,22 +269,11 @@ class TestViewsFromDummies(WorkgroupDummy):
         self.assertIn("login", response.url)
 
     # workgroup_search
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_can_see_workgroup_for_any_centers_by_search(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/workgroup/?term=one")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "workgroup/workgroup_home.html")
-        self.assertIn("Group One", response.content.decode())
+    ## testes de acessos
 
     def test_office_can_see_workgroup_for_any_centers_by_search(self):
         self.client.login(
-            email="office@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -245,7 +285,29 @@ class TestViewsFromDummies(WorkgroupDummy):
 
     def test_user_cannot_see_workgroup_for_any_centers_by_search(self):
         self.client.login(
-            email="user@rcad.min",
+            email="user1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/?term=user")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasury_cannot_see_workgroup_for_any_centers_by_search(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/?term=user")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_cannot_see_workgroup_for_any_centers_by_search(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -255,22 +317,11 @@ class TestViewsFromDummies(WorkgroupDummy):
         self.assertIn("login", response.url)
 
     # membership_create
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_can_create_membership(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/workgroup/1/membership/insert/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "workgroup/membership_insert.html")
-        self.assertIn("Insert Membership", response.content.decode())
+    ## testes de acessos
 
     def test_office_can_create_membership(self):
         self.client.login(
-            email="office@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -282,7 +333,29 @@ class TestViewsFromDummies(WorkgroupDummy):
 
     def test_user_cannot_create_membership(self):
         self.client.login(
-            email="user@rcad.min",
+            email="user1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/membership/insert/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasury_cannot_create_membership(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/membership/insert/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_cannot_create_membership(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -292,22 +365,10 @@ class TestViewsFromDummies(WorkgroupDummy):
         self.assertIn("login", response.url)
 
     # membership_update
-    # testes de acessos (superuser, office, user)
-    def test_superuser_can_update_membership(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/workgroup/1/membership/3/update/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "workgroup/membership_update.html")
-        self.assertIn("Update Membership", response.content.decode())
-
+    # testes de acessos
     def test_office_can_update_membership(self):
         self.client.login(
-            email="office@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -319,7 +380,29 @@ class TestViewsFromDummies(WorkgroupDummy):
 
     def test_user_can_update_membership(self):
         self.client.login(
-            email="user@rcad.min",
+            email="user1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/membership/3/update/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasury_can_update_membership(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/membership/3/update/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_can_update_membership(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -329,21 +412,11 @@ class TestViewsFromDummies(WorkgroupDummy):
         self.assertIn("login", response.url)
 
     # membership_delete
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_logged_in_can_delete_membership(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/workgroup/1/membership/2/delete/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "base/confirm_delete.html")
+    ## testes de acessos
 
     def test_office_logged_in_can_delete_membership(self):
         self.client.login(
-            email="office@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -354,7 +427,7 @@ class TestViewsFromDummies(WorkgroupDummy):
 
     def test_user_logged_in_cannot_delete_membership(self):
         self.client.login(
-            email="user@rcad.min",
+            email="user1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
@@ -363,169 +436,71 @@ class TestViewsFromDummies(WorkgroupDummy):
         self.assertEqual(response.status_code, 302)
         self.assertIn("login", response.url)
 
-    # membership_ps_list
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_logged_in_can_see_membership_ps_list(self):
+    def test_treasury_logged_in_cannot_delete_membership(self):
         self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Simple")  ######
-        response = self.client.get(
-            f"/person/{person.id}/membership_ps/"
-        )  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/membership_ps_list.html")
-
-    def test_office_logged_in_can_see_membership_ps_list(self):
-        self.client.login(
-            email="office@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Simple")  ######
-        response = self.client.get(
-            f"/person/{person.id}/membership_ps/"
-        )  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/membership_ps_list.html")
-
-    def test_user_logged_in_cannot_see_membership_ps_list(self):
-        self.client.login(
-            email="user@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Simple")  ######
-        response = self.client.get(
-            f"/person/{person.id}/membership_ps/"
-        )  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
-
-    # membership_ps_create
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_logged_in_can_see_membership_ps_create(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Simple")  ######
-        response = self.client.get(
-            f"/person/{person.id}/membership_ps/create/"
-        )  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/membership_ps_insert.html")
-
-    def test_office_logged_in_can_see_membership_ps_create(self):
-        self.client.login(
-            email="office@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Simple")  ######
-        response = self.client.get(
-            f"/person/{person.id}/membership_ps/create/"
-        )  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/membership_ps_insert.html")
-
-    def test_user_logged_in_cannot_see_membership_ps_create(self):
-        self.client.login(
-            email="user@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Simple")  ######
-        response = self.client.get(
-            f"/person/{person.id}/membership_ps/create/"
-        )  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
-
-    # membership_ps_update
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_logged_in_can_see_membership_ps_update(self):
-        self.client.login(
-            email="superuser@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Simple")  ######
-        response = self.client.get(
-            f"/person/{person.id}/membership_ps/2/update/"
-        )  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/membership_ps_update.html")
-
-    def test_office_logged_in_can_see_membership_ps_update(self):
-        self.client.login(
-            email="office@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Simple")  ######
-        response = self.client.get(
-            f"/person/{person.id}/membership_ps/2/update/"
-        )  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/membership_ps_update.html")
-
-    def test_user_logged_in_cannot_see_membership_ps_update(self):
-        self.client.login(
-            email="user@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Simple")  ######
-        response = self.client.get(
-            f"/person/{person.id}/membership_ps/2/update/"
-        )  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
-
-    # membership_ps_delete
-    ## testes de acessos (superuser, office, user)
-    def test_superuser_logged_in_can_see_membership_ps_delete(self):
-        self.client.login(
-            email="superuser@rcad.min",
+            email="treasury1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
         self.assertTrue(user.is_authenticated)
         response = self.client.get("/workgroup/1/membership/2/delete/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "base/confirm_delete.html")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
 
-    def test_office_logged_in_can_see_membership_ps_delete(self):
+    def test_treasuryjr_logged_in_cannot_delete_membership(self):
         self.client.login(
-            email="office@rcad.min",
+            email="treasuryjr1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
         self.assertTrue(user.is_authenticated)
         response = self.client.get("/workgroup/1/membership/2/delete/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "base/confirm_delete.html")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
 
-    def test_user_logged_in_cannot_see_membership_ps_delete(self):
+    # membership_insert
+    ## testes de acessos
+
+    def test_office_logged_in_can_insert_membership(self):
         self.client.login(
-            email="user@rcad.min",
+            email="office1@rcad.min",
             password="asdf1234",
         )
         user = auth.get_user(self.client)
         self.assertTrue(user.is_authenticated)
-        response = self.client.get("/workgroup/1/membership/2/delete/")
+        response = self.client.get("/workgroup/1/membership/insert/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "workgroup/membership_insert.html")
+
+    def test_user_logged_in_cannot_insert_membership(self):
+        self.client.login(
+            email="user1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/membership/insert/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasury_logged_in_cannot_insert_membership(self):
+        self.client.login(
+            email="treasury1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/membership/insert/")
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("login", response.url)
+
+    def test_treasuryjr_logged_in_cannot_insert_membership(self):
+        self.client.login(
+            email="treasuryjr1@rcad.min",
+            password="asdf1234",
+        )
+        user = auth.get_user(self.client)
+        self.assertTrue(user.is_authenticated)
+        response = self.client.get("/workgroup/1/membership/insert/")
         self.assertEqual(response.status_code, 302)
         self.assertIn("login", response.url)

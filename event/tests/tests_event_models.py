@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db.models.deletion import ProtectedError
 from django.contrib import auth
 from django.utils import timezone
@@ -36,12 +37,12 @@ class TestEvent(EventDummy):
     def test_list_events(self):
         self.assertEqual(Event.objects.count(), 2)
 
-    def test_insert_event(self):
+    def test_create_event(self):
         new = dict(
             activity=self.activity_1,
             center=self.center_1,
             date=timezone.now(),
-            made_by=self.superuser,
+            made_by=self.office1,
         )
         Event.objects.create(**new)
         self.assertEqual(Event.objects.count(), 3)
@@ -112,3 +113,7 @@ class TestEvent(EventDummy):
         person = self.person_1
         person.event_set.add(self.event_2)
         self.assertEqual(self.event_2.frequencies.count(), 3)
+
+    def test_search_event(self):
+        event = Event.objects.filter(date=timezone.now()).first()
+        self.assertEqual(Event.objects.count(), 2)
