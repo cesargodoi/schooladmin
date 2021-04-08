@@ -2,7 +2,7 @@
   class="media content-section"
   onclick="location.href='{% url 'center_detail' object.pk %}';"
 >
-  <img class="circle article-img" src="{{ object.image.url }}" />
+  <img class="rounded circle article-img" src="{{ object.image.url }}" />
   <div class="media-body">
     <div class="article-metadata">
       {{ object.get_center_type_display }}

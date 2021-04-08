@@ -8,7 +8,7 @@
         Welcome to
     </div>
     <div class="media">
-        <img src="{{ object.image.url }}" class="rounded-circle article-img">
+        <img src="{{ object.image.url }}" class="round-circle article-img">
         <div class="media-body">
             <h1> {{ object.name }}</h1>
             {% if object.phone_1 %}
@@ -39,8 +39,8 @@
 <div class="row">
     <div class="col-lg-3"
          onclick="location.href='{% url 'person_home' %}';">
-        <div class="card h-100">
-            <img src="{% static 'images/persons.jpg' %}" class="card-img-top" alt="...">
+        <div class="card h-100 backimage">
+            <img src="{% static 'images/persons.png' %}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">Persons</h5>
             </div>
@@ -48,8 +48,8 @@
     </div>
     <div class="col-lg-3"
          onclick="location.href='{% url 'event_home' %}';">
-        <div class="card h-100">
-            <img src="{% static 'images/events.jpg' %}" class="card-img-top" alt="...">
+        <div class="card h-100 backimage">
+            <img src="{% static 'images/events.png' %}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">Events</h5>
             </div>
@@ -57,8 +57,8 @@
     </div>
     <div class="col-lg-3"
          onclick="location.href='{% url 'workgroup_home' %}';">
-        <div class="card h-100">
-            <img src="{% static 'images/workgroups.jpg' %}" class="card-img-top" alt="...">
+        <div class="card h-100 backimage">
+            <img src="{% static 'images/workgroups.png' %}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">Workgroups</h5>
             </div>
@@ -66,13 +66,34 @@
     </div>
     <div class="col-lg-3"
          onclick="location.href='{% url 'treasury_home' %}';">
-        <div class="card h-100">
-            <img src="{% static 'images/reports.jpg' %}" class="card-img-top" alt="...">
+        <div class="card h-100 backimage">
+            <img src="{% static 'images/reports.png' %}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title" onclick="location.href='{% url 'treasury_home' %}';">Treasury</h5>
             </div>
         </div>
     </div>
 </div>
-
+<style>
+    .backimage{
+        background: #FAFAFA;
+        background: -moz-linear-gradient(top, #FAFAFA 0%, #c4cdd3 100%);
+        background: -webkit-linear-gradient(top, #FAFAFA 0%, #c4cdd3 100%);
+        background: linear-gradient(to bottom, #FAFAFA 0%, #c4cdd3 100%);
+        border: 0;
+    }
+    .card-title{
+        color: #424242;
+        font-size: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+    .col-lg-3{
+        margin-bottom: 1rem;
+    }
+    .round-circle {
+        border-radius: .25rem;
+    }
+</style>
 {% endblock content %}
