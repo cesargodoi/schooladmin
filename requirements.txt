@@ -3,4 +3,4 @@ dynaconf
 django-crispy-forms
 pillow
 qrcode
-psycopg2
+psycopg2-binary
