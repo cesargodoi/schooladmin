@@ -9,26 +9,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
-  <link 
-    rel="stylesheet" 
+  <link
+    rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
     crossorigin="anonymous">
 
-  <link 
-    rel="stylesheet" 
-    type="text/css" 
+  <link
+    rel="stylesheet"
+    type="text/css"
     href="{% static 'center/main.css' %}">
 
   {% if title %}
-  <title>rc@dmin - {{ title }}</title>
+  <title>{{ APP_NAME }} - {{ title }}</title>
   {% else %}
-  <title>rc@dmin</title>
+  <title>{{ APP_NAME }}</title>
   {% endif %}
 
   <!-- Custom styles for this template -->
-  <link 
-    rel="stylesheet" 
+  <link
+    rel="stylesheet"
     href="{% static 'css/signin.css' %}">
 
 </head>
@@ -37,13 +37,13 @@
   <header class="site-header"></header>
   <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
     <div class="container">
-      <a class="navbar-brand mr-4" href="#">rc@dmin</a>
-      <button class="navbar-toggler" 
-        type="button" 
-        data-toggle="collapse" 
+      <a class="navbar-brand mr-4" href="#">{{ APP_NAME }}</a>
+      <button class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
         data-target="#navbarToggle"
-        aria-controls="navbarToggle" 
-        aria-expanded="false" 
+        aria-controls="navbarToggle"
+        aria-expanded="false"
         aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
