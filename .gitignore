@@ -13,6 +13,7 @@ migrations/
 # arquivos
 *.pyc
 *.sqlite3
+.env
 
 geckodriver.log
 
