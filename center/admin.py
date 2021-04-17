@@ -56,7 +56,12 @@ class CenterAdmin(admin.ModelAdmin):
                     "is_active",
                     "created_on",
                     "modified_on",
+                    "made_by"
                 ]
             },
         ),
     ]
+
+    def save_model(self, request, obj, form, change):
+        obj.made_by = request.user
+        super().save_model(request, obj, form, change)

@@ -14,10 +14,10 @@
     </div>
     <h3>
       {{ object.name }}
-      {% if object.center_type != 'CNF' %}
+      {% if object.center_type != 'CNF' and object.conf_center %}
       &nbsp;&nbsp;
       <small class="text-muted">
-        conference center: {{ object.conf_center.name }} 
+        conference center: {{ object.conf_center.name }}
         ({{ object.conf_center.get_country_display }})
       </small>
       {% endif %}
