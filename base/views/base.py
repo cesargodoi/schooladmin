@@ -7,9 +7,11 @@ from center.models import Center
 
 @login_required
 def home(request):
-    try:
-        center = get_object_or_404(Center, id=request.user.person.center.id)
-    except:
+    if request.user.person.center:
+        center = Center.objects.get(id=request.user.person.center.id)
+    elif Center.objects.count() > 0:
+        center = Center.objects.first()
+    else:
         raise Http404
 
     context = {"object": center}
