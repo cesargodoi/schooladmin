@@ -26,6 +26,15 @@
                     <a class="nav-item nav-link" href="{% url 'login' %}">Login
                     </a>
                     {% endif %}
+
+                    <!-- key-IO -->
+                    <div class="centraliza">
+                      <label class="on-off">
+                        <input type="checkbox" onclick="changeColor()"/>
+                        <span><a>{{ request.session.color_theme }}</a></span>
+                      </label>
+                    <div>
+
                 </div>
             </div>
         </div>

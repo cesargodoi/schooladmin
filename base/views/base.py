@@ -1,5 +1,8 @@
+import os
 from datetime import datetime, timedelta
 from django.http.response import Http404
+from django.http import JsonResponse
+from django.conf import settings
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from center.models import Center
@@ -14,8 +17,19 @@ def home(request):
     else:
         raise Http404
 
-    context = {"object": center}
+    context = {"object": center }
     return render(request, "base/home.html", context)
+
+def change_color_scheme(request):
+    if request.is_ajax():
+        if not request.session.get('color_theme') or request.session['color_theme'] == "light":
+            request.session['color_theme'] = "dark"
+        else:
+            request.session['color_theme'] = "light"
+
+        return JsonResponse({'change': True}, safe=False)
+
+    return render(request, "base/home.html")
 
 
 def error_404(request, exception):

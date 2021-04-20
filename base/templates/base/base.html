@@ -13,7 +13,15 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <!-- Project CSS -->
+    {% if request.session.color_theme == 'dark' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dark.css' %}">
+    {% else %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/light.css' %}">
+    {% endif %}
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/key-IO.css' %}">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
@@ -33,6 +41,7 @@
 
 <body>
     {% include 'base/elements/navbar.html' %}
+
     <main role="main" class="container">
         {% include 'base/messages.html' %}
         {% block content %}{% endblock %}
@@ -48,6 +57,20 @@
     {% endblock %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
+
+    <script>
+      function changeColor(){
+        $.ajax({
+          type: 'GET',
+          url: "{% url 'change_color_scheme' %}",
+          success: function(response) {
+            document.location.reload(true);
+          },
+        });
+      }
+    </script>
+
     {% block scripts %}{% endblock %}
 
 </body>
