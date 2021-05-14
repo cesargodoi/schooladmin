@@ -1,0 +1,74 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% include "publicwork/elements/lecture_header.html" %}
+
+{% block buttons %}
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      href="{% url 'lecture_detail' object.pk %}" 
+      class="btn btn-light btn-sm text-info">
+      <i class="fas fa-chevron-left"></i>
+      Go back
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+<article class="media content-section">
+  <div class="media-body">
+    <h4>Add listener</h4>
+    <form class="form-control-sm border-top" method="GET">
+      {% csrf_token %}
+      {% include "publicwork/elements/search_seeker.html" %}
+    </form>
+
+    {% if object_list %}
+
+    {% if object_list.has_other_pages %}
+    {% include "base/elements/paginator.html" %}
+    {% endif %}
+
+    {% for obj in object_list %}
+    <div class="row border-top border-secondary mt-2 pt-2">
+      <div class="col-sm-3">
+        {{ obj.name }}
+      </div>
+      <div class="col-sm-3">
+        <small class="text-muted">{{ obj.center }}</small>
+      </div>
+      <div class="col-sm-3">
+        <small class="text-muted">{{ obj.city }} ({{ obj.country }})</small>
+      </div>
+      <div class="col-sm-3 text-right">
+        {% if obj.pk not in pre_listeners %}
+          <a type="button" 
+            href="{% url 'add_listener' object.pk %}?seek_pk={{ obj.pk }}"
+            class="btn btn-outline-light btn-sm text-success">
+            <i class="fas fa-plus"></i> <i class="fas fa-user"></i> 
+          </a>
+        {% else %}
+          <span class="badge badge-pill badge-warning">inserted</span>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+
+    {% if object_list.has_other_pages %}
+    {% include "base/elements/paginator.html" %}
+    {% endif %}
+
+    {% else %}
+
+    <div class="alert alert-warning" role="alert">
+      <h4 class="alert-heading">seeker not found</h4>
+    </div>
+
+    {% endif %}
+
+  </div>
+</article>
+
+{% endblock %}

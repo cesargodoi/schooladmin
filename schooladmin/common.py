@@ -4,6 +4,7 @@ from unicodedata import normalize
 from django.urls.base import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.urls.resolvers import URLPattern
+from django.http.response import Http404
 
 
 # hidden auth fields
@@ -83,13 +84,25 @@ PROFILE_PAYFORM_TYPES = (
     ("TRF", "transfer"),
 )
 COUNTRIES = (("BR", "Brasil"),)
+LECTURE_TYPES = (("CTT", "contact"), ("MET", "meeting"))
+SEEKER_STATUS = (
+    ("NEW", "new"),
+    ("REG", "regular"),
+    ("INT", "interview"),
+    ("SVC", "service"),
+    ("CNF", "conference"),
+    ("OTH", "other"),
+)
 
 
 def us_inter_char(txt, codif="utf-8"):
     if not isinstance(txt, str):
         txt = str(txt)
     return (
-        normalize("NFKD", txt).encode("ASCII", "ignore").decode("ASCII").lower()
+        normalize("NFKD", txt)
+        .encode("ASCII", "ignore")
+        .decode("ASCII")
+        .lower()
     )
 
 
@@ -202,3 +215,12 @@ def paginator(queryset, limit=10, page=1):
         object_list = paginator.page(paginator.num_pages)
 
     return object_list
+
+
+def belongs_center(request, pk, Object):
+    object_list = [
+        pk.pk
+        for pk in Object.objects.filter(center=request.user.person.center.id)
+    ]
+    if pk not in object_list and not request.user.is_superuser:
+        raise Http404

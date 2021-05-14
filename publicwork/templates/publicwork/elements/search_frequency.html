@@ -1,0 +1,43 @@
+<div class="form-row">
+
+  <div class="col-sm-3 mb-1">
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <div class="input-group-text">from</div>
+      </div>
+      <input type="date" 
+            name="dt1" 
+            id="dt1"
+            class="form-control dateinput" 
+            value="{{ request.session.search.dt1 }}">
+    </div>
+  </div>
+
+  <div class="col-sm-3 mb-1">
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <div class="input-group-text">to</div>
+      </div>
+      <input type="date" 
+            name="dt2" 
+            id="dt2"
+            class="form-control dateinput" 
+            value="{{ request.session.search.dt2 }}">
+    </div>
+  </div>
+
+  <div class="col-sm-3 mb-1">
+    <div class="input-group">
+      <div class="form-check form-check-inline m-1">
+        <input class="form-check-input"
+              type="checkbox"
+              id="all"
+              name="all"
+              {% if request.session.search.all %}checked{% endif %}>
+        <label class="form-check-label" for="all">all</label>
+      </div>
+      <button class="btn btn btn-outline-success ml-2" type="submit"><i class="fas fa-chart-bar"></i> Generate</button>
+    </div>
+  </div>
+  
+</div>

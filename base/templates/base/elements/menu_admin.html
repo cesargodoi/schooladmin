@@ -1,10 +1,10 @@
+{% if request.user.groups.all.0.name == "office" or request.user.is_superuser %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'center_home' %}">Centers</a>
 </li>
 <li class="nav-item">
     <a class="nav-link" href="{% url 'person_home' %}">Persons</a>
 </li>
-{% if request.user.groups.all.0.name == "office" or request.user.is_superuser %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'event_home' %}?d30=on&lastNext=last">Events</a>
 </li>
@@ -15,6 +15,11 @@
 {% if request.user.groups.all.0.name == "treasury" or request.user.groups.all.0.name == "treasury_jr" or request.user.is_superuser %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'treasury_home' %}">Treasury</a>
+</li>
+{% endif %}
+{% if request.user.groups.all.0.name == "publicwork" or request.user.groups.all.0.name == "publicwork_jr" or request.user.is_superuser %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'publicwork_home' %}">Public Work</a>
 </li>
 {% endif %}
 

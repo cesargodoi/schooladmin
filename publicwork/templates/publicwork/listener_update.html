@@ -1,0 +1,85 @@
+{% extends "base/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if seeker_side %}
+{% include "publicwork/elements/seeker_header.html" %}
+{% else %}
+{% include "publicwork/elements/lecture_header.html" %}
+{% endif %}
+
+{% block buttons %}
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <button 
+      class="btn btn-light text-warning"
+      onclick="document.getElementById('form').submit();">
+      <i class="fas fa-edit"></i> Update
+    </button>
+    <a type="button" 
+      {% if seeker_side %}
+      href="{% url 'seeker_frequencies' object.pk %}" 
+      {% else %}
+      href="{% url 'lecture_detail' object.pk %}" 
+      {% endif %}
+      class="btn btn-light btn-sm text-info">
+      <i class="fas fa-chevron-left"></i>
+      Go back
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+<article class="media content-section">
+  <div class="media-body">
+    <h4>Update listener</h4>
+    {% if seeker_side %}
+    <div class="row mt-4">
+      <div class="col-sm-2">
+        {{ listener.lecture.date | date:"d/m/Y" }}
+      </div>
+      <div class="col-sm-6">
+        {{ listener.lecture.theme }}
+      </div>
+      <div class="col-sm-3">
+        {{ listener.lecture.center }}
+      </div>
+      <div class="col-sm-1 text-right">
+        <span class="badge badge-pill badge-info">
+          {{ listener.lecture.get_type_display }}
+        </span>
+      </div>
+    </div>
+    {% else %}
+    <div class="row mt-4">
+      <div class="col-sm-3">
+        {{ listener.seeker.name }}
+      </div>
+      <div class="col-sm-3">
+        {{ listener.seeker.center }}
+      </div>
+      <div class="col-sm-3">
+        {{ listener.seeker.city }} ({{ listener.seeker.country }})
+      </div>
+    </div>
+    {% endif %}
+    
+    <form class="form-control-sm border-top" method="POST" id="form">
+      {% csrf_token %}
+      <div class="form-group">
+        <div class="row">
+          <div class="col-sm-2">
+            {{ form.ranking | as_crispy_field }}
+          </div>
+          <div class="col-sm-10">
+            {{ form.observations | as_crispy_field }}
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</article>
+
+{% endblock %}

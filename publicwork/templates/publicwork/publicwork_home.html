@@ -1,0 +1,64 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+<article class="media content-section mb-1">
+  <div class="media-body">
+    <h2>Public Work &nbsp;<small class="text-muted">{{ user.person.center }}</small> </h2>
+  </div>
+</article>
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'home' %}">
+      <i class="fas fa-chevron-left "></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+<div class="row-pg-initial">
+  <div class="col-lg-3"
+      onclick="location.href='{% url 'seeker_home' %}';">
+    <div class="card h-100 backimage">
+      <img src="{% static 'images/seekers.png' %}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Seekers</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-3"
+      onclick="location.href='{% url 'lecture_home' %}';">
+    <div class="card h-100 backimage">
+      <img src="{% static 'images/lectures.png' %}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">Seekers</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6 mb-4">
+    <div class="card-treasury-new bg-light mb-3">
+      <div class="card-header-treasury-new">Reports</div>
+      <ul class="list-group list-group-flush">
+        <a type="button" 
+          class="list-group-item-treasury-new list-group-item-action text-info" 
+          href="{% url 'frequencies_per_period' %}">
+          <i class="fas fa-eye"></i> 
+          Frequencies per period
+        </a>
+        <a type="button" 
+          class="list-group-item-treasury-new list-group-item-action text-info" 
+          href="{% url 'lectures_per_period' %}">
+          <i class="fas fa-eye"></i> 
+          Lectures per period
+        </a>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

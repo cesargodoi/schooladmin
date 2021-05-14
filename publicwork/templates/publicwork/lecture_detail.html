@@ -1,0 +1,85 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+{% include 'publicwork/elements/lecture_header.html' %}
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      href="{% url 'add_listener' object.pk %}" 
+      class="btn btn-light btn-sm text-primary">
+      <i class="fas fa-plus"></i> <i class="fas fa-users"></i> Add
+    </a>
+    <a type="button" 
+      class="btn btn-light text-warning" 
+      href="{% url 'lecture_update' object.pk %}">
+      <i class="fas fa-edit"></i> Edit
+    </a>
+    {% if object.listeners.all|length == 0 %}
+    <a type="button" 
+      class="btn btn-light text-danger" 
+      href="{% url 'lecture_delete' object.pk %}">
+      <i class="fas fa-trash-alt"></i> Delete
+    </a>
+    {% endif %}
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'lecture_home' %}">
+      <i class="fas fa-chevron-left"></i> Go back
+    </a>
+  </div>
+</div>
+
+<article class="media content-section">
+  <div class="media-body">
+
+    <h4 class="mb-4">Listeners</h4>
+
+    {% if object_list %}
+
+    {% if object_list.has_other_pages %}
+    {% include "base/elements/paginator.html" %}
+    {% endif %}
+
+    {% for freq in object_list %}
+    <div class="row border-top border-secondary mt-2 pt-2"
+         onclick="location.href='{% url 'update_listener' object.pk freq.pk %}';">
+      <div class="col-sm-4">
+        {{ freq.seeker.name }}
+        <small class="text-muted">({{ freq.seeker.center }})</small>
+      </div>
+      <div class="col-sm-1">
+        {% if freq.ranking > 0 %}
+          {{ freq.ranking }}
+          <i class="fas fa-star"></i>
+        {% endif %}
+      </div>
+      <div class="col-sm-6">
+        <small>
+          {{ freq.observations }}
+        </small>
+      </div>
+      <div class="col-sm-1 text-right">
+        <a type="button" 
+          href="{% url 'remove_listener' object.pk freq.pk %}"
+          class="btn btn-outline-light btn-sm">
+          <i class="fas fa-trash-alt text-danger"></i>
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+
+    {% if object_list.has_other_pages %}
+    {% include "base/elements/paginator.html" %}
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+      <h4 class="alert-heading">no listeners found</h4>
+    </div>
+    {% endif %}
+
+  </div>
+</article>
+
+{% endblock content %}

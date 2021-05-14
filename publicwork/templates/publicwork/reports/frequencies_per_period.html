@@ -1,0 +1,69 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+
+<article class="media content-section mb-1">
+  <div class="media-body">
+    <h2>Frequencies per period</h2>
+    <form class="form-control-sm border-top" method="GET">
+      {% csrf_token %}
+      {% include "publicwork/elements/search_frequency.html" %}
+    </form>
+  </div>
+</article>
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'publicwork_home' %}">
+      <i class="fas fa-chevron-left "></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+{% if object_list %}
+
+<article class="content-section mb-1">
+
+  {% if object_list.has_other_pages %}
+  {% include "base/elements/paginator.html" %}
+  {% endif %}
+
+  {% for object in object_list %}
+  <div class="row border-bottom mb-2 pb-3"
+      onclick="location.href='{% url 'seeker_detail' object.seeker_id %}';">
+    <div class="col-lg-6">
+      <strong>{{ object.seeker_name }}</strong>  
+      <small class="text-mute"> {{ object.seeker_city }} ({{ object.seeker_country }})</small> 
+    </div>
+    <div class="col-lg-4">
+      <small class="text-mute">{{ object.seeker_center }} ({{ object.seeker_center_country }})</small>
+    </div>
+    <div class="col-lg-2 text-right">
+      <span class="badge badge-pill badge-success">
+        {{ object.lectures }} <i class="fas fa-calendar-check"></i>
+      </span>
+      {% if object.ranking %} 
+      <span class="badge badge-pill badge-info">
+        {{ object.ranking }} <i class="fas fa-star"></i>
+      </span>
+      {% endif %} 
+    </div>
+  </div>
+  {% endfor %}
+
+  {% if object_list.has_other_pages %}
+  {% include "base/elements/paginator.html" %}
+  {% endif %}
+
+</article>
+
+{% else %}
+<div class="alert alert-info" role="alert">
+  <h4 class="alert-heading">define the reporting period</h4>
+</div>
+{% endif %}
+
+{% endblock %}
