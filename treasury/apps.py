@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class TreasuryConfig(AppConfig):
-    name = 'treasury'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "treasury"
