@@ -14,6 +14,7 @@ media/
 *.pyc
 *.sqlite3
 .env
+*.ipynb
 
 geckodriver.log
 
