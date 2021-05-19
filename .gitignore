@@ -4,6 +4,7 @@
 .DS_Store/
 .venv/
 .pytest_cache/
+.ipynb_checkpoints/
 # images/
 venv/
 __pycache__/

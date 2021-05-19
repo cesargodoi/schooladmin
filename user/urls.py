@@ -2,7 +2,8 @@ from django.urls import path
 from django.contrib.auth import views
 from . import views as user_views
 
-## user
+
+# user
 urlpatterns = [
     path(
         "login/",
@@ -59,7 +60,7 @@ urlpatterns = [
     ),
 ]
 
-## profile
+# profile
 urlpatterns += [
     path("profile/detail/", user_views.profile_detail, name="profile_detail"),
     path("profile/update/", user_views.profile_update, name="profile_update"),
