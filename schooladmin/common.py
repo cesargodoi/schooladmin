@@ -87,11 +87,14 @@ COUNTRIES = (("BR", "Brasil"),)
 LECTURE_TYPES = (("CTT", "contact"), ("MET", "meeting"))
 SEEKER_STATUS = (
     ("NEW", "new"),
+    ("MT1", "meeting 1"),
+    ("MT2", "meeting 2"),
     ("REG", "regular"),
-    ("INT", "interview"),
     ("SVC", "service"),
     ("CNF", "conference"),
-    ("OTH", "other"),
+    ("INS", "installing"),
+    ("TKG", "thinking"),
+    ("RST", "restriction"),
 )
 
 

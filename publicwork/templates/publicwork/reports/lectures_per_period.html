@@ -34,20 +34,20 @@
   {% for object in object_list %}
 
   <div class="row border-bottom mb-2 pb-3"
-      onclick="location.href='{% url 'lecture_detail' object.lecture_id %}';">
+      onclick="location.href='{% url 'lecture_detail' object.lect_id %}';">
     <div class="col-lg-5">
-      <strong>{{ object.lecture_theme }}</strong>  
+      <strong>{{ object.lect_theme }}</strong>  
     </div>
     <div class="col-lg-3"> 
-      <small class="text-mute"> {{ object.lecture_center }} ({{ object.lecture_center_country }})</small> 
+      <small class="text-mute"> {{ object.lect_center }}</small> 
     </div>
     <div class="col-lg-2 text-info text-right">
-      {{ object.lecture_type }}
+      {{ object.lect_type }}
     </div>
-    <div class="col-lg-1 text-right">{{ object.lecture_date | date:"d/m/Y" }}</div>
+    <div class="col-lg-1 text-right">{{ object.lect_date | date:"d/m/Y" }}</div>
     <div class="col-lg-1 text-right">
       {% if object.listeners %} 
-      <span class="badge badge-pill badge-success">
+      <span class="text-success">
         {{ object.listeners }} <i class="fas fa-calendar-check"></i>
       </span>
       {% endif %} 

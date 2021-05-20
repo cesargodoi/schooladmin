@@ -13,7 +13,7 @@ class CenterAdmin(admin.ModelAdmin):
         "email",
         "secretary",
     ]
-    readonly_fields = ("created_on", "modified_on")
+    readonly_fields = ("created_on", "modified_on", "made_by")
     fieldsets = [
         (
             None,
@@ -51,14 +51,7 @@ class CenterAdmin(admin.ModelAdmin):
         ),
         (
             "Auth Informations",
-            {
-                "fields": [
-                    "is_active",
-                    "created_on",
-                    "modified_on",
-                    "made_by"
-                ]
-            },
+            {"fields": ["is_active", "created_on", "modified_on", "made_by"]},
         ),
     ]
 

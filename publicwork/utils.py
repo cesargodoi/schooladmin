@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from django.db.models import Q
 from django.utils import timezone
+from schooladmin.common import SEEKER_STATUS
 
 
 def seeker_search(request, obj):
@@ -117,23 +118,33 @@ def get_dataframe(request, Table):
             row = dict(
                 id=freq.id,
                 ranking=freq.ranking,
-                observations=freq.observations,
-                lecture_id=freq.lecture.pk,
-                lecture_theme=freq.lecture.theme,
-                lecture_type=freq.lecture.type,
-                lecture_date=freq.lecture.date,
-                lecture_center=freq.lecture.center.name,
-                lecture_center_country=freq.lecture.center.country,
-                seeker_id=freq.seeker.id,
-                seeker_name=freq.seeker.name,
-                seeker_birth=freq.seeker.birth,
-                seeker_gender=freq.seeker.gender,
-                seeker_city=freq.seeker.city,
-                seeker_country=freq.seeker.country,
-                seeker_center=freq.seeker.center.name,
-                seeker_center_country=freq.seeker.center.country,
+                obs=freq.observations,
+                lect_id=freq.lecture.pk,
+                lect_theme=freq.lecture.theme,
+                lect_type=freq.lecture.type,
+                lect_date=freq.lecture.date,
+                lect_center=str(freq.lecture.center),
+                seek_id=freq.seeker.id,
+                seek_name=freq.seeker.short_name,
+                seek_birth=freq.seeker.birth,
+                seek_gender=freq.seeker.gender,
+                seek_city=freq.seeker.city,
+                seek_state=freq.seeker.state,
+                seek_country=freq.seeker.country,
+                seek_local="{} ({}-{})".format(
+                    freq.seeker.city, freq.seeker.state, freq.seeker.country
+                ),
+                seek_center=str(freq.seeker.center),
+                seek_historic=str(
+                    [
+                        h[1]
+                        for h in SEEKER_STATUS
+                        if h[0] == freq.seeker.historic_set.last().occurrence
+                    ][0]
+                ),
+                seek_historic_date=freq.seeker.historic_set.last().date,
             )
-            big_dict.append(row)
+        big_dict.append(row)
     return pd.DataFrame(big_dict)
 
 

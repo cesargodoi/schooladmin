@@ -23,17 +23,16 @@ def frequencies_per_period(request):
         # generate a pandas dataframe
         dataframe = get_dataframe(request, Lecture)
         # count frequencies and insert on each row as lectures column
-        dataframe["lectures"] = dataframe.groupby("seeker_id")[
-            "seeker_name"
+        dataframe["lectures"] = dataframe.groupby("seek_id")[
+            "seek_name"
         ].transform("count")
         # select columns to report
         columns = [
-            "seeker_id",
-            "seeker_name",
-            "seeker_city",
-            "seeker_country",
-            "seeker_center",
-            "seeker_center_country",
+            "seek_id",
+            "seek_name",
+            "seek_local",
+            "seek_center",
+            "seek_historic",
             "lectures",
         ]
         # generate a new data frame with the sum of ranking column
@@ -43,7 +42,7 @@ def frequencies_per_period(request):
             .sort_values("ranking", ascending=False)
         )
         # drop unnecessary columns
-        report_data = set_the_target.drop(columns=["id", "lecture_id"])
+        report_data = set_the_target.drop(columns=["id", "lect_id"])
         # convert to json
         to_json = report_data.reset_index().to_json(orient="records")
         frequencies_per_period = json.loads(to_json)
@@ -71,17 +70,16 @@ def lectures_per_period(request):
         # generate a pandas dataframe
         dataframe = get_dataframe(request, Lecture)
         # count seekers and insert on each row as listeners column
-        dataframe["listeners"] = dataframe.groupby("lecture_id")[
-            "lecture_theme"
+        dataframe["listeners"] = dataframe.groupby("lect_id")[
+            "lect_theme"
         ].transform("count")
         # select columns to report
         columns = [
-            "lecture_id",
-            "lecture_theme",
-            "lecture_type",
-            "lecture_date",
-            "lecture_center",
-            "lecture_center_country",
+            "lect_id",
+            "lect_theme",
+            "lect_type",
+            "lect_date",
+            "lect_center",
             "listeners",
         ]
         # generate a new data frame grouping by lectures
@@ -91,19 +89,17 @@ def lectures_per_period(request):
             .sort_values("listeners", ascending=False)
         )
         # drop unnecessary columns
-        report_data = set_the_target.drop(
-            columns=["id", "ranking", "seeker_id"]
-        )
+        report_data = set_the_target.drop(columns=["id", "ranking", "seek_id"])
         # convert to json
         to_json = report_data.reset_index().to_json(orient="records")
         lectures_per_period = json.loads(to_json)
 
         for lecture in lectures_per_period:
-            lecture["lecture_type"] = [
-                x[1] for x in LECTURE_TYPES if x[0] == lecture["lecture_type"]
+            lecture["lect_type"] = [
+                x[1] for x in LECTURE_TYPES if x[0] == lecture["lect_type"]
             ][0]
-            lecture["lecture_date"] = datetime.utcfromtimestamp(
-                lecture["lecture_date"] // 1e3
+            lecture["lect_date"] = datetime.utcfromtimestamp(
+                lecture["lect_date"] // 1e3
             ).date()
 
         context = {
