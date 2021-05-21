@@ -89,6 +89,7 @@ SEEKER_STATUS = (
     ("NEW", "new"),
     ("MT1", "meeting 1"),
     ("MT2", "meeting 2"),
+    ("DNL", "did not like"),
     ("REG", "regular"),
     ("SVC", "service"),
     ("CNF", "conference"),
