@@ -31,11 +31,9 @@
 
         </div>
         <div class="col text-right">
-          <span class="badge badge-pill badge-secondary">
-
-            {{ object.reg }}
-
-          </span>
+          {% if object.reg %}
+          <span class="badge badge-pill badge-secondary">{{ object.reg }}</span>
+          {% endif %}
         </div>
       </div>
     </div>

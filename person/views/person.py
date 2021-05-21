@@ -222,7 +222,7 @@ def person_search(request):
         _query.append(Q(aspect=search["aspect"]))
     if search["status"]:
         _query.append(Q(status=search["status"]))
-        if search["status"] in ['DIS', 'REM', 'DEA']:
+        if search["status"] in ["DIS", "REM", "DEA"]:
             _query.remove(Q(is_active=True))
     if search["all"]:
         _query.remove(Q(is_active=True))

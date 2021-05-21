@@ -33,7 +33,7 @@
 
   {% for object in object_list %}
   <div class="row border-bottom mb-2 pb-3"
-      onclick="location.href='{% url 'seeker_detail' object.seek_id %}';">
+      onclick="location.href='{% url 'seeker_detail' object.seek_pk %}';">
     <div class="col-lg-5">
       <strong>{{ object.seek_name }}</strong>  &nbsp;&nbsp;
       <small class="text-mute"> {{ object.seek_local }}</small> 

@@ -34,7 +34,8 @@
   {% for object in object_list %}
 
   <div class="row border-bottom mb-2 pb-3"
-      onclick="location.href='{% url 'lecture_detail' object.lect_id %}';">
+      onclick="location.href='{% url 'lecture_detail' object.lect_pk %}';">
+    <div class="col-lg-1 text-right">{{ object.lect_date | date:"d/m/y" }}</div>
     <div class="col-lg-5">
       <strong>{{ object.lect_theme }}</strong>  
     </div>
@@ -44,11 +45,10 @@
     <div class="col-lg-2 text-info text-right">
       {{ object.lect_type }}
     </div>
-    <div class="col-lg-1 text-right">{{ object.lect_date | date:"d/m/Y" }}</div>
     <div class="col-lg-1 text-right">
-      {% if object.listeners %} 
+      {% if object.lect_listeners %} 
       <span class="text-success">
-        {{ object.listeners }} <i class="fas fa-calendar-check"></i>
+        {{ object.lect_listeners }} <i class="fas fa-calendar-check"></i>
       </span>
       {% endif %} 
     </div>
