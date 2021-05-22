@@ -50,8 +50,58 @@
   {% include "base/elements/paginator.html" %}
   {% endif %}
 
-  {% for object in object_list %}
-  <div class="row border-bottom mb-2 pb-3"
+  <table class="table table-sm table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">seeker</th>
+        <th scope="col">center</th>
+        <th scope="col">status</th>
+        <th scope="col" class="text-right"><i class="fas fa-star"></i></th>
+        <th scope="col" class="text-right"><i class="fas fa-calendar-check"></i></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for object in object_list %}
+      <tr onclick="location.href='{% url 'seeker_detail' object.seek_pk %}';">
+        <th scope="row" width="3%">{{ forloop.counter }}</th>
+        <td>
+          {{ object.seek_name }} &nbsp;&nbsp;
+          <small class="text-mute"> {{ object.seek_local }}</small>
+        </td>
+        <td>
+          <small class="text-mute">{{ object.seek_center }}</small>
+        </td>
+        <td>
+          <span class="badge badge-pill badge-success">
+            {{ object.seek_historic }}
+          </span>
+        </td>
+        <td class="text-right">
+          {% if object.ranking %} 
+          <span class="text-info">
+            {{ object.ranking }}
+          </span>
+          {% endif %} 
+        </td>
+        <td class="text-right">
+          {% if object.lectures %} 
+          <span class="text-success">
+            {{ object.lectures }} 
+          </span>
+          {% endif %} 
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  
+  
+  
+
+  <!-- {% for object in object_list %}
+  <div class="row border-bottom mb-1 pb-1"
       onclick="location.href='{% url 'seeker_detail' object.seek_pk %}';">
     <div class="col-lg-5">
       <strong>{{ object.seek_name }}</strong>  &nbsp;&nbsp;
@@ -79,7 +129,7 @@
       {% endif %} 
     </div>
   </div>
-  {% endfor %}
+  {% endfor %} -->
 
   {% if object_list.has_other_pages %}
   {% include "base/elements/paginator.html" %}

@@ -85,9 +85,7 @@ def lectures_per_period(request):
         _object_list = get_lectures_big_dict(request, Lecture)
         # adjust session
         search = request.session["search"]
-        search["type"] = (
-            request.GET["type"] if request.GET.get("type") else ""
-        )
+        search["type"] = request.GET["type"] if request.GET.get("type") else ""
         request.session.modified = True
 
         object_list = [
