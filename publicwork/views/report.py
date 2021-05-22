@@ -7,7 +7,7 @@ from django.shortcuts import render
 
 from ..models import Lecture
 from ..utils import get_frequencies_big_dict, get_lectures_big_dict
-from schooladmin.common import SEEKER_STATUS
+from schooladmin.common import SEEKER_STATUS, LECTURE_TYPES
 
 
 @login_required
@@ -82,15 +82,35 @@ def frequencies_per_period(request):
 @permission_required("publicwork.view_lecture")
 def lectures_per_period(request):
     if request.GET.get("dt1") and request.GET.get("dt2"):
+        _object_list = get_lectures_big_dict(request, Lecture)
+        # adjust session
+        search = request.session["search"]
+        search["type"] = (
+            request.GET["type"] if request.GET.get("type") else ""
+        )
+        request.session.modified = True
+
+        object_list = [
+            obj for obj in _object_list if obj["lect_type"] == search["type"]
+        ]
+
+        print()
+        print(object_list)
+        print(search["type"])
+        print()
+
         context = {
             "title": "lectures per period",
-            "object_list": get_lectures_big_dict(request, Lecture),
+            "object_list": object_list,
+            "type": LECTURE_TYPES,
+            "dt1": datetime.strptime(request.GET["dt1"], "%Y-%m-%d"),
+            "dt2": datetime.strptime(request.GET["dt2"], "%Y-%m-%d"),
         }
         return render(
             request, "publicwork/reports/lectures_per_period.html", context
         )
 
-    context = {"title": "lectures per period"}
+    context = {"title": "lectures per period", "type": LECTURE_TYPES}
 
     return render(
         request, "publicwork/reports/lectures_per_period.html", context

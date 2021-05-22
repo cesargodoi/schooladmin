@@ -2,13 +2,11 @@
 
 {% block content %}
 
+{% include "publicwork/elements/search_lectures.html" %}
+
 <article class="media content-section mb-1">
   <div class="media-body">
     <h2>Lectures per period</h2>
-    <form class="form-control-sm border-top" method="GET">
-      {% csrf_token %}
-      {% include "publicwork/elements/search_frequency.html" %}
-    </form>
   </div>
 </article>
 
@@ -67,5 +65,16 @@
   <h4 class="alert-heading">define the reporting period</h4>
 </div>
 {% endif %}
+
+{% block scripts %}
+<script>
+  $(document).ready(function(){
+    var objectList = '{{ object_list }}';
+    if (!objectList) {
+      $('#modal').modal('show');
+    }
+  });
+</script>
+{% endblock %}
 
 {% endblock %}
