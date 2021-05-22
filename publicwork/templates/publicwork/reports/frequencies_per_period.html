@@ -73,7 +73,7 @@
           <small class="text-mute">{{ object.seek_center }}</small>
         </td>
         <td>
-          <span class="badge badge-pill badge-success">
+          <span class="text-success">
             {{ object.seek_historic }}
           </span>
         </td>
@@ -95,41 +95,6 @@
       {% endfor %}
     </tbody>
   </table>
-
-  
-  
-  
-
-  <!-- {% for object in object_list %}
-  <div class="row border-bottom mb-1 pb-1"
-      onclick="location.href='{% url 'seeker_detail' object.seek_pk %}';">
-    <div class="col-lg-5">
-      <strong>{{ object.seek_name }}</strong>  &nbsp;&nbsp;
-      <small class="text-mute"> {{ object.seek_local }}</small> 
-    </div>
-    <div class="col-lg-3">
-      <small class="text-mute">{{ object.seek_center }}</small>
-    </div>
-    <div class="col-lg-2">
-      <span class="badge badge-pill badge-success">
-        {{ object.seek_historic }}
-      </span>
-    </div>
-    <div class="col-lg-2 text-right">
-      {% if object.ranking %} 
-      <span class="text-info">
-        {{ object.ranking }} <i class="fas fa-star"></i>
-        &nbsp;&nbsp;&nbsp;
-      </span>
-      {% endif %} 
-      {% if object.lectures %} 
-      <span class="text-success">
-        {{ object.lectures }} <i class="fas fa-calendar-check"></i>
-      </span>
-      {% endif %} 
-    </div>
-  </div>
-  {% endfor %} -->
 
   {% if object_list.has_other_pages %}
   {% include "base/elements/paginator.html" %}

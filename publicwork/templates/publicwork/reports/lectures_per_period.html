@@ -50,30 +50,44 @@
   {% include "base/elements/paginator.html" %}
   {% endif %}
 
-  {% for object in object_list %}
-
-  <div class="row border-bottom mb-2 pb-3"
-      onclick="location.href='{% url 'lecture_detail' object.lect_pk %}';">
-    <div class="col-lg-1 text-right">{{ object.lect_date | date:"d/m/y" }}</div>
-    <div class="col-lg-5">
-      <strong>{{ object.lect_theme }}</strong>  
-    </div>
-    <div class="col-lg-3"> 
-      <small class="text-mute"> {{ object.lect_center }}</small> 
-    </div>
-    <div class="col-lg-2 text-info text-right">
-      {{ object.lect_type }}
-    </div>
-    <div class="col-lg-1 text-right">
-      {% if object.lect_listeners %} 
-      <span class="text-success">
-        {{ object.lect_listeners }} <i class="fas fa-calendar-check"></i>
-      </span>
-      {% endif %} 
-    </div>
-  </div>
-
-  {% endfor %}
+  <table class="table table-sm table-hover">
+    <thead>
+      <tr>
+        <th scope="col">date</th>
+        <th scope="col">theme</th>
+        <th scope="col">center</th>
+        <th scope="col">type</th>
+        <th scope="col" class="text-right"><i class="fas fa-calendar-check"></i></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for object in object_list %}
+      <tr onclick="location.href='{% url 'lecture_detail' object.lect_pk %}';">
+        <th scope="row" width="10%">{{ object.lect_date | date:"d/m/y" }}</th>
+        <td>
+          {{ object.lect_theme }}
+        </td>
+        <td>
+          <small class="text-mute"> {{ object.lect_center }}</small>
+        </td>
+        <td>
+          <span class="text-info text-right">
+            {{ object.lect_type }}
+          </span>
+        </td>
+        <td class="text-right">
+          {% if object.lect_listeners %} 
+          <span class="text-success">
+            <strong>
+              {{ object.lect_listeners }}
+            </strong>
+          </span>
+          {% endif %} 
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
   {% if object_list.has_other_pages %}
   {% include "base/elements/paginator.html" %}
