@@ -88,9 +88,11 @@ def lectures_per_period(request):
         search["type"] = request.GET["type"] if request.GET.get("type") else ""
         request.session.modified = True
 
-        object_list = [
-            obj for obj in _object_list if obj["lect_type"] == search["type"]
-        ]
+        object_list = (
+            [obj for obj in _object_list if obj["lect_type"] == search["type"]]
+            if search["type"]
+            else _object_list
+        )
 
         context = {
             "title": "lectures per period",
