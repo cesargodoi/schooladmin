@@ -2,18 +2,37 @@
 
 {% block content %}
 
+{% include "publicwork/elements/search_frequency.html" %}
+
 <article class="media content-section mb-1">
   <div class="media-body">
-    <h2>Frequencies per period</h2>
-    <form class="form-control-sm border-top" method="GET">
-      {% csrf_token %}
-      {% include "publicwork/elements/search_frequency.html" %}
-    </form>
+    <h2>
+      Frequencies per period &nbsp;&nbsp;
+      <small class="text-muted"><em>from: {{ dt1 | date:"d/m/y" }} to: {{ dt2 | date:"d/m/y" }}</em></small>
+    </h2>
   </div>
 </article>
 
 <div class="text-right mb-2">
   <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      class="btn btn-light text-success" 
+      data-toggle="modal" data-target="#modal">
+      <i class="fas fa-chart-bar"></i> 
+      New search
+    </a>
+    <a type="button" 
+      class="btn btn-light text-warning" 
+      href="#">
+      <i class="fas fa-print"></i> 
+      To print
+    </a>
+    <a type="button" 
+      class="btn btn-light text-primary" 
+      href="#">
+      <i class="fas fa-file-csv"></i> 
+      To csv
+    </a>
     <a type="button" 
       class="btn btn-light text-info" 
       href="{% url 'publicwork_home' %}">
@@ -73,5 +92,18 @@
   <h4 class="alert-heading">define the reporting period</h4>
 </div>
 {% endif %}
+
+
+{% block scripts %}
+<script>
+  $(document).ready(function(){
+    var objectList = '{{ object_list }}';
+    if (!objectList) {
+      $('#modal').modal('show');
+    }
+  });
+</script>
+{% endblock %}
+
 
 {% endblock %}

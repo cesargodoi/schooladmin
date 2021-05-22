@@ -4,10 +4,10 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render
-from schooladmin.common import LECTURE_TYPES
 
 from ..models import Lecture
 from ..utils import get_frequencies_big_dict, get_lectures_big_dict
+from schooladmin.common import SEEKER_STATUS
 
 
 @login_required
@@ -42,21 +42,34 @@ def frequencies_per_period(request):
             dataframe.groupby(columns + ["lectures"])
             .sum("ranking")
             .sort_values("ranking", ascending=False)
+            .reset_index()
         )
+        # adjust session
+        search = request.session["search"]
+        search["status"] = (
+            request.GET["status"] if request.GET.get("status") else ""
+        )
+        request.session.modified = True
+        # filter report_data
+        if search["status"]:
+            filter = report_data["seek_historic"] == search["status"]
+            report_data = report_data[filter]
         # convert to json
         to_json = report_data.reset_index().to_json(orient="records")
-        frequencies_per_period = json.loads(to_json)
 
         context = {
             "title": "frequencies per period",
-            "object_list": frequencies_per_period,
+            "object_list": json.loads(to_json),
+            "status": SEEKER_STATUS,
+            "dt1": datetime.strptime(request.GET["dt1"], "%Y-%m-%d"),
+            "dt2": datetime.strptime(request.GET["dt2"], "%Y-%m-%d"),
         }
 
         return render(
             request, "publicwork/reports/frequencies_per_period.html", context
         )
 
-    context = {"title": "frequencies per period"}
+    context = {"title": "frequencies per period", "status": SEEKER_STATUS}
 
     return render(
         request, "publicwork/reports/frequencies_per_period.html", context

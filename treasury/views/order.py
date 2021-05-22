@@ -8,7 +8,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from event.models import Event
 from person.models import Person
-from schooladmin.common import ORDER_STATUS, PAYFORM_TYPES, paginator, short_name
+from schooladmin.common import (
+    ORDER_STATUS,
+    PAYFORM_TYPES,
+    paginator,
+    short_name,
+)
 
 from ..forms import FormOfPaymentForm, FormUpdateStatus, PaymentForm
 from ..models import BankFlags, Order, PayTypes

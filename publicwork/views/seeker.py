@@ -14,7 +14,7 @@ from ..utils import seeker_search
 @permission_required("publicwork.view_seeker")
 def seeker_home(request):
     queryset, page = seeker_search(request, Seeker)
-    object_list = paginator(queryset, page=page)
+    object_list = paginator(queryset, limit=4, page=page)
 
     context = {
         "object_list": object_list,
