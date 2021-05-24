@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from schooladmin.common import paginator, belongs_center
 
+from center.models import Center
 from ..forms import SeekerForm
 from ..models import Seeker
 from ..utils import seeker_search
@@ -19,6 +20,7 @@ def seeker_home(request):
     context = {
         "object_list": object_list,
         "title": "seeker home",
+        "centers": [[str(cnt.pk), str(cnt)] for cnt in Center.objects.all()],
     }
 
     return render(request, "publicwork/seeker_home.html", context)

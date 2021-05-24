@@ -5,41 +5,43 @@
 
 <div class="text-right mb-2">
   <div class="btn-group btn-group-sm mt-1" role="group">
-    {% if tab == "info" %}
-      <a type="button" 
-        class="btn btn-light text-warning" 
-        href="{% url 'seeker_update' object.id %}">
-        <i class="fas fa-edit"></i> Edit
-      </a>
-      {% if object.is_active %}
-      <a type="button" 
-        class="btn btn-light text-danger" 
-        href="{% url 'seeker_delete' object.id %}">
-        <i class="fas fa-trash-alt"></i> Delete
-      </a>
-      {% else %}
+    {% if object.is_active %}
+      {% if tab == "info" %}
+        <a type="button" 
+          class="btn btn-light text-warning" 
+          href="{% url 'seeker_update' object.id %}">
+          <i class="fas fa-edit"></i> Edit
+        </a>
+        {% if object.is_active %}
+        <a type="button" 
+          class="btn btn-light text-danger" 
+          href="{% url 'seeker_delete' object.id %}">
+          <i class="fas fa-trash-alt"></i> Delete
+        </a>
+        {% else %}
+        <a type="button" 
+          class="btn btn-light text-primary" 
+          href="{% url 'seeker_reinsert' object.id %}">
+          <i class="fas fa-sign-in-alt"></i> Reinsert
+        </a>
+        {% endif %}
+      {% endif %}
+
+      {% if tab == "frequencies" %}
       <a type="button" 
         class="btn btn-light text-primary" 
-        href="{% url 'seeker_reinsert' object.id %}">
-        <i class="fas fa-sign-in-alt"></i> Reinsert
+        href="{% url 'add_frequency' object.id %}">
+        <i class="fas fa-plus"></i> Add frequency
       </a>
       {% endif %}
-    {% endif %}
 
-    {% if tab == "frequencies" %}
-    <a type="button" 
-      class="btn btn-light text-primary" 
-      href="{% url 'add_frequency' object.id %}">
-      <i class="fas fa-plus"></i> Add frequency
-    </a>
-    {% endif %}
-
-    {% if tab == "historics" %}
-    <a type="button" 
-      class="btn btn-light text-primary" 
-      href="{% url 'create_historic' object.id %}">
-      <i class="fas fa-plus"></i> Add historic
-    </a>
+      {% if tab == "historics" %}
+      <a type="button" 
+        class="btn btn-light text-primary" 
+        href="{% url 'create_historic' object.id %}">
+        <i class="fas fa-plus"></i> Add historic
+      </a>
+      {% endif %}
     {% endif %}
 
     <a type="button" 
@@ -54,7 +56,6 @@
   <div class="media-body">
 
     <ul class="nav nav-pills mb-3">
-      {% if object.is_active %}
       <li class="nav-item">
         <a class="nav-link {% if tab == 'info' %}active{% endif %}" 
            id="info-tab" 
@@ -79,7 +80,6 @@
           Historics
         </a>
       </li>
-      {% endif %}
     </ul>
 
     {% if tab == "info" %}

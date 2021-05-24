@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from schooladmin.common import paginator
 from django.urls import reverse
+from django.utils import timezone
 
 from ..forms import ListenerForm
-from ..models import Lecture, Seeker, Listener
+from ..models import Lecture, Seeker, Listener, Historic
 from ..utils import seeker_search, lecture_search
 
 
@@ -18,6 +19,10 @@ def add_listener(request, lect_pk):
         seeker = Seeker.objects.get(pk=request.GET["seek_pk"])
 
         if request.method == "POST":
+            # isert historic if necessary
+            if seeker.historic_set.last().occurrence in ["NEW", "MT1"]:
+                insert_historic_if_necessary(request, seeker)
+            # create listener
             Listener.objects.create(
                 lecture=lecture,
                 seeker=seeker,
@@ -98,6 +103,10 @@ def add_frequency(request, pk):
         lecture = Lecture.objects.get(pk=request.GET["lect_pk"])
 
         if request.method == "POST":
+            # isert historic if necessary
+            if seeker.historic_set.last().occurrence in ["NEW", "MT1"]:
+                insert_historic_if_necessary(request, seeker)
+            # create listener
             Listener.objects.create(
                 lecture=lecture,
                 seeker=seeker,
@@ -171,3 +180,19 @@ def remove_frequency(request, seek_pk, freq_pk):
 
     context = {"object": listener, "title": "confirm to delete"}
     return render(request, "base/confirm_delete.html", context)
+
+
+# handlers
+def insert_historic_if_necessary(request, obj):
+    new_historic = dict(
+        seeker=obj,
+        date=timezone.now().date(),
+        description="automatically added by frequency",
+        made_by=request.user,
+    )
+    if obj.historic_set.last().occurrence == "NEW":
+        new_historic["occurrence"] = "MT1"
+    elif obj.historic_set.last().occurrence == "MT1":
+        new_historic["occurrence"] = "MT2"
+
+    Historic.objects.create(**new_historic)

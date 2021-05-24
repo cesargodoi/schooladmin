@@ -10,7 +10,7 @@
     </div>
   </div>
 
-  <div class="col-sm-3 mb-1">
+  <!-- <div class="col-sm-3 mb-1">
     <div class="input-group">
       <input name="center"
              class="dateinput form-control"
@@ -18,9 +18,20 @@
              placeholder="center"
              {% if request.session.search.center %}value={{ request.session.search.center }}{% endif %}>
     </div>
+  </div> -->
+
+  <div class="col-sm-2 mb-1">
+    <select class="form-control" name="center">
+      {% for cnt in centers %}
+      <option value="{{ cnt.0 }}"
+              {% if cnt.0 == request.session.search.center %}selected{% endif %}>
+        {{ cnt.1 }}
+      </option>
+      {% endfor %}
+    </select>
   </div>
 
-  <div class="col-sm-3 mb-1">
+  <div class="col-sm-2 mb-1">
     <div class="input-group">
       <input name="city"
              class="dateinput form-control"

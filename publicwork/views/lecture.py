@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http.response import Http404
 from schooladmin.common import paginator, LECTURE_TYPES
 
 from ..forms import LectureForm
@@ -71,7 +72,9 @@ def lecture_create(request):
 @login_required
 @permission_required("publicwork.change_lecture")
 def lecture_update(request, pk):
-    object = get_object_or_404(Lecture, pk=pk)
+    object = Lecture.objects.get(pk=pk)
+    if object.center != request.user.person.center:
+        raise Http404
     if request.method == "POST":
         form = LectureForm(request.POST, instance=object)
         if form.is_valid():
@@ -99,6 +102,8 @@ def lecture_update(request, pk):
 @permission_required("publicwork.delete_lecture")
 def lecture_delete(request, pk):
     object = get_object_or_404(Lecture, pk=pk)
+    if object.center != request.user.person.center:
+        raise Http404
     if request.method == "POST":
         object.delete()
         message = "The lecture has been deleted!"

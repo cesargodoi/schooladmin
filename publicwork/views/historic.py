@@ -15,10 +15,12 @@ def create_historic(request, pk):
 
     if request.method == "POST":
         form = HistoricForm(request.POST)
-        print(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "The Historic has been created!")
+        if request.POST["occurrence"] == "RST":
+            seeker.is_active = False
+            seeker.save()
 
         return redirect("seeker_historics", pk=pk)
 

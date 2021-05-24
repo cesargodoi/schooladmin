@@ -10,17 +10,19 @@
       class="btn btn-light btn-sm text-primary">
       <i class="fas fa-plus"></i> <i class="fas fa-users"></i> Add
     </a>
-    <a type="button" 
-      class="btn btn-light text-warning" 
-      href="{% url 'lecture_update' object.pk %}">
-      <i class="fas fa-edit"></i> Edit
-    </a>
-    {% if object.listeners.all|length == 0 %}
-    <a type="button" 
-      class="btn btn-light text-danger" 
-      href="{% url 'lecture_delete' object.pk %}">
-      <i class="fas fa-trash-alt"></i> Delete
-    </a>
+    {% if object.center == request.user.person.center or request.user.is_superuser %}
+      <a type="button" 
+        class="btn btn-light text-warning" 
+        href="{% url 'lecture_update' object.pk %}">
+        <i class="fas fa-edit"></i> Edit
+      </a>
+      {% if object.listeners.all|length == 0 %}
+      <a type="button" 
+        class="btn btn-light text-danger" 
+        href="{% url 'lecture_delete' object.pk %}">
+        <i class="fas fa-trash-alt"></i> Delete
+      </a>
+      {% endif %}
     {% endif %}
     <a type="button" 
       class="btn btn-light text-info" 

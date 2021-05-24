@@ -13,7 +13,7 @@ def seeker_search(request, obj):
         request.session["search"] = {
             "name": "",
             "city": "",
-            "center": "",
+            "center": request.user.person.center.pk,
             "all": "",
             "page": 1,
         }
@@ -43,7 +43,7 @@ def seeker_search(request, obj):
         _query.append(Q(city__icontains=search["city"]))
     if search["center"]:
         _query.remove(Q(center=request.user.person.center))
-        _query.append(Q(center__name__icontains=search["center"]))
+        _query.append(Q(center__pk=search["center"]))
     if search["all"]:
         _query.remove(Q(is_active=True))
         if Q(center=request.user.person.center) in _query:
