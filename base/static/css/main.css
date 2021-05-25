@@ -225,3 +225,27 @@ color: var(--color-font)
 .link-principal-center:active {
 text-decoration: none
 }
+
+
+/* cores para os paginadores */
+
+.btn-secondary:not(:disabled):not(.disabled).active, .btn-secondary:not(:disabled):not(.disabled):active, .show>.btn-secondary.dropdown-toggle {
+  color: var(--color-background);
+  font-weight: bold;
+  background-color: var(--color-title);
+  border-color: var(--color-title);
+}
+
+.btn-secondary {
+  color: var(--color-background);
+  background-color: var(--color-title);
+  border-color: var(--color-title);
+}
+
+.btn-light {
+  color: var(--color-font);
+}
+
+.m-4 {
+  margin: .5rem!important;
+}
