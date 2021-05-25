@@ -12,8 +12,8 @@ def seeker_search(request, obj):
     if not request.session.get("search"):
         request.session["search"] = {
             "name": "",
-            "city": "",
             "center": request.user.person.center.pk,
+            "city": "",
             "all": "",
             "page": 1,
         }
@@ -24,10 +24,10 @@ def seeker_search(request, obj):
     else:
         search["page"] = 1
         search["name"] = request.GET["name"] if request.GET.get("name") else ""
-        search["city"] = request.GET["city"] if request.GET.get("city") else ""
         search["center"] = (
             request.GET["center"] if request.GET.get("center") else ""
         )
+        search["city"] = request.GET["city"] if request.GET.get("city") else ""
         search["all"] = "on" if request.GET.get("all") else ""
 
     # save session
@@ -39,11 +39,11 @@ def seeker_search(request, obj):
         Q(name_sa__icontains=search["name"]),
     ]
     # adding more complexity
-    if search["city"]:
-        _query.append(Q(city__icontains=search["city"]))
     if search["center"]:
         _query.remove(Q(center=request.user.person.center))
         _query.append(Q(center__pk=search["center"]))
+    if search["city"]:
+        _query.append(Q(city__icontains=search["city"]))
     if search["all"]:
         _query.remove(Q(is_active=True))
         if Q(center=request.user.person.center) in _query:

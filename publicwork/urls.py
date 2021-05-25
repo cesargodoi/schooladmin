@@ -123,4 +123,9 @@ urlpatterns += [
         report.lectures_per_period,
         name="lectures_per_period",
     ),
+    path(
+        "report/status-per-center/",
+        report.status_per_center,
+        name="status_per_center",
+    ),
 ]

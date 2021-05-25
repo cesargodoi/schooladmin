@@ -3,7 +3,7 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
-from schooladmin.common import paginator, belongs_center
+from schooladmin.common import paginator, belongs_center, SEEKER_STATUS
 
 from center.models import Center
 from ..forms import SeekerForm
@@ -16,6 +16,8 @@ from ..utils import seeker_search
 def seeker_home(request):
     queryset, page = seeker_search(request, Seeker)
     object_list = paginator(queryset, limit=4, page=page)
+
+    print(queryset.filter(name__icontains="maria"))
 
     context = {
         "object_list": object_list,
