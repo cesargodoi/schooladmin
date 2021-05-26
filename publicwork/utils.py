@@ -1,5 +1,3 @@
-import pandas as pd
-
 from datetime import datetime, timedelta
 
 from django.db.models import Q
@@ -135,9 +133,13 @@ def get_lectures_big_dict(request, Table):
     return big_dict
 
 
-def get_frequencies_big_dict(request, Table):
+def get_frequencies_big_dict(request, model, report_type="date"):
     big_dict = []
-    for obj in queryset_per_date(request, Table):
+    if report_type == "date":
+        queryset = queryset_per_date(request, model)
+    else:
+        queryset = queryset_per_status(request, model)
+    for obj in queryset:
         if obj.listener_set.count():
             for freq in obj.listener_set.all():
                 row = dict(
@@ -219,3 +221,26 @@ def queryset_per_date(request, Table):
         query.add(q, Q.AND)
 
     return Table.objects.filter(query).order_by("-date")
+
+
+def queryset_per_status(request, model):
+    # checking for search in request.session
+    if not request.session.get("search"):
+        request.session["search"] = {
+            "status": "",
+        }
+    # adjust search
+    search = request.session["search"]
+    search["status"] = (
+        request.GET["status"] if request.GET.get("status") else ""
+    )
+    # save session
+    request.session.modified = True
+    # basic query
+    _query = [Q(is_active=True), Q(center=request.user.person.center)]
+    # generating query
+    query = Q()
+    for q in _query:
+        query.add(q, Q.AND)
+
+    return model.objects.filter(query).order_by("-date")

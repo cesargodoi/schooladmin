@@ -2,13 +2,12 @@
 
 {% block content %}
 
-{% include "publicwork/elements/search_frequency.html" %}
+{% include "publicwork/elements/modal_search_status.html" %}
 
 <article class="media content-section mb-1">
   <div class="media-body">
     <h2>
-      Status per center &nbsp;&nbsp;
-      <small class="text-muted"><em>from: {{ dt1 | date:"d/m/y" }} to: {{ dt2 | date:"d/m/y" }}</em></small>
+      Status per center
     </h2>
   </div>
 </article>
@@ -57,6 +56,7 @@
         <th scope="col">seeker</th>
         <th scope="col">center</th>
         <th scope="col" class="text-right">status</th>
+        <th scope="col" class="text-right">since</th>
       </tr>
     </thead>
     <tbody>
@@ -74,8 +74,11 @@
           <span class="text-success">
             {{ object.seek_historic }}
           </span>
-          <small class="text-muted">since</small>
-          {{ object.seek_historic_date | date:"d/m/y" }}
+        </td>
+        <td class="text-right">
+          <small>
+            {{ object.seek_historic_date | timesince }}
+          </small>
         </td>
       </tr>
       {% endfor %}
@@ -90,7 +93,7 @@
 
 {% else %}
 <div class="alert alert-info" role="alert">
-  <h4 class="alert-heading">define the reporting period</h4>
+  <h4 class="alert-heading">define the reporting status</h4>
 </div>
 {% endif %}
 

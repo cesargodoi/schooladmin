@@ -38,7 +38,7 @@
                 <div class="input-group-text">status</div>
               </div>
               <select class="form-control" name="status">
-                <option value="" {% if stt.1 == request.session.search.status %}selected{% endif %}>---</option>
+                <option value="" {% if stt.1 == request.session.search.status %}selected{% endif %}>all</option>
                 {% for stt in status %}
                 <option value="{{ stt.1 }}"
                         {% if stt.1 == request.session.search.status %}selected{% endif %}>
