@@ -249,3 +249,85 @@ text-decoration: none
 .m-4 {
   margin: .5rem!important;
 }
+
+/* pandas table */
+table{
+  border: var(--background-card);
+}
+
+.dataframe{
+  width: 100%;
+  text-align: right;
+  font-size: 80%;
+}
+.dataframe thead{
+  border-bottom: 2px solid gray;
+}
+
+.dataframe td, .dataframe th {
+  padding: 8px;
+}
+
+.dataframe th{
+  font-size: 1rem;
+}
+.dataframe td:nth-child(3), td:nth-child(2), td:nth-child(1){
+  text-align: left;
+}
+
+
+.dataframe td:nth-child(2), td:nth-child(1){
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.dataframe tr{
+  line-height: .5rem;
+}
+
+.dataframe tr:nth-child(even){
+  background-color: var(--table-line);
+}
+
+.dataframe tr:hover {background-color: var(--table-hover);}
+
+.dataframe th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-weight: bold;
+}
+
+.dataframe th:nth-child(1), th:nth-child(2), th:nth-child(3){
+  text-align: left;
+}
+
+/* cabecalhos relatorios */
+
+.cabecalho-relatorios{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.logo-relatorio {
+  width: 7rem;
+  opacity: 70%;
+}
+
+.title-cabecalho-relatorio{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title-cabecalho-relatorio h2, p{
+  margin: 0;
+}
+
+.cabecalho-dados{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+}

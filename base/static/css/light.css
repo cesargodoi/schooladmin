@@ -9,5 +9,7 @@
   --link-hover: #17a2b8;
   --card-item:#fff;
   --card-header: rgba(0,0,0,.03);
-  --card-border: rgba(0,0,0,.125)
+  --card-border: rgba(0,0,0,.125);
+  --table-line: #f2f2f2;
+  --table-hover:#ddd;
 }

@@ -145,6 +145,8 @@ def status_per_center(request):
             pd.to_datetime("today").normalize()
             - report_data["seek_historic_date"]
         )
+        report_data.drop("seek_pk", axis="columns", inplace=True)
+        report_data.index += 1
 
         # adjust session
         search = request.session["search"]
@@ -153,10 +155,12 @@ def status_per_center(request):
             report_data = report_data[filter]
 
         context = {
-            "title": "frequencies per period",
+            "title": "status per center",
             "object_list": report_data.to_dict(orient="records"),
             "status": SEEKER_STATUS,
             "report": report_data.to_html(),
+            "report_title": "Status per Center",
+            "report_subtitle": request.user.person.center
         }
 
         return render(

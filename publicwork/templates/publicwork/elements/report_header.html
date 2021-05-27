@@ -1,0 +1,24 @@
+{% load static %}
+
+<article class="media content-section mb-1">
+  <div class="media-body cabecalho-relatorios">
+
+    <img src="{% static 'images/11n-transp.png' %}" class="logo-relatorio" alt="...">
+
+    <div class="title-cabecalho-relatorio">
+      <h2>
+        {{ report_title }}
+      </h2>
+      <p>
+        {{ report_subtitle }}
+      </p>
+    </div>
+
+    <small class="cabecalho-dados">
+      <p>{{ request.user.person.center }}</p>
+      <p>{{ request.user }}</p>
+      <p>{% now "SHORT_DATETIME_FORMAT" %}</p>
+    </small>
+
+  </div>
+</article>
