@@ -45,10 +45,6 @@
 
 <article class="content-section mb-1">
 
-  {% if object_list.has_other_pages %}
-  {% include "base/elements/paginator.html" %}
-  {% endif %}
-
   <table class="table table-sm table-hover">
     <thead>
       <tr>
@@ -64,16 +60,19 @@
       <tr onclick="location.href='{% url 'seeker_detail' object.seek_pk %}';">
         <th scope="row" width="3%">{{ forloop.counter }}</th>
         <td>
-          {{ object.seek_name }} &nbsp;&nbsp;
+          <strong>{{ object.seek_name }}</strong>
+          &nbsp;&nbsp;
           <small class="text-mute"> {{ object.seek_local }}</small>
         </td>
         <td>
           <small class="text-mute">{{ object.seek_center }}</small>
         </td>
         <td class="text-right">
-          <span class="text-success">
-            {{ object.seek_historic }}
-          </span>
+          <strong>
+            <span class="text-success">
+              {{ object.seek_historic }}
+            </span>
+          </strong>
         </td>
         <td class="text-right">
           <small>
@@ -85,9 +84,9 @@
     </tbody>
   </table>
 
-  {% if object_list.has_other_pages %}
-  {% include "base/elements/paginator.html" %}
-  {% endif %}
+  <div class="pandas-table">
+    {{ report | safe }}
+  </div>
 
 </article>
 

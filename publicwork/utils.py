@@ -133,13 +133,9 @@ def get_lectures_big_dict(request, Table):
     return big_dict
 
 
-def get_frequencies_big_dict(request, model, report_type="date"):
+def get_frequencies_big_dict(request, model):
     big_dict = []
-    if report_type == "date":
-        queryset = queryset_per_date(request, model)
-    else:
-        queryset = queryset_per_status(request, model)
-    for obj in queryset:
+    for obj in queryset_per_date(request, model):
         if obj.listener_set.count():
             for freq in obj.listener_set.all():
                 row = dict(
@@ -177,6 +173,37 @@ def get_frequencies_big_dict(request, model, report_type="date"):
                     seek_historic_date=freq.seeker.historic_set.last().date,
                 )
                 big_dict.append(row)
+    return big_dict
+
+
+def get_status_big_dict(request, model):
+    queryset = queryset_per_status(request, model)
+    big_dict = []
+    for obj in queryset:
+        row = dict(
+            seek_pk=obj.pk,
+            seek_name=obj.short_name,
+            seek_birth=obj.birth,
+            seek_gender=obj.gender,
+            seek_city=obj.city,
+            seek_state=obj.state,
+            seek_country=obj.country,
+            seek_local="{} ({}-{})".format(
+                obj.city,
+                obj.state,
+                obj.country,
+            ),
+            seek_center=str(obj.center),
+            seek_historic=str(
+                [
+                    h[1]
+                    for h in SEEKER_STATUS
+                    if h[0] == obj.historic_set.last().occurrence
+                ][0]
+            ),
+            seek_historic_date=obj.historic_set.last().date,
+        )
+        big_dict.append(row)
     return big_dict
 
 
@@ -243,4 +270,4 @@ def queryset_per_status(request, model):
     for q in _query:
         query.add(q, Q.AND)
 
-    return model.objects.filter(query).order_by("-date")
+    return model.objects.filter(query).order_by("name_sa")

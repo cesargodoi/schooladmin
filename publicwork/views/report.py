@@ -4,8 +4,12 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render
 
-from ..models import Lecture
-from ..utils import get_frequencies_big_dict, get_lectures_big_dict
+from ..models import Lecture, Seeker
+from ..utils import (
+    get_frequencies_big_dict,
+    get_lectures_big_dict,
+    get_status_big_dict,
+)
 from schooladmin.common import SEEKER_STATUS, LECTURE_TYPES
 
 
@@ -115,7 +119,7 @@ def lectures_per_period(request):
 def status_per_center(request):
     if request.GET.get("status"):
         # get frequencies big dict
-        big_dict = get_frequencies_big_dict(request, Lecture, "status")
+        big_dict = get_status_big_dict(request, Seeker)
         # select columns to report
         columns = [
             "seek_pk",
@@ -143,6 +147,7 @@ def status_per_center(request):
             "title": "frequencies per period",
             "object_list": report_data.to_dict(orient="records"),
             "status": SEEKER_STATUS,
+            "report": report_data.to_html(),
         }
 
         return render(
