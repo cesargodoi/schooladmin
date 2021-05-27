@@ -137,6 +137,15 @@ def status_per_center(request):
             .sort_values("seek_historic")
             .reset_index()
         )
+        # add since column
+        report_data["seek_historic_date"] = pd.to_datetime(
+            report_data["seek_historic_date"]
+        ).dt.normalize()
+        report_data["since"] = (
+            pd.to_datetime("today").normalize()
+            - report_data["seek_historic_date"]
+        )
+
         # adjust session
         search = request.session["search"]
         if search["status"] != "all":
