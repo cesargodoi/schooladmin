@@ -119,6 +119,7 @@ body {
   display: flex;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
+  align-items: flex-start;
   margin-right: -15px;
   margin-left: -15px;
   margin-top: 2.5rem
@@ -251,8 +252,13 @@ text-decoration: none
 }
 
 /* pandas table */
-table{
-  border: var(--background-card);
+table, td, th{
+  border-style: none;
+}
+
+
+thead{
+  border-bottom: 2px solid gray!important;
 }
 
 .dataframe{
@@ -261,7 +267,7 @@ table{
   font-size: 80%;
 }
 .dataframe thead{
-  border-bottom: 2px solid gray;
+  border-bottom: 2px solid gray!important;
 }
 
 .dataframe td, .dataframe th {
@@ -312,7 +318,7 @@ table{
 
 .logo-relatorio {
   width: 7rem;
-  opacity: 70%;
+  opacity: 90%;
 }
 
 .title-cabecalho-relatorio{
@@ -330,4 +336,10 @@ table{
   flex-direction: column;
   align-items: flex-end;
 
+}
+
+@media print{
+  .controls-report{
+    display: none;
+  }
 }
