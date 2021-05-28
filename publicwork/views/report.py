@@ -6,9 +6,9 @@ from django.shortcuts import render
 
 from ..models import Lecture, Seeker
 from ..utils import (
-    get_frequencies_big_dict,
-    get_lectures_big_dict,
-    get_status_big_dict,
+    get_frequencies_dict,
+    get_lectures_dict,
+    get_seekers_dict,
 )
 from schooladmin.common import SEEKER_STATUS, LECTURE_TYPES
 
@@ -26,8 +26,8 @@ def publicwork_home(request):
 @permission_required("publicwork.view_lecture")
 def frequencies_per_period(request):
     if request.GET.get("dt1") and request.GET.get("dt2"):
-        # get frequencies big dict
-        big_dict = get_frequencies_big_dict(request, Lecture)
+        # get frequencies dict
+        _dict = get_frequencies_dict(request, Lecture)
         # select columns to report
         columns = [
             "seek_pk",
@@ -38,184 +38,182 @@ def frequencies_per_period(request):
             "seek_historic_date",
         ]
         # generate pandas dataframe
-        dataframe = pd.DataFrame(big_dict, columns=columns + ["ranking"])
-        # count frequencies and insert on each row as lectures column
-        dataframe["lectures"] = dataframe.groupby("seek_pk")[
+        dataframe = pd.DataFrame(_dict, columns=columns + ["ranking"])
+        # add since column
+        dataframe["since"] = since(dataframe, "seek_historic_date")
+        # count frequencies and insert on each row as freqs column
+        dataframe["freqs"] = dataframe.groupby("seek_pk")[
             "seek_name"
         ].transform("count")
         # .sort_values('ranking', ascending=False)
+        columns += ["since", "freqs"]
         report_data = (
-            dataframe.groupby(columns + ["lectures"])
+            dataframe.groupby(columns)
             .sum("ranking")
             .sort_values("ranking", ascending=False)
             .reset_index()
         )
-        # adjust session
+        # drop columns
+        report_data.drop(
+            ["seek_pk", "seek_historic_date"], axis="columns", inplace=True
+        )
+
+        # filter report_data
         search = request.session["search"]
         search["status"] = (
             request.GET["status"] if request.GET.get("status") else ""
         )
         request.session.modified = True
-        # filter report_data
         if search["status"]:
             filter = report_data["seek_historic"] == search["status"]
             report_data = report_data[filter]
 
+        # reset and adjust index
+        report_data.reset_index(drop=True, inplace=True)
+        report_data.index += 1
+        # rename columns
+        rename = {
+            "seek_name": "name",
+            "seek_local": "local",
+            "seek_center": "center",
+            "seek_historic": "status",
+            "ranking": "rank",
+        }
+        report_data = report_data.rename(columns=rename, inplace=False)
+
         context = {
             "title": "frequencies per period",
-            "object_list": report_data.to_dict(orient="records"),
+            "subtitle": "from: {} to: {}".format(
+                datetime.strftime(
+                    datetime.strptime(request.GET["dt1"], "%Y-%m-%d"),
+                    "%d/%m/%y",
+                ),
+                datetime.strftime(
+                    datetime.strptime(request.GET["dt2"], "%Y-%m-%d"),
+                    "%d/%m/%y",
+                ),
+            ),
+            "report_data": report_data.to_html(),
             "status": SEEKER_STATUS,
-            "dt1": datetime.strptime(request.GET["dt1"], "%Y-%m-%d"),
-            "dt2": datetime.strptime(request.GET["dt2"], "%Y-%m-%d"),
+            "search": "publicwork/elements/modal_search_frequencies.html",
         }
 
-        return render(
-            request, "publicwork/reports/frequencies_per_period.html", context
-        )
+        return render(request, "publicwork/reports/show_report.html", context)
 
-    context = {"title": "frequencies per period", "status": SEEKER_STATUS}
+    context = {
+        "title": "frequencies per period",
+        "status": SEEKER_STATUS,
+        "search": "publicwork/elements/modal_search_frequencies.html",
+    }
 
-    return render(
-        request, "publicwork/reports/frequencies_per_period.html", context
-    )
+    return render(request, "publicwork/reports/show_report.html", context)
 
 
 @login_required
 @permission_required("publicwork.view_lecture")
 def lectures_per_period(request):
     if request.GET.get("dt1") and request.GET.get("dt2"):
-        _object_list = get_lectures_big_dict(request, Lecture)
-        # adjust session
+        # get lectures dict
+        _dict = get_lectures_dict(request, Lecture)
+        # select columns to report
+        columns = ["date", "theme", "type", "center", "listeners"]
+        # generate pandas dataframe
+        dataframe = pd.DataFrame(_dict, columns=columns)
+
+        # filter report_data
         search = request.session["search"]
         search["type"] = request.GET["type"] if request.GET.get("type") else ""
         request.session.modified = True
+        if search["type"]:
+            filter = dataframe["type"] == search["type"]
+            dataframe = dataframe[filter]
 
-        object_list = (
-            [obj for obj in _object_list if obj["lect_type"] == search["type"]]
-            if search["type"]
-            else _object_list
-        )
+        # reset and adjust index
+        dataframe.reset_index(drop=True, inplace=True)
+        dataframe.index += 1
 
         context = {
             "title": "lectures per period",
-            "object_list": object_list,
+            "subtitle": "from: {} to: {}".format(
+                datetime.strftime(
+                    datetime.strptime(request.GET["dt1"], "%Y-%m-%d"),
+                    "%d/%m/%y",
+                ),
+                datetime.strftime(
+                    datetime.strptime(request.GET["dt2"], "%Y-%m-%d"),
+                    "%d/%m/%y",
+                ),
+            ),
+            "report_data": dataframe.to_html(),
             "type": LECTURE_TYPES,
-            "dt1": datetime.strptime(request.GET["dt1"], "%Y-%m-%d"),
-            "dt2": datetime.strptime(request.GET["dt2"], "%Y-%m-%d"),
+            "search": "publicwork/elements/modal_search_lectures.html",
         }
-        return render(
-            request, "publicwork/reports/lectures_per_period.html", context
-        )
+        return render(request, "publicwork/reports/show_report.html", context)
 
-    context = {"title": "lectures per period", "type": LECTURE_TYPES}
+    context = {
+        "title": "lectures per period",
+        "type": LECTURE_TYPES,
+        "search": "publicwork/elements/modal_search_lectures.html",
+    }
 
-    return render(
-        request, "publicwork/reports/lectures_per_period.html", context
-    )
+    return render(request, "publicwork/reports/show_report.html", context)
 
 
 @login_required
 @permission_required("publicwork.view_lecture")
 def status_per_center(request):
     if request.GET.get("status"):
-        # get frequencies big dict
-        big_dict = get_status_big_dict(request, Seeker)
+        # get seekers dict
+        _dict = get_seekers_dict(request, Seeker)
         # select columns to report
         columns = [
-            "seek_pk",
-            "seek_name",
-            "seek_local",
-            "seek_center",
-            "seek_historic",
-            "seek_historic_date",
+            "name",
+            "local",
+            "center",
+            "historic",
+            "historic_date",
         ]
         # generate pandas dataframe
-        dataframe = pd.DataFrame(big_dict, columns=columns)
+        dataframe = pd.DataFrame(_dict, columns=columns)
         # order by historic
         report_data = (
             pd.DataFrame(dataframe.groupby(columns).count())
-            .sort_values("seek_historic")
+            .sort_values("historic")
             .reset_index()
         )
         # add since column
-        report_data["seek_historic_date"] = pd.to_datetime(
-            report_data["seek_historic_date"]
-        ).dt.normalize()
-        report_data["since"] = (
-            pd.to_datetime("today").normalize()
-            - report_data["seek_historic_date"]
-        )
-        report_data.drop("seek_pk", axis="columns", inplace=True)
-        report_data.index += 1
-
+        report_data["since"] = since(report_data, "historic_date")
+        # drop columns
+        report_data.drop(["historic_date"], axis="columns", inplace=True)
         # adjust session
         search = request.session["search"]
         if search["status"] != "all":
-            filter = report_data["seek_historic"] == search["status"]
+            filter = report_data["historic"] == search["status"]
             report_data = report_data[filter]
+        # reset and adjust index
+        report_data.reset_index(drop=True, inplace=True)
+        report_data.index += 1
 
         context = {
             "title": "status per center",
-            "object_list": report_data.to_dict(orient="records"),
+            "subtitle": request.user.person.center,
             "status": SEEKER_STATUS,
-            "report": report_data.to_html(),
-            "report_title": "Status per Center",
-            "report_subtitle": request.user.person.center
+            "report_data": report_data.to_html(),
+            "search": "publicwork/elements/modal_search_status.html",
         }
 
-        return render(
-            request, "publicwork/reports/status_per_center.html", context
-        )
+        return render(request, "publicwork/reports/show_report.html", context)
 
-    context = {"title": "status per center", "status": SEEKER_STATUS}
+    context = {
+        "title": "status per center",
+        "status": SEEKER_STATUS,
+        "search": "publicwork/elements/modal_search_status.html",
+    }
 
-    return render(
-        request, "publicwork/reports/status_per_center.html", context
-    )
+    return render(request, "publicwork/reports/show_report.html", context)
 
 
-# @login_required
-# @permission_required("publicwork.view_seeker")
-# def seekers_per_status(request):
-#     if request.GET.get("dt1") and request.GET.get("dt2"):
-#         # generate a pandas dataframe
-#         dataframe = get_dataframe(request, Lecture)
-#         # count frequencies and insert on each row as lectures column
-#         dataframe["lectures"] = dataframe.groupby("seek_id")[
-#             "seek_name"
-#         ].transform("count")
-#         # select columns to report
-#         columns = [
-#             "seek_id",
-#             "seek_name",
-#             "seek_local",
-#             "seek_center",
-#             "seek_historic",
-#             "lectures",
-#         ]
-#         # generate a new data frame with the sum of ranking column
-#         set_the_target = (
-#             dataframe.groupby(columns)
-#             .sum("ranking")
-#             .sort_values("ranking", ascending=False)
-#         )
-#         # drop unnecessary columns
-#         report_data = set_the_target.drop(columns=["id", "lect_id"])
-#         # convert to json
-#         to_json = report_data.reset_index().to_json(orient="records")
-#         frequencies_per_period = json.loads(to_json)
-
-#         context = {
-#             "title": "frequencies per period",
-#             "object_list": frequencies_per_period,
-#         }
-
-#         return render(
-#             request, "publicwork/reports/frequencies_per_period.html", context
-#         )
-
-#     context = {"title": "seekers per status"}
-
-#     return render(
-#         request, "publicwork/reports/seekers_per_status.html", context
-#     )
+# handlers
+def since(df, date):
+    df[date] = pd.to_datetime(df[date]).dt.normalize()
+    return pd.to_datetime("today").normalize() - df[date]

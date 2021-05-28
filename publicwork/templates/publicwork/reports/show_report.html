@@ -1,0 +1,68 @@
+{% extends "base/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+  {% include search %}
+
+  {% include "publicwork/elements/report_header.html" %}
+
+  <div class="text-right mb-2">
+    <div class="btn-group btn-group-sm mt-1" role="group">
+      <a type="button" 
+        class="btn btn-light text-success" 
+        data-toggle="modal" data-target="#modal">
+        <i class="fas fa-chart-bar"></i> 
+        New search
+      </a>
+      <a type="button" 
+        class="btn btn-light text-warning" 
+        href="#"
+        onclick="window.print()">
+        <i class="fas fa-print"></i> 
+        To print
+      </a>
+      <a type="button" 
+        class="btn btn-light text-primary" 
+        href="#">
+        <i class="fas fa-file-csv"></i> 
+        To csv
+      </a>
+      <a type="button" 
+        class="btn btn-light text-info" 
+        href="{% url 'publicwork_home' %}">
+        <i class="fas fa-chevron-left "></i> 
+        Go back
+      </a>
+    </div>
+  </div>
+
+  {% if report_data %}
+
+  <article class="content-section mb-1">
+    <div class="pandas-table">
+      {{ report_data | safe }}
+    </div>
+  </article>
+
+  {% else %}
+
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">define the reporting terms</h4>
+  </div>
+
+  {% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $(document).ready(function(){
+    var reportData = '{{ report_data }}';
+    if (!reportData) {
+      $('#modal').modal('show');
+    }
+  });
+</script>
+{% endblock %}
