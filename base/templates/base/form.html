@@ -1,0 +1,31 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+<article class="media content-section mb-1">
+  <div class="media-body">
+    <h2>{% if to_create %}Create{% else %}Update{% endif %} {{ form_name }}</h2>
+  </div>
+</article>
+
+<div class="text-right mb-2">
+  <div class="btn-group-sm mt-2" role="group">
+    <button 
+      class="btn btn-{% if to_create %}primary{% else %}warning{% endif %}"
+      onclick="document.getElementById('form').submit();">
+      <i class="fas fa-check"></i> Save
+    </button>
+    <a type="button" 
+      class="btn btn-light text-info"
+      href="{{ goback }}">
+      <i class="fas fa-chevron-left"></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+<article class="media content-section">
+  <div class="media-body">
+    {% include form_path %}
+  </div>
+</article>
+{% endblock %}

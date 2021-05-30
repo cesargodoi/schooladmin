@@ -3,7 +3,8 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
-from schooladmin.common import paginator, belongs_center, SEEKER_STATUS
+from django.urls import reverse
+from schooladmin.common import paginator, belongs_center
 
 from center.models import Center
 from ..forms import SeekerForm
@@ -15,9 +16,7 @@ from ..utils import seeker_search
 @permission_required("publicwork.view_seeker")
 def seeker_home(request):
     queryset, page = seeker_search(request, Seeker)
-    object_list = paginator(queryset, limit=4, page=page)
-
-    print(queryset.filter(name__icontains="maria"))
+    object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
@@ -62,10 +61,13 @@ def seeker_create(request):
                 "center": request.user.person.center,
             }
         ),
+        "form_name": "Seeker",
+        "form_path": "publicwork/forms/seeker.html",
+        "goback": reverse("seeker_home"),
         "title": "create seeker",
         "to_create": True,
     }
-    return render(request, "publicwork/seeker_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -90,10 +92,13 @@ def seeker_update(request, pk):
 
     context = {
         "form": seeker_form,
+        "form_name": "Seeker",
+        "form_path": "publicwork/forms/seeker.html",
+        "goback": reverse("seeker_detail", args=[pk]),
         "title": "update seeker",
         "pk": pk,
     }
-    return render(request, "publicwork/seeker_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required

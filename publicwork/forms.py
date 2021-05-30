@@ -23,7 +23,7 @@ class LectureForm(forms.ModelForm):
         fields = "__all__"
         exclude = ["listeners"]
         widgets = {
-            "descriptions": forms.Textarea(attrs={"rows": 2}),
+            "description": forms.Textarea(attrs={"rows": 2}),
             "date": forms.widgets.DateInput(
                 format="%Y-%m-%d", attrs={"type": "date"}
             ),

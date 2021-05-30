@@ -2,7 +2,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http.response import Http404
+from django.urls import reverse
 from schooladmin.common import paginator, LECTURE_TYPES
+
 
 from ..forms import LectureForm
 from ..models import Lecture
@@ -63,10 +65,13 @@ def lecture_create(request):
 
     context = {
         "form": lecture_form,
+        "form_name": "Lecture",
+        "form_path": "publicwork/forms/lecture.html",
+        "goback": reverse("lecture_home"),
         "title": "create lecture",
         "to_create": True,
     }
-    return render(request, "publicwork/lecture_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -92,10 +97,13 @@ def lecture_update(request, pk):
 
     context = {
         "form": lecture_form,
+        "form_name": "Lecture",
+        "form_path": "publicwork/forms/lecture.html",
+        "goback": reverse("lecture_detail", args=[pk]),
         "title": "update lecture",
         "pk": pk,
     }
-    return render(request, "publicwork/lecture_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
