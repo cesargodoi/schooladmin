@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from ..forms import ActivityForm
 from ..models import Activity
@@ -28,10 +29,13 @@ def activity_create(request):
 
     context = {
         "form": ActivityForm(),
+        "form_name": "Activity",
+        "form_path": "event/forms/activity.html",
+        "goback": reverse("activity_home"),
         "to_create": True,
         "title": "Create Activity",
     }
-    return render(request, "event/activity_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -48,9 +52,12 @@ def activity_update(request, pk):
 
     context = {
         "form": ActivityForm(instance=activity),
+        "form_name": "Activity",
+        "form_path": "event/forms/activity.html",
+        "goback": reverse("activity_home"),
         "title": "Update Activity",
     }
-    return render(request, "event/activity_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required

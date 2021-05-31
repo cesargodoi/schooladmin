@@ -89,9 +89,13 @@ def event_create(request):
 
     context = {
         "form": EventForm(initial={"made_by": request.user}),
+        "form_name": "Event",
+        "form_path": "event/forms/event.html",
+        "goback": reverse("event_home"),
+        "title": "create event",
         "to_create": True,
     }
-    return render(request, "event/event_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -108,9 +112,13 @@ def event_update(request, pk):
 
     context = {
         "form": EventForm(instance=object),
+        "form_name": "Event",
+        "form_path": "event/forms/event.html",
+        "goback": reverse("event_detail", args=[pk]),
+        "title": "update event",
         "pk": pk,
     }
-    return render(request, "event/event_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required

@@ -8,22 +8,26 @@
     <a type="button" 
       href="{% url 'frequencies_add' object.pk %}" 
       class="btn btn-light btn-sm text-primary">
-      <i class="fas fa-plus"></i> <i class="fas fa-users"></i> insert
+      <i class="fas fa-plus"></i> <i class="fas fa-users"></i> 
+      insert
     </a>
     <a type="button" 
       class="btn btn-light text-warning" 
       href="{% url 'event_update' object.id %}">
-      <i class="fas fa-edit"></i> Edit
+      <i class="fas fa-edit"></i> 
+      Edit
     </a>
     <a type="button" 
       class="btn btn-light text-danger" 
       href="{% url 'event_delete' object.id %}">
-      <i class="fas fa-trash-alt"></i> Delete
+      <i class="fas fa-trash-alt"></i> 
+      Delete
     </a>
     <a type="button" 
       class="btn btn-light text-info" 
       href="{% url 'event_home' %}?d30=on&lastNext=last">
-      <i class="fas fa-chevron-left"></i> Go back
+      <i class="fas fa-chevron-left"></i> 
+      Go back
     </a>
   </div>
 </div>
@@ -31,7 +35,7 @@
 <article class="media content-section">
   <div class="media-body">
 
-    <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
       <li class="nav-item" role="presentation">
         <a class="nav-link active" 
           id="pills-frequencies-tab" 
