@@ -5,6 +5,7 @@ from schooladmin.common import paginator
 from django.urls import reverse
 from django.utils import timezone
 
+from center.models import Center
 from ..forms import ListenerForm
 from ..models import Lecture, Seeker, Listener, Historic
 from ..utils import seeker_search, lecture_search
@@ -54,6 +55,7 @@ def add_listener(request, lect_pk):
         "pre_listeners": [seek.pk for seek in lecture.listeners.all()],
         "title": "add listener",
         "object": lecture,
+        "centers": [[str(cnt.pk), str(cnt)] for cnt in Center.objects.all()],
     }
     return render(request, "publicwork/listener_add.html", context)
 

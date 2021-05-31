@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.urls import reverse
+
 from schooladmin.common import ASPECTS, STATUS, paginator
 from user.models import User
 
@@ -87,10 +89,13 @@ def person_create(request):
         "user_form": user_form,
         "profile_form": profile_form,
         "person_form": person_form,
+        "form_name": "Person",
+        "form_path": "person/forms/person.html",
+        "goback": reverse("person_home"),
         "title": "create person",
         "to_create": True,
     }
-    return render(request, "person/person_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -138,10 +143,13 @@ def person_update(request, id):
         "user_form": user_form,
         "profile_form": profile_form,
         "person_form": person_form,
+        "form_name": "Person",
+        "form_path": "person/forms/person.html",
+        "goback": reverse("person_detail", args=[id]),
         "title": "update person",
         "id": id,
     }
-    return render(request, "person/person_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
