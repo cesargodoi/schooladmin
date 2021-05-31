@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from schooladmin.common import WORKGROUP_TYPES, paginator
 
 from ..forms import WorkgroupForm
@@ -74,10 +75,13 @@ def workgroup_create(request):
 
     context = {
         "form": WorkgroupForm(initial={"made_by": request.user}),
+        "form_name": "Workgroup",
+        "form_path": "workgroup/forms/workgroup.html",
+        "goback": reverse("workgroup_home"),
         "title": "create workgroup",
         "to_create": True,
     }
-    return render(request, "workgroup/workgroup_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -96,10 +100,13 @@ def workgroup_update(request, pk):
         "form": WorkgroupForm(
             instance=workgroup, initial={"made_by": request.user}
         ),
+        "form_name": "Workgroup",
+        "form_path": "workgroup/forms/workgroup.html",
+        "goback": reverse("workgroup_detail", args=[pk]),
         "title": "update workgroup",
         "pk": pk,
     }
-    return render(request, "workgroup/workgroup_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required

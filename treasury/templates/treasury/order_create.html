@@ -13,7 +13,7 @@
     {% if request.session.order.total_payments != 0.0 %}
     {% if request.session.order.total_payments == request.session.order.total_payforms %}
     <button 
-      class="btn btn-light text-success" 
+      class="btn btn-success" 
       onclick="document.getElementById('form').submit();">
       <i class="fas fa-money-bill-wave-alt"></i> 
       Pay
