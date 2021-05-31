@@ -12,7 +12,7 @@ from ..models import Historic, Person
 
 @login_required
 @permission_required("person.view_historic")
-def historic_list(request, person_id):
+def person_historic(request, person_id):
     queryset = Historic.objects.filter(person=person_id).order_by("-date")
     person = (
         queryset[0].person if queryset else Person.objects.get(id=person_id)
@@ -24,8 +24,9 @@ def historic_list(request, person_id):
         "object_list": object_list,
         "title": "historic list",
         "person": person,  # to header element
+        "tab": "historic",
     }
-    return render(request, "person/historic_list.html", context)
+    return render(request, "person/person_detail.html", context)
 
 
 @login_required
@@ -41,7 +42,7 @@ def historic_create(request, person_id):
                 person, request.POST["occurrence"], request.POST["date"]
             )
             messages.success(request, "The Historic has been created!")
-        return redirect("historic_list", person_id=person_id)
+        return redirect("person_historic", person_id=person_id)
 
     context = {
         "form": HistoricForm(
@@ -55,7 +56,7 @@ def historic_create(request, person_id):
         "to_create": True,
         "person": person,  # to header element
     }
-    return render(request, "person/historic_form.html", context)
+    return render(request, "person/forms/historic.html", context)
 
 
 @login_required
@@ -72,14 +73,14 @@ def historic_update(request, person_id, pk):
                 request.POST["date"],
             )
             messages.success(request, "The Historic has been updated!")
-        return redirect("historic_list", person_id=person_id)
+        return redirect("person_historic", person_id=person_id)
 
     context = {
         "form": HistoricForm(instance=historic),
         "title": "update historic",
         "person": historic.person,  # to header element
     }
-    return render(request, "person/historic_form.html", context)
+    return render(request, "person/forms/historic.html", context)
 
 
 @login_required
@@ -89,15 +90,13 @@ def historic_delete(request, person_id, pk):
     if request.method == "POST":
         adjust_status_or_aspect(historic)
         historic.delete()
-        return redirect("historic_list", person_id=person_id)
+        return redirect("person_historic", person_id=person_id)
 
     context = {"object": historic, "title": "confirm to delete"}
     return render(request, "base/confirm_delete.html", context)
 
 
-# auxiliar functions
-
-
+# handlers
 def adjust_person_side(person, occurrence, dt):
     date = datetime.strptime(dt, "%Y-%m-%d").date()
     if len(occurrence) == 2:

@@ -23,9 +23,10 @@ def frequency_ps_list(request, person_id):
     context = {
         "object_list": object_list,
         "title": "frequencies list",
-        "person": person,  # to header element
+        "person": person,  # to header element,
+        "tab": "frequencies",
     }
-    return render(request, "person/frequency_list.html", context)
+    return render(request, "person/person_detail.html", context)
 
 
 @login_required

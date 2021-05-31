@@ -47,6 +47,7 @@ def person_detail(request, id):
         "object": person,
         "title": "person detail",
         "person": person,  # to header element
+        "tab": "info",
     }
     return render(request, "person/person_detail.html", context)
 

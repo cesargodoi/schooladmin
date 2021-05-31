@@ -18,8 +18,8 @@ urlpatterns = [
 urlpatterns += [
     path(
         "<uuid:person_id>/historic",
-        historic.historic_list,
-        name="historic_list",
+        historic.person_historic,
+        name="person_historic",
     ),
     path(
         "<uuid:person_id>/historic/create/",

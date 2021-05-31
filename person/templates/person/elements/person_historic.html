@@ -1,0 +1,46 @@
+<h4>Historic</h4>
+
+{% if object_list %}
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+<table class="table table-hover table-sm">
+  <thead>
+    <tr>
+      <th width="15%">date</th>
+      <th>occurrece</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for hist in object_list %}
+    <tr 
+      onclick="location.href='{% url 'historic_update' person.id hist.pk %}';">
+      <td>{{ hist.date | date:"d/m/Y" }}</td>
+      <td>
+        {{ hist.get_occurrence_display }} &nbsp;&nbsp;
+        <small class="text-mute">{{ hist.description | truncatechars:50 }}</small>
+      </td>
+      <td class="text-right">
+        <a type="button" 
+          href="{% url 'historic_delete' person.id hist.pk %}"
+          class="btn btn-outline-light btn-sm">
+          <i class="fas fa-trash-alt text-danger"></i>
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+{% else %}
+<div class="alert alert-secondary" role="alert">
+  <h4 class="alert-heading">historic not found</h4>
+</div>
+{% endif %}

@@ -5,27 +5,60 @@
 
 <div class="text-right mb-2">
   <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      class="btn btn-light text-warning" 
-      href="{% url 'person_update' object.id %}">
-      <i class="fas fa-edit"></i> 
-      Edit
-    </a>
-    {% if object.user.is_active %}
-    <a type="button" 
-      class="btn btn-light text-danger" 
-      href="{% url 'person_delete' object.id %}">
-      <i class="fas fa-trash-alt"></i> 
-      Delete
-    </a>
-    {% else %}
-    <a type="button" 
-      class="btn btn-light text-primary" 
-      href="{% url 'person_reinsert' object.id %}">
-      <i class="fas fa-sign-in-alt"></i> 
-      Reinsert
-    </a>
+    {% if person.is_active %}
+      {% if tab == "info" %}
+        <a type="button" 
+          class="btn btn-light text-warning" 
+          href="{% url 'person_update' object.id %}">
+          <i class="fas fa-edit"></i> 
+          Edit person
+        </a>
+        {% if object.user.is_active %}
+        <a type="button" 
+          class="btn btn-light text-danger" 
+          href="{% url 'person_delete' object.id %}">
+          <i class="fas fa-trash-alt"></i> 
+          Delete person
+        </a>
+        {% else %}
+        <a type="button" 
+          class="btn btn-light text-primary" 
+          href="{% url 'person_reinsert' object.id %}">
+          <i class="fas fa-sign-in-alt"></i> 
+          Reinsert person
+        </a>
+        {% endif %}
+      {% endif %}
+
+      {% if tab == "historic" %}
+      <a type="button" 
+        href="{% url 'historic_create' person.id %}" 
+        class="btn btn-light btn-sm text-primary">
+        <i class="fas fa-plus"></i> 
+        Add historic
+      </a>
+      {% endif %}
+
+      {% if tab == "frequencies" %}
+      <a type="button" 
+        href="{% url 'frequency_ps_insert' person.id %}?d30=on&lastNext=last"
+        class="btn btn-light btn-sm text-primary">
+        <i class="fas fa-plus"></i> 
+        Add frequencies
+      </a>
+      {% endif %}
+
+      {% if tab == "membership" %}
+      <a type="button"
+        href="{% url 'membership_ps_create' person.id %}"
+        class="btn btn-light btn-sm text-primary">
+        <i class="fas fa-plus"></i> 
+        Add membership
+      </a>
+      {% endif %}
+
     {% endif %}
+
     <a type="button" 
       class="btn btn-light text-info" 
       href="{% url 'person_home' %}">
@@ -38,54 +71,47 @@
 <article class="media content-section">
   <div class="media-body">
 
-    <ul class="nav nav-tabs mb-3">
-      {% if object.is_active %}
+    <ul class="nav nav-pills mb-3">
       <li class="nav-item">
-        <a class="nav-link active" id="nav-person-tab" href="#">
+        <a class="nav-link {% if tab == 'info' %}active{% endif %}" 
+           id="nav-person-tab" 
+           href="{% url 'person_detail' person.id %}">
           <i class="fas fa-user"></i>
           Person
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'historic_list' object.id %}">
+        <a class="nav-link {% if tab == 'historic' %}active{% endif %}" 
+           href="{% url 'person_historic' person.id %}">
           <i class="fas fa-book"></i>
           Historic
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'frequency_ps_list' object.id %}">
+        <a class="nav-link {% if tab == 'frequencies' %}active{% endif %}" 
+           href="{% url 'frequency_ps_list' person.id %}">
           <i class="fas fa-list"></i>
           Frequencies
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'membership_ps_list' object.id %}">
+        <a class="nav-link {% if tab == 'membership' %}active{% endif %}" 
+           href="{% url 'membership_ps_list' person.id %}">
           <i class="fas fa-users"></i>
           Workgroups
         </a>
       </li>
-      {% endif %}
     </ul>
 
-    <div class="row">
-      <div class="col-md-3 text-center">
-
-        <img 
-          class="img-thumbnail rounded mx-auto d-block mb-4" 
-          src="{{ object.user.profile.image.url }}">
-
-      </div>
-      <div class="col-md-9">
-
-        <article class="media content-section">
-          <div class="media-body">
-            {% include "person/elements/person_info.html" %}
-          </div>
-        </article>
-
-      </div>
-
-    </div>
+    {% if tab == "info" %}
+    {% include "person/elements/person_info.html" %}
+    {% elif tab == "historic" %}
+    {% include "person/elements/person_historic.html" %}
+    {% elif tab == "frequencies" %}
+    {% include "person/elements/person_frequencies.html" %}
+    {% elif tab == "membership" %}
+    {% include "person/elements/person_membership.html" %}
+    {% endif %}
     
   </div>
 </article>
