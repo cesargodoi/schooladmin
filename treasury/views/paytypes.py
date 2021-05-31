@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from schooladmin.common import paginator
 
 from ..forms import PayTypeForm
@@ -30,10 +31,13 @@ def paytype_create(request):
 
     context = {
         "form": PayTypeForm(),
+        "form_name": "Paytype",
+        "form_path": "treasury/forms/paytype.html",
+        "goback": reverse("payments"),
         "to_create": True,
         "title": "Create PayType",
     }
-    return render(request, "treasury/paytype_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -50,9 +54,12 @@ def paytype_update(request, pk):
 
     context = {
         "form": PayTypeForm(instance=object),
+        "form_name": "Paytype",
+        "form_path": "treasury/forms/paytype.html",
+        "goback": reverse("payments"),
         "title": "Update PayType",
     }
-    return render(request, "treasury/paytype_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required

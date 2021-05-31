@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from schooladmin.common import paginator
 
 from ..forms import BankFlagForm
@@ -30,10 +31,13 @@ def bankflag_create(request):
 
     context = {
         "form": BankFlagForm(),
+        "form_name": "Bankflag",
+        "form_path": "treasury/forms/bankflag.html",
+        "goback": reverse("bankflags"),
         "to_create": True,
         "title": "Create BankFlag",
     }
-    return render(request, "treasury/bankflag_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -50,9 +54,12 @@ def bankflag_update(request, pk):
 
     context = {
         "form": BankFlagForm(instance=object),
+        "form_name": "Bankflag",
+        "form_path": "treasury/forms/bankflag.html",
+        "goback": reverse("bankflags"),
         "title": "Update BankFlag",
     }
-    return render(request, "treasury/bankflag_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required

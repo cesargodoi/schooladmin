@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from schooladmin.common import paginator
 
 from ..forms import PaymentForm
@@ -30,10 +31,13 @@ def payment_create(request):
 
     context = {
         "form": PaymentForm(),
+        "form_name": "Payment",
+        "form_path": "treasury/forms/payment.html",
+        "goback": reverse("payments"),
         "to_create": True,
         "title": "Create Payment",
     }
-    return render(request, "treasury/payment_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -50,9 +54,12 @@ def payment_update(request, pk):
 
     context = {
         "form": PaymentForm(instance=object),
+        "form_name": "Payment",
+        "form_path": "treasury/forms/payment.html",
+        "goback": reverse("payments"),
         "title": "Update Payment",
     }
-    return render(request, "treasury/payment_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
