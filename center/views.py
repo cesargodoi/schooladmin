@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from schooladmin.common import paginator
 
 from .forms import CenterForm, SelectNewCenterForm
@@ -48,10 +49,13 @@ def center_create(request):
 
     context = {
         "form": CenterForm(initial={"made_by": request.user}),
+        "form_name": "Center",
+        "form_path": "center/forms/center.html",
+        "goback": reverse("center_home"),
         "title": "create center",
         "to_create": True,
     }
-    return render(request, "center/center_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
@@ -68,10 +72,13 @@ def center_update(request, pk):
 
     context = {
         "form": CenterForm(instance=center),
+        "form_name": "Center",
+        "form_path": "center/forms/center.html",
+        "goback": reverse("center_detail", args=[pk]),
         "title": "update center",
         "id": pk,
     }
-    return render(request, "center/center_form.html", context)
+    return render(request, "base/form.html", context)
 
 
 @login_required
