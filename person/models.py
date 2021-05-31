@@ -2,6 +2,7 @@ import uuid
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from schooladmin.common import (
     ASPECTS,
     OCCURRENCES,
@@ -68,6 +69,9 @@ class Person(models.Model):
     class Meta:
         verbose_name = "person"
         verbose_name_plural = "persons"
+
+    def get_absolute_url(self):
+        return reverse("person_detail", kwargs={"id": self.id})
 
 
 # Historic
