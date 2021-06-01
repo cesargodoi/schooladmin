@@ -1,5 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Profile</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-steel mb-1">
+  <a class="navbar-brand" href="{% url 'profile_detail' %}">Profile</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarProfile"
     aria-controls="navbarProfile" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -8,31 +8,49 @@
   <div class="collapse navbar-collapse" id="navbarProfile">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link text-secondary" href="{% url 'user_frequencies' %}">Frequencies</a>
+        <a class="nav-link {% if tab == 'frequencies' %}active{% endif %}" href="{% url 'user_frequencies' %}">Frequencies</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-secondary" href="{% url 'user_historic' %}">Historic</a>
+        <a class="nav-link {% if tab == 'historic' %}active{% endif %}" href="{% url 'user_historic' %}">Historic</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-secondary" href="{% url 'user_payments' %}">Payments</a>
+        <a class="nav-link {% if tab == 'payments' %}active{% endif %}" href="{% url 'user_payments' %}">Payments</a>
       </li>
     </ul>
     <div class="navbar-nav">
+      {% if tab == "detail" %}
       <li class="nav-item">
-        <a class="nav-link text-warning" href="{% url 'profile_update' %}">
-          <i class="fas fa-edit"></i> Edit
+        <a class="nav-link" href="{% url 'profile_update' %}">
+          <i class="fas fa-edit"></i> 
+          Edit profile
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-primary" href="{% url 'password_change' %}">
-          <i class="fas fa-key"></i> Change password
+        <a class="nav-link" href="{% url 'password_change' %}">
+          <i class="fas fa-key"></i> 
+          Change password
         </a>
       </li>
+      {% endif %}
+
+      {% if tab == "frequencies" %}
       <li class="nav-item">
-        <a class="nav-link text-danger" href="{% url 'logout' %}">
-          <i class="fas fa-sign-out-alt"></i> Logout
+        <a class="nav-link" href="{% url 'scan_qrcode_event' %}">
+          <i class="fas fa-qrcode "></i> 
+          Scan QR-CODE
         </a>
       </li>
+      {% endif %}
+
+      {% if tab == "payments" %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'user_new_order' %}">
+          <i class="fas fa-money-bill-wave-alt"></i> 
+          New order
+        </a>
+      </li>
+      {% endif %}
+
     </div>
   </div>
 </nav>

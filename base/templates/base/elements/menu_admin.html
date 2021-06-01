@@ -1,4 +1,6 @@
-{% if request.user.groups.all.0.name == "office" or request.user.is_superuser %}
+{% load base_extras %}
+
+{% if request.user|has_group:"office" or request.user.is_superuser %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'center_home' %}">Centers</a>
 </li>
@@ -12,12 +14,13 @@
     <a class="nav-link" href="{% url 'workgroup_home' %}">Workgroups</a>
 </li>
 {% endif %}
-{% if request.user.groups.all.0.name == "treasury" or request.user.groups.all.0.name == "treasury_jr" or request.user.is_superuser %}
+{% if request.user|has_group:"treasury" or request.user|has_group:"treasury_jr" or request.user.is_superuser %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'treasury_home' %}">Treasury</a>
 </li>
 {% endif %}
-{% if request.user.groups.all.0.name == "publicwork" or request.user.groups.all.0.name == "publicwork_jr" or request.user.is_superuser %}
+
+{% if request.user|has_group:"publicwork" or request.user|has_group:"publicwork_jr" or request.user.is_superuser %}
 <li class="nav-item">
     <a class="nav-link" href="{% url 'publicwork_home' %}">Public Work</a>
 </li>

@@ -1,9 +1,10 @@
 from django.contrib import admin, messages
 from django.utils.translation import ngettext
 
-from .models import Activity, Event
+from .models import Activity, Event, Frequency
 
 admin.site.register(Activity)
+admin.site.register(Frequency)
 
 
 @admin.register(Event)
@@ -49,7 +50,6 @@ class EventAdmin(admin.ModelAdmin):
         "status",
     ]
     readonly_fields = ("created_on", "modified_on", "made_by")
-    filter_horizontal = ("frequencies",)
     fieldsets = [
         (
             None,
@@ -63,14 +63,6 @@ class EventAdmin(admin.ModelAdmin):
                     "status",
                     "description",
                     "qr_code",
-                ]
-            },
-        ),
-        (
-            "Frequencies Informations",
-            {
-                "fields": [
-                    "frequencies",
                 ]
             },
         ),

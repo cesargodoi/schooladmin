@@ -7,6 +7,7 @@ from django.core.files import File
 from django.db import models
 from PIL import Image
 from schooladmin.common import ACTIVITY_TYPES, EVENT_STATUS
+from person.models import Person
 
 
 #  Activity
@@ -39,7 +40,9 @@ class Event(models.Model):
         max_length=3, choices=EVENT_STATUS, default="OPN"
     )
     description = models.TextField(null=True, blank=True)
-    frequencies = models.ManyToManyField("person.Person", blank=True)
+    frequencies = models.ManyToManyField(
+        Person, through="Frequency", blank=True
+    )
     is_active = models.BooleanField(default=True)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
@@ -71,3 +74,18 @@ class Event(models.Model):
         verbose_name = "event"
         verbose_name_plural = "events"
         ordering = ["date"]
+
+
+#  Frequency
+class Frequency(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.PROTECT)
+    person = models.ForeignKey(Person, on_delete=models.PROTECT)
+    ranking = models.IntegerField(default=0)
+    observations = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.event} - {self.person} [{self.ranking}]"
+
+    class Meta:
+        verbose_name = "frequency"
+        verbose_name_plural = "frequencies"

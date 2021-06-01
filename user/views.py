@@ -16,7 +16,7 @@ from .forms import MyFormOfPaymentForm, MyPaymentForm, ProfileForm, UserForm
 @login_required
 @permission_required("user.view_profile")
 def profile_detail(request):
-    context = {"object": request.user}
+    context = {"object": request.user, "tab": "detail"}
     return render(request, "user/profile_detail.html", context)
 
 
@@ -49,6 +49,19 @@ def profile_update(request):
 
 @login_required
 @permission_required("user.view_profile")
+def user_frequencies(request):
+    frequencies = request.user.person.event_set.all().order_by("-date")
+    context = {
+        "frequencies": frequencies[:20],
+        "count": frequencies.count(),
+        "object": request.user,
+        "tab": "frequencies",
+    }
+    return render(request, "user/profile_detail.html", context)
+
+
+@login_required
+@permission_required("user.view_profile")
 def user_historic(request):
     historic = Historic.objects.filter(person=request.user.person).order_by(
         "-date"
@@ -57,20 +70,9 @@ def user_historic(request):
         "historic": historic[:20],
         "count": historic.count(),
         "object": request.user,
+        "tab": "historic",
     }
-    return render(request, "user/profile_historic.html", context)
-
-
-@login_required
-@permission_required("user.view_profile")
-def user_frequencies(request):
-    frequencies = request.user.person.event_set.all().order_by("-date")
-    context = {
-        "frequencies": frequencies[:20],
-        "count": frequencies.count(),
-        "object": request.user,
-    }
-    return render(request, "user/profile_frequencies.html", context)
+    return render(request, "user/profile_detail.html", context)
 
 
 @login_required
@@ -97,8 +99,9 @@ def user_payments(request):
     context = {
         "payments": payments[:20],
         "object": request.user,
+        "tab": "payments",
     }
-    return render(request, "user/profile_payments.html", context)
+    return render(request, "user/profile_detail.html", context)
 
 
 @login_required

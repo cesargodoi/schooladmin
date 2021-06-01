@@ -7,32 +7,32 @@ from . import views as user_views
 urlpatterns = [
     path(
         "login/",
-        views.LoginView.as_view(template_name="user/login.html"),
+        views.LoginView.as_view(template_name="user/auth/login.html"),
         name="login",
     ),
     path(
         "logout/",
-        views.LogoutView.as_view(template_name="user/logout.html"),
+        views.LogoutView.as_view(template_name="user/auth/logout.html"),
         name="logout",
     ),
     path(
         "password_change/",
         views.PasswordChangeView.as_view(
-            template_name="user/password_change_form.html"
+            template_name="user/auth/password_change_form.html"
         ),
         name="password_change",
     ),
     path(
         "password_change/done/",
         views.PasswordChangeDoneView.as_view(
-            template_name="user/password_change_done.html"
+            template_name="user/auth/password_change_done.html"
         ),
         name="password_change_done",
     ),
     path(
         "password_reset/",
         views.PasswordResetView.as_view(
-            template_name="user/password_reset_form.html",
+            template_name="user/auth/password_reset_form.html",
             email_template_name="user/password_reset_email.html",
         ),
         name="password_reset",
@@ -40,21 +40,21 @@ urlpatterns = [
     path(
         "password_reset/done",
         views.PasswordResetDoneView.as_view(
-            template_name="user/password_reset_done.html"
+            template_name="user/auth/password_reset_done.html"
         ),
         name="password_reset_done",
     ),
     path(
         "reset/<uidb64>/<token>/",
         views.PasswordResetConfirmView.as_view(
-            template_name="user/password_reset_confirm.html"
+            template_name="user/auth/password_reset_confirm.html"
         ),
         name="password_reset_confirm",
     ),
     path(
         "reset/done",
         views.PasswordResetCompleteView.as_view(
-            template_name="user/password_reset_complete.html"
+            template_name="user/auth/password_reset_complete.html"
         ),
         name="password_reset_complete",
     ),
