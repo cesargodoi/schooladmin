@@ -30,6 +30,8 @@ class Seeker(models.Model):
     country = models.CharField(max_length=50, blank=True)
     phone = models.CharField("phone", max_length=15, blank=True)
     email = models.EmailField()
+    status = models.CharField(max_length=3, choices=SEEKER_STATUS, blank=True)
+    status_date = models.DateField(null=True, blank=True)
     observations = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     created_on = models.DateTimeField(auto_now_add=True)
