@@ -32,9 +32,8 @@ def person_historic(request, person_id):
 @login_required
 @permission_required("person.add_historic")
 def historic_create(request, person_id):
-    person = get_object_or_404(Person, id=person_id)
+    person = Person.objects.get(id=person_id)
     if request.method == "POST":
-
         form = HistoricForm(request.POST)
         if form.is_valid():
             form.save()

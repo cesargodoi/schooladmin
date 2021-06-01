@@ -8,10 +8,14 @@ from .models import Seeker, Historic
 @receiver(post_save, sender=Seeker)
 def insert_historic(sender, instance, created, **kwargs):
     if created:
+        date = timezone.now().date()
+        instance.status = "new"
+        instance.status_date = date
+        instance.save()
         Historic.objects.create(
             seeker=instance,
             occurrence="new",
-            date=timezone.now().date(),
+            date=date,
             description="entered as a seeker",
             made_by=instance.made_by,
         )

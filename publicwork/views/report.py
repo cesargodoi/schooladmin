@@ -35,13 +35,13 @@ def frequencies_per_period(request):
                 "seek_name",
                 "seek_local",
                 "seek_center",
-                "seek_historic",
-                "seek_historic_date",
+                "seek_status",
+                "seek_status_date",
             ]
             # generate pandas dataframe
             dataframe = pd.DataFrame(_dict, columns=columns + ["ranking"])
             # add since column
-            dataframe["since"] = since(dataframe, "seek_historic_date")
+            dataframe["since"] = since(dataframe, "seek_status_date")
             # count frequencies and insert on each row as freqs column
             dataframe["freqs"] = dataframe.groupby("seek_pk")[
                 "seek_name"
@@ -56,7 +56,7 @@ def frequencies_per_period(request):
             )
             # drop columns
             report_data.drop(
-                ["seek_pk", "seek_historic_date"], axis="columns", inplace=True
+                ["seek_pk", "seek_status_date"], axis="columns", inplace=True
             )
 
             # filter report_data
@@ -66,7 +66,7 @@ def frequencies_per_period(request):
             )
             request.session.modified = True
             if search["status"]:
-                filter = report_data["seek_historic"] == search["status"]
+                filter = report_data["seek_status"] == search["status"]
                 report_data = report_data[filter]
 
             # reset and adjust index
@@ -77,7 +77,7 @@ def frequencies_per_period(request):
                 "seek_name": "name",
                 "seek_local": "local",
                 "seek_center": "center",
-                "seek_historic": "status",
+                "seek_status": "status",
                 "ranking": "rank",
             }
             report_data = report_data.rename(columns=rename, inplace=False)
@@ -179,28 +179,22 @@ def status_per_center(request):
                 "name",
                 "local",
                 "center",
-                "historic",
-                "historic_date",
+                "status",
+                "status_date",
             ]
             # generate pandas dataframe
             dataframe = pd.DataFrame(_dict, columns=columns)
-            # order by historic
+            # order by status
             report_data = (
                 pd.DataFrame(dataframe.groupby(columns).count())
-                .sort_values("historic")
+                .sort_values("status")
                 .reset_index()
             )
             # add since column
-            report_data["since"] = since(report_data, "historic_date")
+            report_data["since"] = since(report_data, "status_date")
             # drop columns
-            report_data.drop(["historic_date"], axis="columns", inplace=True)
-            # adjust session
-            search = request.session["search"]
-            if search["status"] != "all":
-                filter = report_data["historic"] == search["status"]
-                report_data = report_data[filter]
-            # reset and adjust index
-            report_data.reset_index(drop=True, inplace=True)
+            report_data.drop(["status_date"], axis="columns", inplace=True)
+            #  adjust index
             report_data.index += 1
 
             context = {

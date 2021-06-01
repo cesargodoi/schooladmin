@@ -170,6 +170,9 @@ def queryset_per_status(request, model):
     request.session.modified = True
     # basic query
     _query = [Q(is_active=True), Q(center=request.user.person.center)]
+    # adding more complexity
+    if search["status"] != "all":
+        _query.append(Q(status=search["status"]))
     # generating query
     query = Q()
     for q in _query:
@@ -180,7 +183,7 @@ def queryset_per_status(request, model):
 
 # reports
 def get_lectures_dict(request, model):
-    big_dict = []
+    _dict = []
     for obj in queryset_per_date(request, model):
         row = dict(
             pk=obj.pk,
@@ -193,12 +196,12 @@ def get_lectures_dict(request, model):
             center_state=obj.center.state,
             center_country=obj.center.country,
         )
-        big_dict.append(row)
-    return big_dict
+        _dict.append(row)
+    return _dict
 
 
 def get_frequencies_dict(request, model):
-    big_dict = []
+    _dict = []
     for obj in queryset_per_date(request, model):
         if obj.listener_set.count():
             for freq in obj.listener_set.all():
@@ -226,23 +229,22 @@ def get_frequencies_dict(request, model):
                         freq.seeker.country,
                     ),
                     seek_center=str(freq.seeker.center),
-                    seek_historic=str(
+                    seek_status=str(
                         [
-                            h[1]
-                            for h in SEEKER_STATUS
-                            if h[0]
-                            == freq.seeker.historic_set.last().occurrence
+                            stt[1]
+                            for stt in SEEKER_STATUS
+                            if stt[0] == freq.seeker.status
                         ][0]
                     ),
-                    seek_historic_date=freq.seeker.historic_set.last().date,
+                    seek_status_date=freq.seeker.status_date,
                 )
-                big_dict.append(row)
-    return big_dict
+                _dict.append(row)
+    return _dict
 
 
 def get_seekers_dict(request, model):
     queryset = queryset_per_status(request, model)
-    big_dict = []
+    _dict = []
     for obj in queryset:
         row = dict(
             pk=obj.pk,
@@ -254,14 +256,10 @@ def get_seekers_dict(request, model):
             country=obj.country,
             local="{} ({}-{})".format(obj.city, obj.state, obj.country),
             center=str(obj.center),
-            historic=str(
-                [
-                    h[1]
-                    for h in SEEKER_STATUS
-                    if h[0] == obj.historic_set.last().occurrence
-                ][0]
+            status=str(
+                [stt[1] for stt in SEEKER_STATUS if stt[0] == obj.status][0]
             ),
-            historic_date=obj.historic_set.last().date,
+            status_date=obj.status_date,
         )
-        big_dict.append(row)
-    return big_dict
+        _dict.append(row)
+    return _dict

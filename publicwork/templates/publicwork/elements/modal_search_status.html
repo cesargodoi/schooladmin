@@ -20,8 +20,8 @@
               <select class="form-control" name="status">
                 <option value="all" {% if stt.1 == request.session.search.status %}selected{% endif %}>all</option>
                 {% for stt in status %}
-                <option value="{{ stt.1 }}"
-                        {% if stt.1 == request.session.search.status %}selected{% endif %}>
+                <option value="{{ stt.0 }}"
+                        {% if stt.0 == request.session.search.status %}selected{% endif %}>
                   {{ stt.1 }}
                 </option>
                 {% endfor %}

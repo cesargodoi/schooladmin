@@ -15,9 +15,9 @@
               <tr>
                 <th>status</th>
                 <td>
-                  {{ object.historic_set.last.get_occurrence_display }}
+                  {{ object.get_status_display }}
                   &nbsp;&nbsp; <small class="text-mute">since</small> &nbsp;&nbsp;
-                  {{ object.historic_set.last.date | date:"d/m/Y" }}
+                  {{ object.status_date | date:"d/m/Y" }}
                 </td>
               </tr>
               <tr>

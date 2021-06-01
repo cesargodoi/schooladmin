@@ -4,14 +4,14 @@
 {% include "publicwork/elements/seeker_header.html" %}
 
 <div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
+  <div class="btn-group-sm mt-2" role="group">
     <button 
-      class="btn btn-light text-{% if add %}primary{% else %}warning{% endif %}"
+      class="btn btn-{% if add %}primary{% else %}warning{% endif %}"
       onclick="document.getElementById('form').submit();">
       {% if add %}
-      <i class="fas fa-plus"></i> Add
+      <i class="fas fa-check"></i> Add
       {% else %}
-      <i class="fas fa-edit"></i> Edit
+      <i class="fas fa-check"></i> Edit
       {% endif %}
     </button>
     <a type="button" 
