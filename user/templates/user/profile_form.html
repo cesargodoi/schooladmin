@@ -7,10 +7,10 @@
 <div class="text-right mb-2">
   <div class="btn-group btn-group-sm mt-1" role="group">
     <button 
-      class="btn btn-light text-warning" 
+      class="btn btn-warning" 
       onclick="document.getElementById('form').submit();">
-      <i class="fas fa-edit"></i> 
-      Update
+      <i class="fas fa-check"></i> 
+      Save
     </button>
     <a type="button" 
       class="btn btn-light text-info" 
@@ -29,7 +29,7 @@
         <legend class="border-bottom mb-4">
           {% if to_create %} Create {% else %} Update {% endif %} Profile
         </legend>
-        <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+        <ul class="nav nav-pills" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
             <a class="nav-link active" 
               id="basic-tab" 
