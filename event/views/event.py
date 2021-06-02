@@ -1,13 +1,11 @@
 import os
-from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.utils import timezone
-from schooladmin.common import paginator
+from schooladmin.common import paginator, ACTIVITY_TYPES
+from base.searchs import event_search
 
 from ..forms import EventForm
 from ..models import Event
@@ -16,45 +14,13 @@ from ..models import Event
 @login_required
 @permission_required("event.view_event")
 def event_home(request):
-    date = (
-        datetime.strptime(request.GET.get("date"), "%Y-%m-%d")
-        if request.GET.get("date")
-        else timezone.now()
-    )
-    _query = [
-        Q(date=date),
-        Q(is_active=True),
-        Q(center=request.user.person.center),
-    ]
-    if request.GET.get("act_type"):
-        _query.append(Q(activity__activity_type=request.GET.get("act_type")))
-    if request.GET.get("d30"):
-        _query.remove(Q(date=date))
-        if request.GET.get("lastNext") == "last":
-            _query.append(Q(date__range=[date - timedelta(30), date]))
-        else:
-            _query.append(Q(date__range=[date, date + timedelta(30)]))
-    if request.GET.get("all"):
-        _query.remove(Q(is_active=True))
-        _query.remove(Q(center=request.user.person.center))
-
-    query = Q()
-    for q in _query:
-        query.add(q, Q.AND)
-
-    queryset = Event.objects.filter(query).order_by("-date")
-
-    object_list = paginator(queryset, page=request.GET.get("page"))
+    queryset, page = event_search(request, Event)
+    object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
         "title": "event home",
-        "date": date.strftime("%Y-%m-%d"),
-        "all": True if request.GET.get("all") else False,
-        "d30": True if request.GET.get("d30") else False,
-        "lastNext": "last"
-        if request.GET.get("lastNext") == "last"
-        else "next",
+        "type_list": ACTIVITY_TYPES,
     }
     return render(request, "event/event_home.html", context)
 
@@ -62,10 +28,8 @@ def event_home(request):
 @login_required
 @permission_required("event.view_event")
 def event_detail(request, pk):
-    object = get_object_or_404(Event, pk=pk)
-
+    object = Event.objects.get(pk=pk)
     queryset = object.frequencies.all().order_by("name_sa")
-
     object_list = paginator(queryset, 25, request.GET.get("page"))
 
     context = {
@@ -101,7 +65,7 @@ def event_create(request):
 @login_required
 @permission_required("event.change_event")
 def event_update(request, pk):
-    object = get_object_or_404(Event, pk=pk)
+    object = Event.objects.get(pk=pk)
     if request.method == "POST":
         form = EventForm(request.POST, instance=object)
         if form.is_valid():
@@ -124,7 +88,7 @@ def event_update(request, pk):
 @login_required
 @permission_required("event.delete_event")
 def event_delete(request, pk):
-    object = get_object_or_404(Event, pk=pk)
+    object = Event.objects.get(pk=pk)
     if request.method == "POST":
         os.remove(object.qr_code.path)
         object.delete()

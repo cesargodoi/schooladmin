@@ -1,0 +1,90 @@
+{% extends "base/base.html" %}
+
+{% block content %}
+{% include "workgroup/elements/header.html" %}
+
+<div class="text-right mb-2">
+  <div class="btn-group btn-group-sm mt-1" role="group">
+    <a type="button" 
+      href="{% url 'membership_insert' object.id %}" 
+      class="btn btn-light btn-sm text-primary">
+      <i class="fas fa-plus"></i> <i class="fas fa-user"></i> 
+      Insert
+    </a>
+    <a type="button" 
+      class="btn btn-light text-warning" 
+      href="{% url 'workgroup_update' object.id %}">
+      <i class="fas fa-edit"></i> 
+      Edit
+    </a>
+    <a type="button" 
+      class="btn btn-light text-danger" 
+      href="{% url 'workgroup_delete' object.id %}">
+      <i class="fas fa-trash-alt"></i> 
+      Delete
+    </a>
+    <a type="button" 
+      class="btn btn-light text-info" 
+      href="{% url 'workgroup_home' %}">
+      <i class="fas fa-chevron-left"></i> 
+      Go back
+    </a>
+  </div>
+</div>
+
+<article class="media content-section">
+  <div class="media-body">
+
+    <h4>Members</h4>
+
+    {% if object_list %}
+
+    {% if object_list.has_other_pages %}
+    {% include "base/elements/paginator.html" %}
+    {% endif %}
+
+    <table class="table table-hover table-sm">
+      <tr>
+        <th></th>
+        <th>person</th>
+        <th>aspect</th>
+        <th>role</th>
+        <th></th>
+      </tr>
+      {% for member in object_list %}
+      <tr>
+        <th>{{ forloop.counter }}</th>
+        <td>{{ member.person.name }}
+          <small class="text-muted">
+            <em>({{ member.person.center.name }})</em>
+          </small>
+        </td>
+        <td>{{ member.person.get_aspect_display }}</td>
+        <td>{{ member.get_role_type_display }}</td>
+        <td class="text-right">
+          <a type="button" 
+            href="{% url 'mentoring_member_detail' object.id member.person.pk %}"
+            class="btn btn-outline-light btn-sm text-info">
+            <i class="fas fa-eye"></i>
+            detail
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    {% if object_list.has_other_pages %}
+    {% include "base/elements/paginator.html" %}
+    {% endif %}
+
+    {% else %}
+
+    <div class="alert alert-secondary" role="alert">
+      <h4 class="alert-heading">members not found</h4>
+    </div>
+
+    {% endif %}
+
+  </div>
+</article>
+{% endblock content %}

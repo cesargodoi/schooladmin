@@ -17,21 +17,14 @@
 </div>
 {% endblock %}
 
-<article class="media content-section">
+<article class="media content-section mb-1">
   <div class="media-body">
-    <div class="row">
-      <div class="col-6">
-        <h4>Insert Frequency</h4>
-      </div>
-      <div class="col-6">
-        <div class="text-right">
-          <form class="form-control-sm" method="GET">
-            {% csrf_token %}
-            {% include "base/search_event.html" %}
-          </form>
-        </div>
-      </div>
-    </div>
+    <h4>Insert Frequency</h4>
+    <form class="form-control-sm border-top" method="GET">
+      {% csrf_token %}
+      {% include "base/search_event.html" %}
+    </form>
+    <br>
 
     {% if object_list %}
 
@@ -56,11 +49,15 @@
             <small class="text-muted">{{ obj.center }}</small>
           </td>
           <td class="text-right">
-            <a type="button" 
-              href="{% url 'frequency_ps_insert' person.id %}?pk={{ obj.pk }}"
-              class="btn btn-outline-light btn-sm text-primary">
-              <i class="fas fa-plus"></i> Add
-            </a>
+            {% if obj.pk not in pre_freqs %}
+              <a type="button" 
+                href="{% url 'frequency_ps_insert' person.id %}?pk={{ obj.pk }}"
+                class="btn btn-outline-light btn-sm text-primary">
+                <i class="fas fa-plus"></i> <i class="fas fa-user"></i> add
+              </a>
+            {% else %}
+              <span class="badge badge-pill badge-warning">inserted</span>
+            {% endif %}
           </td>
         </tr>
         {% endfor %}

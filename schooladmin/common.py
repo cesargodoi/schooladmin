@@ -59,6 +59,7 @@ EVENT_STATUS = (("OPN", "open"), ("CLS", "close"))
 ACTIVITY_TYPES = (
     ("SRV", "service"),
     ("CNF", "conference"),
+    ("MET", "meeting"),
     ("CTT", "contact"),
     ("OTH", "other"),
 )
