@@ -11,21 +11,23 @@
     <tr>
       <th width="15%">date</th>
       <th>event</th>
+      <th>aspect</th>
       <th></th>
     </tr>
   </thead>
   <tbody>
-    {% for freq in object_list %}
+    {% for obj in object_list %}
     <tr>
-      <td>{{ freq.date | date:"d/m/Y" }}</td>
-      <td>{{ freq.activity }}
+      <td>{{ obj.event.date | date:"d/m/Y" }}</td>
+      <td>{{ obj.event.activity }}
         <small class="text-muted">
-          {{ freq.center }}
+          {{ obj.event.center }}
         </small>
       </td>
+      <td>{{ obj.get_aspect_display }}</td>
       <td class="text-right">
         <a type="button" 
-          href="{% url 'frequency_ps_delete' person.id freq.id %}"
+          href="{% url 'frequency_ps_delete' person.id obj.event.id %}"
           class="btn btn-outline-light btn-sm">
           <i class="fas fa-trash-alt text-danger"></i>
         </a>

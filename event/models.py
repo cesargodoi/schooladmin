@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.files import File
 from django.db import models
 from PIL import Image
-from schooladmin.common import ACTIVITY_TYPES, EVENT_STATUS
+from schooladmin.common import ACTIVITY_TYPES, EVENT_STATUS, ASPECTS
 from person.models import Person
 
 
@@ -80,11 +80,14 @@ class Event(models.Model):
 class Frequency(models.Model):
     event = models.ForeignKey(Event, on_delete=models.PROTECT)
     person = models.ForeignKey(Person, on_delete=models.PROTECT)
+    aspect = models.CharField(max_length=2, choices=ASPECTS, default="--")
     ranking = models.IntegerField(default=0)
     observations = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.event} - {self.person} [{self.ranking}]"
+        return "event: {} person: {} asp: {} rank: {}".format(
+            self.event, self.person, self.aspect, self.ranking
+        )
 
     class Meta:
         verbose_name = "frequency"

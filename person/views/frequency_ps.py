@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 
 from event.models import Event
 from base.searchs import event_search
@@ -12,10 +12,8 @@ from ..models import Person
 @login_required
 @permission_required("event.view_event")
 def frequency_ps_list(request, person_id):
-    person = get_object_or_404(Person, id=person_id)
-
-    queryset = person.event_set.all()
-
+    person = Person.objects.get(id=person_id)
+    queryset = person.frequency_set.all()
     object_list = paginator(queryset, page=request.GET.get("page"))
 
     context = {
@@ -33,10 +31,14 @@ def frequency_ps_insert(request, person_id):
     person = Person.objects.get(id=person_id)
 
     if request.GET.get("pk"):
-        event = get_object_or_404(Event, pk=request.GET.get("pk"))
+        event = Event.objects.get(pk=request.GET.get("pk"))
 
         if request.method == "POST":
-            person.event_set.add(event)
+            person.frequency_set.create(
+                person=person,
+                event=event,
+                aspect=person.aspect,
+            )
             messages.success(request, "The Frequency has been inserted!")
             return redirect("frequency_ps_list", person_id=person_id)
 
@@ -67,8 +69,8 @@ def frequency_ps_insert(request, person_id):
 @login_required
 @permission_required("person.change_person")
 def frequency_ps_delete(request, person_id, event_id):
-    person = get_object_or_404(Person, id=person_id)
-    event = get_object_or_404(Event, pk=event_id)
+    person = Person.objects.get(id=person_id)
+    event = Event.objects.get(pk=event_id)
     if request.method == "POST":
         person.event_set.remove(event)
         messages.success(request, "The Frequency has been removed!")

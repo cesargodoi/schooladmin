@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from person.models import Person
 
 from ..forms import FrequenciesAddForm
@@ -10,7 +10,7 @@ from ..models import Event
 @login_required
 @permission_required(["event.change_event", "person.change_person"])
 def frequency_delete(request, pk, person_id):
-    event = get_object_or_404(Event, pk=pk)
+    event = Event.objects.get(pk=pk)
     person = event.frequencies.get(id=person_id)
     object = f"Remove: {person.name} from: {event}"
     if request.method == "POST":
@@ -26,7 +26,7 @@ def frequency_delete(request, pk, person_id):
 @login_required
 @permission_required(["event.change_event", "person.change_person"])
 def frequencies_add(request, pk):
-    object = get_object_or_404(Event, pk=pk)
+    object = Event.objects.get(pk=pk)
 
     if request.method == "POST":
         from_request = set(
@@ -36,7 +36,12 @@ def frequencies_add(request, pk):
         for reg in from_request:
             try:
                 person = Person.objects.get(reg=reg)
-                object.frequencies.add(person)
+                # object.frequencies.add(person)
+                object.frequency_set.create(
+                    person=person,
+                    event=object,
+                    aspect=person.aspect,
+                )
                 regs.append(reg)
             except:
                 unknow.append(reg)

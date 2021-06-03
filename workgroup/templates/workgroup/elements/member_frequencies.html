@@ -23,9 +23,11 @@
     <small>{{ freq.event.center }}</small>
   </div>
   <div class="col-sm-3">
+    {% if freq.observations %}
     <small>
       {{ freq.observations }}
     </small>
+    {% endif%}
   </div>
   <div class="col-sm-1 text-right">
     {% if freq.ranking > 0 %}

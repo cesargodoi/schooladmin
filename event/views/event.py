@@ -29,7 +29,7 @@ def event_home(request):
 @permission_required("event.view_event")
 def event_detail(request, pk):
     object = Event.objects.get(pk=pk)
-    queryset = object.frequencies.all().order_by("name_sa")
+    queryset = object.frequency_set.all().order_by("person__name_sa")
     object_list = paginator(queryset, 25, request.GET.get("page"))
 
     context = {
@@ -89,6 +89,14 @@ def event_update(request, pk):
 @permission_required("event.delete_event")
 def event_delete(request, pk):
     object = Event.objects.get(pk=pk)
+    if object.frequencies.all():
+        message = """
+        You cannot delete an event if it has frequencies launched.\n
+        Remove all frequencies and try again.
+        """
+        context = {"title": "action not allowed", "message": message}
+        return render(request, "base/action_not_allowed.html", context)
+
     if request.method == "POST":
         os.remove(object.qr_code.path)
         object.delete()
