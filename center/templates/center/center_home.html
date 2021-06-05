@@ -3,17 +3,11 @@
 {% block content %}
 <article class="media content-section mb-1">
   <div class="media-body">
-    <div class="row">
-      <div class="col-8">
-        <h2>Centers</h2>
-      </div>
-      <div class="floating-right">
-        <form class="form-control-sm" method="GET">
-          {% csrf_token %}
-          {% include "center/elements/search_center.html" %}
-        </form>
-      </div>
-    </div>
+    <h2>Center</h2>
+    <form class="form-control-sm border-top" method="GET">
+      {% csrf_token %}
+      {% include "base/searchs/center.html" %}
+    </form>
   </div>
 </article>
 

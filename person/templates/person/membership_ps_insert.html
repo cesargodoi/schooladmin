@@ -19,19 +19,12 @@
 
 <article class="media content-section">
   <div class="media-body">
-    <div class="row">
-      <div class="col-6">
-        <h4>Insert Membership</h4>
-      </div>
-      <div class="col-6">
-        <div class="text-right">
-          <form class="form-control-sm" method="GET">
-            {% csrf_token %}
-            {% include "base/search_workgroup.html" %}
-          </form>
-        </div>
-      </div>
-    </div>
+    <h4>Insert Membership</h4>
+    <form class="form-control-sm border-top" method="GET">
+      {% csrf_token %}
+      {% include "base/searchs/workgroup.html" %}
+    </form>
+    <br>
 
     {% if object_list %}
 
@@ -59,11 +52,15 @@
             </span>
           </td>
           <td class="text-right">
+            {% if obj.pk not in pre_groups %}
             <a type="button" 
               href="{% url 'membership_ps_create' person.id %}?pk={{ obj.pk }}"
               class="btn btn-outline-light btn-sm text-primary">
               <i class="fas fa-plus"></i> Add
             </a>
+            {% else %}
+              <span class="badge badge-pill badge-warning">inserted</span>
+            {% endif %}
           </td>
         </tr>
         {% endfor %}

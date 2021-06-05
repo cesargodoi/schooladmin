@@ -74,10 +74,10 @@
     <ul class="nav nav-pills mb-3">
       <li class="nav-item">
         <a class="nav-link {% if tab == 'info' %}active{% endif %}" 
-           id="nav-person-tab" 
+           id="nav-info-tab" 
            href="{% url 'person_detail' person.id %}">
           <i class="fas fa-user"></i>
-          Person
+          Info
         </a>
       </li>
       <li class="nav-item">
@@ -98,7 +98,7 @@
         <a class="nav-link {% if tab == 'membership' %}active{% endif %}" 
            href="{% url 'membership_ps_list' person.id %}">
           <i class="fas fa-users"></i>
-          Workgroups
+          Membership
         </a>
       </li>
     </ul>

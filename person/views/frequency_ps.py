@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 
 from event.models import Event
-from base.searchs import event_search
+from base.searchs import search_event
 from schooladmin.common import paginator, ACTIVITY_TYPES
 
 from ..models import Person
@@ -51,7 +51,7 @@ def frequency_ps_insert(request, person_id):
             request, "person/elements/confirm_to_insert.html", context
         )
 
-    queryset, page = event_search(request, Event)
+    queryset, page = search_event(request, Event)
     object_list = paginator(queryset, page=page)
 
     context = {

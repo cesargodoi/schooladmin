@@ -96,7 +96,7 @@ def frequencies_per_period(request):
                 ),
                 "report_data": report_data.to_html(),
                 "status": SEEKER_STATUS,
-                "search": "publicwork/elements/modal_search_frequencies.html",
+                "search": "base/searchs/modal_frequencies.html",
             }
 
             return render(
@@ -106,7 +106,7 @@ def frequencies_per_period(request):
     context = {
         "title": "frequencies per period",
         "status": SEEKER_STATUS,
-        "search": "publicwork/elements/modal_search_frequencies.html",
+        "search": "base/searchs/modal_frequencies.html",
     }
 
     return render(request, "publicwork/reports/show_report.html", context)
@@ -152,7 +152,7 @@ def lectures_per_period(request):
                 ),
                 "report_data": dataframe.to_html(),
                 "type": LECTURE_TYPES,
-                "search": "publicwork/elements/modal_search_lectures.html",
+                "search": "base/searchs/modal_lectures.html",
             }
             return render(
                 request, "publicwork/reports/show_report.html", context
@@ -161,7 +161,7 @@ def lectures_per_period(request):
     context = {
         "title": "lectures per period",
         "type": LECTURE_TYPES,
-        "search": "publicwork/elements/modal_search_lectures.html",
+        "search": "base/searchs/modal_lectures.html",
     }
 
     return render(request, "publicwork/reports/show_report.html", context)
@@ -202,7 +202,7 @@ def status_per_center(request):
                 "subtitle": request.user.person.center,
                 "status": SEEKER_STATUS,
                 "report_data": report_data.to_html(),
-                "search": "publicwork/elements/modal_search_status.html",
+                "search": "base/searchs/modal_status.html",
             }
 
             return render(
@@ -212,7 +212,7 @@ def status_per_center(request):
     context = {
         "title": "status per center",
         "status": SEEKER_STATUS,
-        "search": "publicwork/elements/modal_search_status.html",
+        "search": "base/searchs/modal_status.html",
     }
 
     return render(request, "publicwork/reports/show_report.html", context)

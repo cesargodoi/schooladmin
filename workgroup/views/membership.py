@@ -2,11 +2,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
 from person.models import Person
-from person.views.person import person_search
 from schooladmin.common import ASPECTS, STATUS, paginator
 
 from ..forms import MembershipForm
 from ..models import Membership, Workgroup
+from base.searchs import search_person
 
 
 @login_required
@@ -35,8 +35,7 @@ def membership_insert(request, workgroup_id):
             context,
         )
 
-    queryset, page = person_search(request)
-
+    queryset, page = search_person(request, Person)
     object_list = paginator(queryset, 25, page=page)
 
     context = {

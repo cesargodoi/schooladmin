@@ -4,18 +4,17 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http.response import Http404
 from django.urls import reverse
 from schooladmin.common import paginator, LECTURE_TYPES
+from base.searchs import search_lecture
 
 
 from ..forms import LectureForm
 from ..models import Lecture
-from ..utils import lecture_search
 
 
 @login_required
 @permission_required("publicwork.view_lecture")
 def lecture_home(request):
-    queryset, page = lecture_search(request, Lecture)
-
+    queryset, page = search_lecture(request, Lecture)
     object_list = paginator(queryset, page=page)
 
     context = {

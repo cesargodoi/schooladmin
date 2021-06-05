@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from schooladmin.common import WORKGROUP_TYPES, paginator
+from base.searchs import search_workgroup
 
 from ..forms import WorkgroupForm
 from ..models import Workgroup
@@ -12,35 +12,13 @@ from ..models import Workgroup
 @login_required
 @permission_required("workgroup.view_workgroup")
 def workgroup_home(request):
-    term = request.GET.get("term") if request.GET.get("term") else ""
-
-    _query = [
-        Q(name__icontains=term),
-        Q(is_active=True),
-        Q(center=request.user.person.center),
-    ]
-
-    if request.GET.get("all"):
-        _query.remove(Q(is_active=True))
-        _query.remove(Q(center=request.user.person.center))
-    if request.GET.get("wg_type"):
-        _query.append(Q(workgroup_type=request.GET.get("wg_type")))
-
-    query = Q()
-    for q in _query:
-        query.add(q, Q.AND)
-
-    queryset = Workgroup.objects.filter(query).order_by("name")
-
-    object_list = paginator(queryset, page=request.GET.get("page"))
+    queryset, page = search_workgroup(request, Workgroup)
+    object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
         "title": "workgroups",
         "workgroup_types": WORKGROUP_TYPES,
-        "all": True if request.GET.get("all") else False,
-        "term": request.GET.get("term"),
-        "wg_type": request.GET.get("wg_type"),
     }
     return render(request, "workgroup/workgroup_home.html", context)
 
@@ -87,7 +65,7 @@ def workgroup_create(request):
 @login_required
 @permission_required("workgroup.change_workgroup")
 def workgroup_update(request, pk):
-    workgroup = get_object_or_404(Workgroup, pk=pk)
+    workgroup = Workgroup.objects.get(pk=pk)
     if request.method == "POST":
         form = WorkgroupForm(request.POST, instance=workgroup)
         if form.is_valid():
@@ -112,7 +90,7 @@ def workgroup_update(request, pk):
 @login_required
 @permission_required("workgroup.delete_workgroup")
 def workgroup_delete(request, pk):
-    workgroup = get_object_or_404(Workgroup, pk=pk)
+    workgroup = Workgroup.objects.get(pk=pk)
     if request.method == "POST":
         if workgroup.members:
             workgroup.members.clear()
@@ -122,7 +100,8 @@ def workgroup_delete(request, pk):
     context = {
         "object": workgroup,
         "members": [
-            m for m in workgroup.membership_set.all().order_by("-role_type")[:4]
+            m
+            for m in workgroup.membership_set.all().order_by("-role_type")[:4]
         ],
         "title": "confirm to delete",
     }

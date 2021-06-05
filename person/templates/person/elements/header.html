@@ -7,8 +7,7 @@
           {% if person.aspect != "--" %}
           &nbsp;&nbsp;&nbsp;&nbsp;
           <em>
-            {{ person.get_aspect_display }} <strong>in</strong>
-            {{ person.aspect_date|date:"d/m/Y" }}
+            {{ person.get_aspect_display }} 
           </em>
           {% endif %}
           {% if person.center != request.user.person.center %}

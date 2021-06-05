@@ -17,10 +17,6 @@
           &nbsp;&nbsp;&nbsp;
           <em>
             {{ object.get_aspect_display }}
-            {% if object.aspect_date %}
-            <strong>in</strong>
-            {{ object.aspect_date|date:"d/m/Y" }}
-            {% endif %}
           </em>
           {% endif %}
 

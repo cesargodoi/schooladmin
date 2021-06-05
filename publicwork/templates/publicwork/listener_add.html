@@ -22,8 +22,9 @@
     <h4>Add listener</h4>
     <form class="form-control-sm border-top" method="GET">
       {% csrf_token %}
-      {% include "publicwork/elements/search_seeker.html" %}
+      {% include "base/searchs/seeker.html" %}
     </form>
+    <br>
 
     {% if object_list %}
 

@@ -4,17 +4,11 @@
 
 <article class="media content-section mb-1">
   <div class="media-body">
-    <div class="row">
-      <div class="col-6">
-        <h2>Workgroup</h2>
-      </div>
-      <div class="floating-right">
-        <form class="form-control-sm" method="GET">
-          {% csrf_token %}
-          {% include "base/search_workgroup.html" %}
-        </form>
-      </div>
-    </div>
+    <h2>Workgroup</h2>
+    <form class="form-control-sm border-top" method="GET">
+      {% csrf_token %}
+      {% include "base/searchs/workgroup.html" %}
+    </form>
   </div>
 </article>
 

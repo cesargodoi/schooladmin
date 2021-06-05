@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from schooladmin.common import paginator, ACTIVITY_TYPES
-from base.searchs import event_search
+from base.searchs import search_event
 
 from ..forms import EventForm
 from ..models import Event
@@ -14,7 +14,7 @@ from ..models import Event
 @login_required
 @permission_required("event.view_event")
 def event_home(request):
-    queryset, page = event_search(request, Event)
+    queryset, page = search_event(request, Event)
     object_list = paginator(queryset, page=page)
 
     context = {

@@ -1,10 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from schooladmin.common import WORKGROUP_TYPES, paginator
 from workgroup.forms import MembershipForm
 from workgroup.models import Membership, Workgroup
+from base.searchs import search_workgroup
 
 from ..models import Person
 
@@ -18,7 +18,6 @@ def membership_ps_list(request, person_id):
     person = (
         queryset[0].person if queryset else Person.objects.get(id=person_id)
     )
-
     object_list = paginator(queryset, page=request.GET.get("page"))
 
     context = {
@@ -33,10 +32,10 @@ def membership_ps_list(request, person_id):
 @login_required
 @permission_required("workgroup.add_membership")
 def membership_ps_create(request, person_id):
-    person = get_object_or_404(Person, id=person_id)
+    person = Person.objects.get(id=person_id)
 
     if request.GET.get("pk"):
-        workgroup = get_object_or_404(Workgroup, pk=request.GET.get("pk"))
+        workgroup = Workgroup.objects.get(pk=request.GET.get("pk"))
 
         if request.method == "POST":
             workgroup.members.add(person)
@@ -54,36 +53,17 @@ def membership_ps_create(request, person_id):
             request, "person/elements/confirm_to_insert.html", context
         )
 
-    term = request.GET.get("term") if request.GET.get("term") else ""
-
-    _query = [
-        Q(name__icontains=term),
-        Q(is_active=True),
-        Q(center=request.user.person.center),
-    ]
-
-    if request.GET.get("all"):
-        _query.remove(Q(is_active=True))
-        _query.remove(Q(center=request.user.person.center))
-    if request.GET.get("wg_type"):
-        _query.append(Q(workgroup_type=request.GET.get("wg_type")))
-
-    query = Q()
-    for q in _query:
-        query.add(q, Q.AND)
-
-    queryset = Workgroup.objects.filter(query).order_by("name")
-
-    object_list = paginator(queryset, page=request.GET.get("page"))
+    queryset, page = search_workgroup(request, Workgroup)
+    object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
         "title": "insert membership",
         "person": person,  # to header element
         "workgroup_types": WORKGROUP_TYPES,
-        "all": True if request.GET.get("all") else False,
-        "term": request.GET.get("term"),
-        "wg_type": request.GET.get("wg_type"),
+        "pre_groups": [
+            person.workgroup.pk for person in person.membership_set.all()
+        ],
     }
     return render(request, "person/membership_ps_insert.html", context)
 
@@ -91,7 +71,7 @@ def membership_ps_create(request, person_id):
 @login_required
 @permission_required("workgroup.change_membership")
 def membership_ps_update(request, person_id, pk):
-    membership = get_object_or_404(Membership, pk=pk)
+    membership = Membership.objects.get(pk=pk)
 
     if request.method == "POST":
         form = MembershipForm(request.POST, instance=membership)
@@ -112,7 +92,7 @@ def membership_ps_update(request, person_id, pk):
 @login_required
 @permission_required("workgroup.delete_membership")
 def membership_ps_delete(request, person_id, pk):
-    membership = get_object_or_404(Membership, pk=pk)
+    membership = Membership.objects.get(pk=pk)
     if request.method == "POST":
         membership.delete()
         return redirect("membership_ps_list", person_id=person_id)

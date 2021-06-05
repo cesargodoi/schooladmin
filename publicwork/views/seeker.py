@@ -7,15 +7,16 @@ from django.urls import reverse
 from schooladmin.common import paginator, belongs_center
 
 from center.models import Center
+from base.searchs import search_seeker
+
 from ..forms import SeekerForm
 from ..models import Seeker
-from ..utils import seeker_search
 
 
 @login_required
 @permission_required("publicwork.view_seeker")
 def seeker_home(request):
-    queryset, page = seeker_search(request, Seeker)
+    queryset, page = search_seeker(request, Seeker)
     object_list = paginator(queryset, page=page)
 
     context = {

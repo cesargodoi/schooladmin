@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from schooladmin.common import paginator
+from base.searchs import search_center
 
 from .forms import CenterForm, SelectNewCenterForm
 from .models import Center
@@ -12,7 +13,7 @@ from .models import Center
 @login_required
 @permission_required("center.view_center")
 def center_home(request):
-    queryset, page = center_search(request)
+    queryset, page = search_center(request, Center)
     object_list = paginator(queryset, page=page)
 
     context = {
@@ -117,38 +118,3 @@ def center_reinsert(request, pk):
 
     context = {"object": center, "title": "confirm to reinsert"}
     return render(request, "center/confirm_reinsert.html", context)
-
-
-# auxiliar functions
-def center_search(request):
-    # checking for search in request.session
-    if not request.session.get("search"):
-        request.session["search"] = {
-            "term": "",
-            "all": "",
-            "page": 1,
-        }
-    # adjust search
-    search = request.session["search"]
-    if request.GET.get("page"):
-        search["page"] = request.GET["page"]
-    else:
-        search["page"] = 1
-        search["term"] = request.GET["term"] if request.GET.get("term") else ""
-        search["all"] = "on" if request.GET.get("all") else ""
-    # save session
-    request.session.modified = True
-    # basic query
-    _query = [
-        Q(is_active=True),
-        Q(name__icontains=search["term"]),
-    ]
-    # adding more complexity
-    if search["all"]:
-        _query.remove(Q(is_active=True))
-    # generating query
-    query = Q()
-    for q in _query:
-        query.add(q, Q.AND)
-
-    return Center.objects.filter(query).order_by("name"), search["page"]

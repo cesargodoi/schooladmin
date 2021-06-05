@@ -1,4 +1,4 @@
-<form class="form-control-sm mt-1 mb-2 border-bottom" method="GET">
+<form class="form-control-sm mt-1 mb-2" method="GET">
   {% csrf_token %}
   {% include "publicwork/elements/search_lecture.html" %}
 </form>
@@ -9,9 +9,42 @@
 {% include "base/elements/paginator.html" %}
 {% endif %}
 
-{% for obj in object_list %}
-{% include 'publicwork/elements/lecture_card_to_insert.html' %}
-{% endfor %}
+<table class="table table-hover table-sm">
+  <thead>
+    <tr>
+      <th width="15%">date</th>
+      <th>event</th>
+      <th>type</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for obj in object_list %}
+    <tr>
+      <td>{{ obj.date|date:'d/m/y'}}</td>
+      <td>
+        {{ obj.theme }}
+        <small class="text-muted">{{ obj.center }}</small>
+      </td>
+      <td>
+        {{ obj.get_type_display }}
+      </td>
+      <td class="text-right">
+        {% if obj.pk not in pre_freqs %}
+          <a type="button" 
+            href="{% url 'add_frequency' object.pk %}?lect_pk={{ obj.pk }}"
+            class="btn btn-outline-light btn-sm text-primary">
+            <i class="fas fa-plus"></i> <i class="fas fa-user"></i> add
+          </a>
+        {% else %}
+          <span class="badge badge-pill badge-warning">inserted</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 
 {% if object_list.has_other_pages %}
 {% include "base/elements/paginator.html" %}

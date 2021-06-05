@@ -41,6 +41,17 @@
                 <td>{{ person.get_person_type_display }}</td>
               </tr>
               <tr>
+                <th>aspect</th>
+                <td>
+                  {{ person.get_aspect_display }}
+                  {% if person.aspect_date %}
+                    &nbsp;&nbsp;<strong>since</strong>&nbsp;&nbsp;
+                    {{ person.aspect_date|date:"d/m/Y" }} 
+                    &nbsp;&nbsp;<small class="text-muted">({{ person.aspect_date|timesince:date }})</small>
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
                 <th>phone</th>
                 <td>{{ person.user.profile.phone_1 }}</td>
               </tr>

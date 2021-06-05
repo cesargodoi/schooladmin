@@ -5,186 +5,10 @@ from django.utils import timezone
 from schooladmin.common import SEEKER_STATUS, LECTURE_TYPES
 
 
-def seeker_search(request, obj):
-    # checking for search in request.session
-    if not request.session.get("search"):
-        request.session["search"] = {
-            "name": "",
-            "center": request.user.person.center.pk,
-            "city": "",
-            "all": "",
-            "page": 1,
-        }
-    # adjust search
-    search = request.session["search"]
-    if request.GET.get("page"):
-        search["page"] = request.GET["page"]
-    else:
-        search["page"] = 1
-        search["name"] = request.GET["name"] if request.GET.get("name") else ""
-        search["center"] = (
-            request.GET["center"] if request.GET.get("center") else ""
-        )
-        search["city"] = request.GET["city"] if request.GET.get("city") else ""
-        search["all"] = "on" if request.GET.get("all") else ""
-
-    # save session
-    request.session.modified = True
-    # basic query
-    _query = [
-        Q(is_active=True),
-        Q(center=request.user.person.center),
-        Q(name_sa__icontains=search["name"]),
-    ]
-    # adding more complexity
-    if search["center"]:
-        _query.remove(Q(center=request.user.person.center))
-        _query.append(Q(center__pk=search["center"]))
-    if search["city"]:
-        _query.append(Q(city__icontains=search["city"]))
-    if search["all"]:
-        _query.remove(Q(is_active=True))
-        if Q(center=request.user.person.center) in _query:
-            _query.remove(Q(center=request.user.person.center))
-    # generating query
-    query = Q()
-    for q in _query:
-        query.add(q, Q.AND)
-
-    return (
-        obj.objects.filter(query).order_by("name_sa"),
-        search["page"],
-    )
-
-
-def lecture_search(request, obj):
-    # checking for search in request.session
-    if not request.session.get("search"):
-        request.session["search"] = {
-            "dt1": "",
-            "dt2": "",
-            "type": "CTT",
-            "all": "",
-            "page": 1,
-        }
-    # adjust search
-    search = request.session["search"]
-    if request.GET.get("page"):
-        search["page"] = request.GET["page"]
-    else:
-        search["page"] = 1
-        dt1 = (
-            datetime.strptime(request.GET["dt1"], "%Y-%m-%d")
-            if request.GET.get("dt1")
-            else timezone.now() - timedelta(30)
-        )
-        search["dt1"] = dt1.strftime("%Y-%m-%d")
-        dt2 = (
-            datetime.strptime(request.GET["dt2"], "%Y-%m-%d")
-            if request.GET.get("dt2")
-            else timezone.now()
-        )
-        search["dt2"] = dt2.strftime("%Y-%m-%d")
-        search["type"] = request.GET["type"] if request.GET.get("type") else ""
-        search["all"] = "on" if request.GET.get("all") else ""
-    # save session
-    request.session.modified = True
-    # basic query
-    _query = [
-        Q(is_active=True),
-        Q(center=request.user.person.center),
-        Q(date__range=[search["dt1"], search["dt2"]]),
-    ]
-    # adding more complexity
-    if search["type"]:
-        _query.append(Q(type=search["type"]))
-    if search["all"]:
-        _query.remove(Q(is_active=True))
-        _query.remove(Q(center=request.user.person.center))
-    # generating query
-    query = Q()
-    for q in _query:
-        query.add(q, Q.AND)
-
-    return (
-        obj.objects.filter(query).order_by("-date"),
-        search["page"],
-    )
-
-
-def queryset_per_date(request, Table):
-    # checking for search in request.session
-    if not request.session.get("search"):
-        request.session["search"] = {
-            "dt1": "",
-            "dt2": "",
-            "all": "",
-        }
-    # adjust search
-    search = request.session["search"]
-    dt1 = (
-        datetime.strptime(request.GET["dt1"], "%Y-%m-%d")
-        if request.GET.get("dt1")
-        else timezone.now() - timedelta(30)
-    )
-    search["dt1"] = dt1.strftime("%Y-%m-%d")
-    dt2 = (
-        datetime.strptime(request.GET["dt2"], "%Y-%m-%d")
-        if request.GET.get("dt2")
-        else timezone.now()
-    )
-    search["dt2"] = dt2.strftime("%Y-%m-%d")
-    search["all"] = "on" if request.GET.get("all") else ""
-    # save session
-    request.session.modified = True
-    # basic query
-    _query = [
-        Q(is_active=True),
-        Q(center=request.user.person.center),
-        Q(date__range=[search["dt1"], search["dt2"]]),
-    ]
-    # adding more complexity
-    if search["all"]:
-        _query.remove(Q(is_active=True))
-        _query.remove(Q(center=request.user.person.center))
-    # generating query
-    query = Q()
-    for q in _query:
-        query.add(q, Q.AND)
-
-    return Table.objects.filter(query).order_by("-date")
-
-
-def queryset_per_status(request, model):
-    # checking for search in request.session
-    if not request.session.get("search"):
-        request.session["search"] = {
-            "status": "",
-        }
-    # adjust search
-    search = request.session["search"]
-    search["status"] = (
-        request.GET["status"] if request.GET.get("status") else ""
-    )
-    # save session
-    request.session.modified = True
-    # basic query
-    _query = [Q(is_active=True), Q(center=request.user.person.center)]
-    # adding more complexity
-    if search["status"] != "all":
-        _query.append(Q(status=search["status"]))
-    # generating query
-    query = Q()
-    for q in _query:
-        query.add(q, Q.AND)
-
-    return model.objects.filter(query).order_by("name_sa")
-
-
 # reports
-def get_lectures_dict(request, model):
+def get_lectures_dict(request, obj):
     _dict = []
-    for obj in queryset_per_date(request, model):
+    for obj in queryset_per_date(request, obj):
         row = dict(
             pk=obj.pk,
             date=obj.date,
@@ -200,9 +24,9 @@ def get_lectures_dict(request, model):
     return _dict
 
 
-def get_frequencies_dict(request, model):
+def get_frequencies_dict(request, obj):
     _dict = []
-    for obj in queryset_per_date(request, model):
+    for obj in queryset_per_date(request, obj):
         if obj.listener_set.count():
             for freq in obj.listener_set.all():
                 row = dict(
@@ -242,8 +66,8 @@ def get_frequencies_dict(request, model):
     return _dict
 
 
-def get_seekers_dict(request, model):
-    queryset = queryset_per_status(request, model)
+def get_seekers_dict(request, obj):
+    queryset = queryset_per_status(request, obj)
     _dict = []
     for obj in queryset:
         row = dict(
@@ -263,3 +87,73 @@ def get_seekers_dict(request, model):
         )
         _dict.append(row)
     return _dict
+
+
+# searchs of reports
+def queryset_per_date(request, obj):
+    # checking for search in request.session
+    if not request.session.get("search"):
+        request.session["search"] = {
+            "dt1": "",
+            "dt2": "",
+            "all": "",
+        }
+    # adjust search
+    search = request.session["search"]
+    dt1 = (
+        datetime.strptime(request.GET["dt1"], "%Y-%m-%d")
+        if request.GET.get("dt1")
+        else timezone.now() - timedelta(30)
+    )
+    search["dt1"] = dt1.strftime("%Y-%m-%d")
+    dt2 = (
+        datetime.strptime(request.GET["dt2"], "%Y-%m-%d")
+        if request.GET.get("dt2")
+        else timezone.now()
+    )
+    search["dt2"] = dt2.strftime("%Y-%m-%d")
+    search["all"] = "on" if request.GET.get("all") else ""
+    # save session
+    request.session.modified = True
+    # basic query
+    _query = [
+        Q(is_active=True),
+        Q(center=request.user.person.center),
+        Q(date__range=[search["dt1"], search["dt2"]]),
+    ]
+    # adding more complexity
+    if search["all"]:
+        _query.remove(Q(is_active=True))
+        _query.remove(Q(center=request.user.person.center))
+    # generating query
+    query = Q()
+    for q in _query:
+        query.add(q, Q.AND)
+
+    return obj.objects.filter(query).order_by("-date")
+
+
+def queryset_per_status(request, obj):
+    # checking for search in request.session
+    if not request.session.get("search"):
+        request.session["search"] = {
+            "status": "",
+        }
+    # adjust search
+    search = request.session["search"]
+    search["status"] = (
+        request.GET["status"] if request.GET.get("status") else ""
+    )
+    # save session
+    request.session.modified = True
+    # basic query
+    _query = [Q(is_active=True), Q(center=request.user.person.center)]
+    # adding more complexity
+    if search["status"] != "all":
+        _query.append(Q(status=search["status"]))
+    # generating query
+    query = Q()
+    for q in _query:
+        query.add(q, Q.AND)
+
+    return obj.objects.filter(query).order_by("name_sa")

@@ -9,6 +9,7 @@ from django.urls import reverse
 
 from schooladmin.common import ASPECTS, STATUS, paginator
 from user.models import User
+from base.searchs import search_person
 
 from ..forms import PersonForm, ProfileForm, UserForm
 from ..models import Historic, Person
@@ -17,7 +18,7 @@ from ..models import Historic, Person
 @login_required
 @permission_required("person.view_person")
 def person_home(request):
-    queryset, page = person_search(request)
+    queryset, page = search_person(request, Person)
     object_list = paginator(queryset, page=page)
 
     context = {
@@ -48,6 +49,7 @@ def person_detail(request, id):
         "title": "person detail",
         "person": person,  # to header element
         "tab": "info",
+        "date": timezone.now().date(),
     }
     return render(request, "person/person_detail.html", context)
 
@@ -193,57 +195,6 @@ def person_reinsert(request, id):
 
 
 # auxiliar functions
-def person_search(request):
-    # checking for search in request.session
-    if not request.session.get("search"):
-        request.session["search"] = {
-            "term": "",
-            "aspect": "",
-            "status": "",
-            "all": "",
-            "page": 1,
-        }
-    # adjust search
-    search = request.session["search"]
-    if request.GET.get("page"):
-        search["page"] = request.GET["page"]
-    else:
-        search["page"] = 1
-        search["term"] = request.GET["term"] if request.GET.get("term") else ""
-        search["aspect"] = (
-            request.GET["aspect"] if request.GET.get("aspect") else ""
-        )
-        search["status"] = (
-            request.GET["status"] if request.GET.get("status") else ""
-        )
-        search["all"] = "on" if request.GET.get("all") else ""
-
-    # save session
-    request.session.modified = True
-    # basic query
-    _query = [
-        Q(is_active=True),
-        Q(center=request.user.person.center),
-        Q(name_sa__icontains=search["term"]),
-    ]
-    # adding more complexity
-    if search["aspect"]:
-        _query.append(Q(aspect=search["aspect"]))
-    if search["status"]:
-        _query.append(Q(status=search["status"]))
-        if search["status"] in ["DIS", "REM", "DEA"]:
-            _query.remove(Q(is_active=True))
-    if search["all"]:
-        _query.remove(Q(is_active=True))
-        _query.remove(Q(center=request.user.person.center))
-    # generating query
-    query = Q()
-    for q in _query:
-        query.add(q, Q.AND)
-
-    return Person.objects.filter(query).order_by("name_sa"), search["page"]
-
-
 def add_historic(person, occurrence, made_by):
     historic = dict(
         person=person,

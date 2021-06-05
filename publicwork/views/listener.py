@@ -6,9 +6,10 @@ from django.urls import reverse
 from django.utils import timezone
 
 from center.models import Center
+from base.searchs import search_seeker, search_lecture
+
 from ..forms import ListenerForm
 from ..models import Lecture, Seeker, Listener, Historic
-from ..utils import seeker_search, lecture_search
 
 
 @login_required
@@ -47,7 +48,7 @@ def add_listener(request, lect_pk):
             context,
         )
 
-    queryset, page = seeker_search(request, Seeker)
+    queryset, page = search_seeker(request, Seeker)
     object_list = paginator(queryset, page=page)
 
     context = {
@@ -132,8 +133,7 @@ def add_frequency(request, pk):
             context,
         )
 
-    queryset, page = lecture_search(request, Lecture)
-
+    queryset, page = search_lecture(request, Lecture)
     object_list = paginator(queryset, page=page)
 
     context = {
