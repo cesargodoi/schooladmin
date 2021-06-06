@@ -9,7 +9,7 @@ from event.models import Event
 from schooladmin.common import ORDER_STATUS, PAYFORM_TYPES
 
 
-##  PayTypes  ##
+#  PayTypes
 class PayTypes(models.Model):
     name = models.CharField(max_length=50)
     code = models.CharField(max_length=10)
@@ -23,7 +23,7 @@ class PayTypes(models.Model):
         verbose_name_plural = "pay types"
 
 
-##  Payment  ##
+#  Payment
 class Payment(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True
@@ -69,7 +69,7 @@ class Payment(models.Model):
         verbose_name_plural = "payments"
 
 
-##  BankFlags  ##
+#  BankFlags
 class BankFlags(models.Model):
     name = models.CharField(max_length=15)
     is_active = models.BooleanField(default=True)
@@ -103,7 +103,7 @@ def voucher_img_filename(instance, filename):
     return path
 
 
-##  FormOfPayment  ##
+#  FormOfPayment
 class FormOfPayment(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True
@@ -129,7 +129,7 @@ class FormOfPayment(models.Model):
         if self.voucher_img:
             img = Image.open(self.voucher_img.path)
             img_gray = ImageOps.grayscale(img)
-            if img_gray.width > 600 or img_gray.height > 800:
+            if img_gray.width > 600:
                 img_gray.thumbnail((600, 800))
             img_gray.save(self.voucher_img.path, quality=50)
 
@@ -144,7 +144,7 @@ class FormOfPayment(models.Model):
         verbose_name_plural = "form of payments"
 
 
-##  Order  ##
+#  Order
 class Order(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True
@@ -159,7 +159,9 @@ class Order(models.Model):
     payments = models.ManyToManyField(Payment)
     form_of_payments = models.ManyToManyField(FormOfPayment)
     amount = models.DecimalField(max_digits=6, decimal_places=2)
-    status = models.CharField(max_length=3, choices=ORDER_STATUS, default="PND")
+    status = models.CharField(
+        max_length=3, choices=ORDER_STATUS, default="PND"
+    )
     description = models.TextField(null=True, blank=True)
     self_payed = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -173,9 +175,7 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return (
-            f"{self.center} - {self.person.name} ${self.amount} ({self.status})"
-        )
+        return f"{self.center} - {self.person.name} ${self.amount} ({self.status})"
 
     class Meta:
         verbose_name = "order"

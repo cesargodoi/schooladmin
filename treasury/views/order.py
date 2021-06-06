@@ -1,8 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django import forms
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Q, query
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -26,58 +25,7 @@ def orders(request):
     if request.session.get("order"):
         del request.session["order"]
 
-    # # checking for search in request.session
-    # if not request.session.get("search"):
-    #     request.session["search"] = {
-    #         "term": "",
-    #         "status": "",
-    #         "date1": (timezone.now().date() - timedelta(30)).strftime(
-    #             "%Y-%m-%d"
-    #         ),
-    #         "date2": timezone.now().date().strftime("%Y-%m-%d"),
-    #     }
-
-    # # adjust search
-    # search = request.session["search"]
-    # search["term"] = request.GET.get("term") if request.GET.get("term") else ""
-    # search["status"] = (
-    #     request.GET.get("status") if request.GET.get("status") else ""
-    # )
-    # date1 = (
-    #     datetime.strptime(request.GET["date1"], "%Y-%m-%d")
-    #     if request.GET.get("date1")
-    #     else datetime.strptime(search["date1"], "%Y-%m-%d")
-    # )
-    # search["date1"] = date1.strftime("%Y-%m-%d")
-    # date2 = (
-    #     datetime.strptime(request.GET["date2"], "%Y-%m-%d")
-    #     if request.GET.get("date2")
-    #     else datetime.strptime(search["date2"], "%Y-%m-%d")
-    # )
-    # search["date2"] = date2.strftime("%Y-%m-%d")
-
-    # # save session
-    # request.session.modified = True
-
-    # # basic query
-    # _query = [
-    #     Q(center=request.user.person.center),
-    #     Q(person__name__icontains=search["term"]),
-    #     Q(created_on__date__range=[date1, date2]),
-    # ]
-
-    # # adding more complexity
-    # if search["status"]:
-    #     _query.append(Q(status=search["status"]))
-
-    # # generating query
-    # query = Q()
-    # for q in _query:
-    #     query.add(q, Q.AND)
-
-    # queryset = Order.objects.filter(query).order_by("-created_on")
     queryset, page = search_order(request, Order)
-
     object_list = paginator(queryset, 25, page=page)
 
     context = {

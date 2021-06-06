@@ -1,4 +1,5 @@
 from django import forms
+from crispy_forms.helper import FormHelper
 from .models import PayTypes, Payment, BankFlags, FormOfPayment
 from schooladmin.common import ORDER_STATUS
 
@@ -38,6 +39,9 @@ class FormOfPaymentForm(forms.ModelForm):
 
 
 class FormUpdateStatus(forms.Form):
-    status = forms.ChoiceField(
-        choices=ORDER_STATUS,
-    )
+    status = forms.ChoiceField(choices=ORDER_STATUS)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_show_labels = False

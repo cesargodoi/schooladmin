@@ -8,10 +8,10 @@
   <div class="btn-group btn-group-sm mt-1" role="group">
     {% if request.session.my_order.total_payments != 0.0 %}
     <button 
-      class="btn btn-light text-success" 
+      class="btn btn-primary" 
       onclick="document.getElementById('form').submit();">
       <i class="fas fa-money-bill-wave-alt"></i> 
-      Pay
+      Pay now
     </button>
     {% endif %}
     <a type="button" 
@@ -43,7 +43,7 @@
     {% if request.session.my_order.payments %}
 
     {% for object in request.session.my_order.payments %}
-    {% include "treasury/elements/el_payment.html" %}
+    {% include "treasury/elements/payment.html" %}
     {% endfor %}
 
     <table class="table table-hover table-sm mt-2">

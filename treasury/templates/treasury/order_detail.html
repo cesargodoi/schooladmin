@@ -50,7 +50,7 @@
           {{ request.session.order.created_on }}
         </h5>
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-3 text-right">
         <h5><small><em>status:</em></small>
           <span class="badge badge-pill badge-{% if request.session.order.status.cod == 'PND' %}warning
                         {% elif request.session.order.status.cod == 'CCL' %}danger
@@ -98,6 +98,24 @@
             </th>
           </tr>
         </table>
+
+        {% if request.session.order.self_payed %}
+        <br>
+        <div class="float-right">
+          <form class="form-inline"
+            action="{% url 'order_update_status' request.session.order.id %}" 
+            method="POST">
+            {% csrf_token %}
+            {{ form_update_status.status | as_crispy_field }}
+            <button 
+              class="btn btn-warning ml-1 mr-1" 
+              type="submit">
+              Update status
+            </button>
+          </form>
+        </div>
+        {% endif %}
+
       </div>
     </div>
 
@@ -108,31 +126,14 @@
 </article>
 
 {% for object in request.session.order.payforms %}
-{% if object.voucher_img %}
-<article class="media content-section">
-  <div class="media-body">
-    <h5>Voucher</h5>
-    <div class="row">
-      <div class="col-sm-8 p-2 text-center">
-        <img src="{{ object.voucher_img }}">
-      </div>
-      <div class="col-sm-4">
-        <form 
-          action="{% url 'order_update_status' request.session.order.id %}" 
-          method="POST">
-          {% csrf_token %}
-          {{ form_update_status|crispy }}
-          <button 
-            class="btn btn-outline-primary" 
-            type="submit">
-            Update status
-          </button>
-        </form>
-      </div>
+  {% if object.voucher_img %}
+  <article class="media content-section">
+    <div class="media-body">
+      <h5>Voucher</h5>
+      <div class="p-2 text-center"><img src="{{ object.voucher_img }}"></div>
+      
     </div>
-
-  </div>
-</article>
-{% endif %}
+  </article>
+  {% endif %}
 {% endfor %}
 {% endblock %}
