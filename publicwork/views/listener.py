@@ -154,7 +154,9 @@ def update_frequency(request, seek_pk, freq_pk):
     seeker = Seeker.objects.get(pk=seek_pk)
     listener = Listener.objects.get(pk=freq_pk)
     if request.method == "POST":
-        listener.ranking = int(request.POST["ranking"])
+        listener.ranking = (
+            int(request.POST["ranking"]) if request.POST.get("ranking") else 0
+        )
         listener.observations = request.POST["observations"]
         listener.save()
         messages.success(request, "The Listener has been updated!")

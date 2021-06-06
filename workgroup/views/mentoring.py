@@ -8,7 +8,7 @@ from schooladmin.common import ACTIVITY_TYPES, paginator
 from base.searchs import search_event
 
 from person.models import Person
-from event.models import Event
+from event.models import Event, Frequency
 from ..forms import MentoringFrequencyForm
 from ..models import Workgroup, Membership
 
@@ -138,4 +138,37 @@ def membership_add_frequency(request, group_pk, person_pk):
     }
     return render(
         request, "workgroup/mentoring/member_add_frequency.html", context
+    )
+
+
+@login_required
+@permission_required("workgroup.view_workgroup")
+def membership_update_frequency(request, group_pk, person_pk, freq_pk):
+    person = Person.objects.get(pk=person_pk)
+    frequency = Frequency.objects.get(pk=freq_pk)
+
+    if request.method == "POST":
+        frequency.ranking = (
+            int(request.POST["ranking"]) if request.POST.get("ranking") else 0
+        )
+        frequency.observations = request.POST["observations"]
+        frequency.save()
+        messages.success(request, "The Frequency has been updated!")
+        return redirect(
+            "mentoring_member_frequencies",
+            group_pk=group_pk,
+            person_pk=person_pk,
+        )
+
+    context = {
+        "object": person,
+        "event": frequency.event,
+        "form": MentoringFrequencyForm(instance=frequency),
+        "title": "update frequency | person side",
+        "goback": reverse(
+            "mentoring_member_frequencies", args=[group_pk, person_pk]
+        ),
+    }
+    return render(
+        request, "workgroup/mentoring/update_frequency.html", context
     )

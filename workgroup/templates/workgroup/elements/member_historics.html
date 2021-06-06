@@ -10,21 +10,12 @@
   <div class="col-sm-1">
     <small>{{ hist.date|date:'d/m/Y' }}</small>
   </div>
-  <div class="col-sm-1">
-    <span class="badge badge-pill badge-success">
-      {{ hist.get_occurrence_display }}
-    </span>
+  <div class="col-sm-2">
+    {{ hist.get_occurrence_display }}
   </div>
-  <div class="col-sm-9">
+  <div class="col-sm-8">
     {{ hist.description }}
   </div> 
-  <div class="col-sm-1 text-right">
-    <a type="button" 
-      href="{ url 'delete_historic' object.pk hist.pk %}"
-      class="btn btn-outline-light btn-sm">
-      <i class="fas fa-trash-alt text-danger"></i>
-    </a>
-  </div>
 </div>
 {% endfor %}
 

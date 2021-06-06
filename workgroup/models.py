@@ -16,7 +16,7 @@ class Workgroup(models.Model):
     workgroup_type = models.CharField(
         "type", max_length=3, choices=WORKGROUP_TYPES, default="ASP"
     )
-    description = models.TextField(blank=True)
+    description = models.CharField(max_length=200, null=True, blank=True)
     aspect = models.CharField(max_length=2, choices=ASPECTS, default="--")
     members = models.ManyToManyField(Person, through="Membership")
     is_active = models.BooleanField(default=True)

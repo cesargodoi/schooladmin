@@ -63,4 +63,9 @@ urlpatterns += [
         mentoring.membership_add_frequency,
         name="membership_add_frequency",
     ),
+    path(
+        "mentoring/<int:group_pk>/member/<uuid:person_pk>/update-frequency/<int:freq_pk>",
+        mentoring.membership_update_frequency,
+        name="membership_update_frequency",
+    ),
 ]
