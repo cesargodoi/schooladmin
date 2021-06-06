@@ -130,38 +130,6 @@ body {
   border-color: transparent;
 }
 
-.list-group-item-treasury-new {
-  position: relative;
-  display: block;
-  padding: .75rem 1.25rem;
-  margin-bottom: -1px;
-  background-color: var(--card-item);
-  border: 1px solid rgba(0,0,0,.125);
-}
-
-.card-header-treasury-new {
-  padding: .75rem 1.25rem;
-  margin-bottom: 0;
-  background-color: var(--card-header);
-  border-bottom: 1px solid rgba(0,0,0,.125);
-}
-
-.card-treasury-new {
-  position: relative;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: column;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color:var(--color-background);
-  background-clip: border-box;
-  border: 1px solid var(--card-border);
-  border-radius: .25rem;
-}
 
 .logo-img {
   height: auto;
@@ -176,10 +144,6 @@ body {
   width: 290px;
   height: auto;
 }
-
-/* .toast-body{
-  text-align: center;
-} */
 
 .tamanho-img{
   height: auto;
@@ -256,7 +220,6 @@ table, td, th{
   border-style: none;
 }
 
-
 thead{
   border-bottom: 2px solid gray!important;
 }
@@ -281,7 +244,6 @@ thead{
   text-align: left;
 }
 
-
 .dataframe td:nth-child(2), td:nth-child(1){
   font-weight: bold;
   font-size: 1rem;
@@ -305,6 +267,16 @@ thead{
 
 .dataframe th:nth-child(1), th:nth-child(2), th:nth-child(3){
   text-align: left;
+}
+/* profile */
+.bg-transp{
+  background-color: transparent !important;
+}
+.navbar-light .navbar-nav .nav-link {
+  color: var(--color-font);
+}
+.navbar-light .navbar-brand {
+  color: var(--color-title);
 }
 
 /* cabecalhos relatorios */
@@ -342,4 +314,48 @@ thead{
   .controls-report{
     display: none;
   }
+}
+
+/* treasury first page */
+
+.card-header-sumary {
+  padding: .75rem 1.25rem;
+  margin-bottom: 0;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.list-group-item-treasury-new {
+  position: relative;
+  display: block;
+  padding: .75rem 1.25rem;
+  margin-bottom: -1px;
+  background-color: var(--card-item);
+  border: 1px solid rgba(0,0,0,.125);
+}
+
+.card-header-treasury-new {
+  padding: .75rem 1.25rem;
+  margin-bottom: 0;
+  background-color: var(--card-header);
+  border-bottom: 1px solid rgba(0,0,0,.125);
+  color: var(--color-title);
+  font-weight: bold;
+}
+
+.card-treasury-new {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color:var(--color-background);
+  background-clip: border-box;
+  border: 1px solid var(--card-border);
+  border-radius: .25rem;
 }

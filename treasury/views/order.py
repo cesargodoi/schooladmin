@@ -47,7 +47,7 @@ def order_create(request):
             "total_payments": 0.0,
             "total_payforms": 0.0,
             "missing": 0.0,
-            "status": None,
+            "status": {"cod": "PND"},
             "description": "",
             "self_payed": False,
         }
