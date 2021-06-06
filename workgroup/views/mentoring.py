@@ -2,13 +2,14 @@ from datetime import date
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
-from schooladmin.common import WORKGROUP_TYPES, paginator
+from schooladmin.common import ACTIVITY_TYPES, paginator
+from base.searchs import search_event
 
 from person.models import Person
-from ..forms import WorkgroupForm
+from event.models import Event
+from ..forms import MentoringFrequencyForm
 from ..models import Workgroup, Membership
 
 
@@ -92,70 +93,49 @@ def mentoring_member_historics(request, group_pk, person_pk):
 
 
 @login_required
-@permission_required("workgroup.add_workgroup")
-def workgroup_create(request):
-    if request.method == "POST":
-        form = WorkgroupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "The Workgroup has been created!")
+@permission_required("workgroup.view_workgroup")
+def membership_add_frequency(request, group_pk, person_pk):
+    object = Person.objects.get(pk=person_pk)
 
-        return redirect("workgroup_home")
+    if request.GET.get("pk"):
+        event = Event.objects.get(pk=request.GET.get("pk"))
 
-    context = {
-        "form": WorkgroupForm(initial={"made_by": request.user}),
-        "form_name": "Workgroup",
-        "form_path": "workgroup/forms/workgroup.html",
-        "goback": reverse("workgroup_home"),
-        "title": "create workgroup",
-        "to_create": True,
-    }
-    return render(request, "base/form.html", context)
+        if request.method == "POST":
+            object.frequency_set.create(
+                person=object,
+                event=event,
+                aspect=object.aspect,
+                ranking=request.POST.get("ranking"),
+                observations=request.POST.get("observations"),
+            )
+            messages.success(request, "The Frequency has been inserted!")
+            return redirect(
+                "mentoring_member_frequencies",
+                group_pk=group_pk,
+                person_pk=person_pk,
+            )
 
+        context = {
+            "person": object,
+            "form": MentoringFrequencyForm,
+            "insert_to": f"{event.activity.name} {event.center}",
+            "title": "confirm to insert",
+        }
+        return render(
+            request, "workgroup/elements/confirm_add_frequency.html", context
+        )
 
-@login_required
-@permission_required("workgroup.change_workgroup")
-def workgroup_update(request, pk):
-    workgroup = get_object_or_404(Workgroup, pk=pk)
-    if request.method == "POST":
-        form = WorkgroupForm(request.POST, instance=workgroup)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "The Workgroup has been updated!")
-
-        return redirect("workgroup_detail", pk=pk)
-
-    context = {
-        "form": WorkgroupForm(
-            instance=workgroup, initial={"made_by": request.user}
-        ),
-        "form_name": "Workgroup",
-        "form_path": "workgroup/forms/workgroup.html",
-        "goback": reverse("workgroup_detail", args=[pk]),
-        "title": "update workgroup",
-        "pk": pk,
-    }
-    return render(request, "base/form.html", context)
-
-
-@login_required
-@permission_required("workgroup.delete_workgroup")
-def workgroup_delete(request, pk):
-    workgroup = get_object_or_404(Workgroup, pk=pk)
-    if request.method == "POST":
-        if workgroup.members:
-            workgroup.members.clear()
-        workgroup.delete()
-        return redirect("workgroup_home")
+    queryset, page = search_event(request, Event)
+    object_list = paginator(queryset, page=page)
 
     context = {
-        "object": workgroup,
-        "members": [
-            m
-            for m in workgroup.membership_set.all().order_by("-role_type")[:4]
-        ],
-        "title": "confirm to delete",
+        "object": object,
+        "object_list": object_list,
+        "title": "insert frequencies",
+        "type_list": ACTIVITY_TYPES,
+        "pre_freqs": [obj.event.pk for obj in object.frequency_set.all()],
+        "group_pk": group_pk,
     }
     return render(
-        request, "workgroup/elements/confirm_to_delete_workgroup.html", context
+        request, "workgroup/mentoring/member_add_frequency.html", context
     )

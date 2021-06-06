@@ -6,9 +6,7 @@
           {{ person.center }}
           {% if person.aspect != "--" %}
           &nbsp;&nbsp;&nbsp;&nbsp;
-          <em>
-            {{ person.get_aspect_display }} 
-          </em>
+          <em>{{ person.get_aspect_display }}</em>
           {% endif %}
           {% if person.center != request.user.person.center %}
           &nbsp;&nbsp;&nbsp;

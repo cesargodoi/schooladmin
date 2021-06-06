@@ -1,6 +1,7 @@
 from django import forms
 
 from .models import Workgroup, Membership
+from event.models import Frequency
 from schooladmin.common import HIDDEN_AUTH_FIELDS
 
 
@@ -22,5 +23,15 @@ class MembershipForm(forms.ModelForm):
         widgets = {
             "person": forms.HiddenInput(),
             "workgroup": forms.HiddenInput(),
-            "observations": forms.Textarea(attrs={"rows": 4}),
+            "observations": forms.Textarea(attrs={"rows": 2}),
+        }
+
+
+class MentoringFrequencyForm(forms.ModelForm):
+    class Meta:
+        model = Frequency
+        fields = ["ranking", "observations"]
+        widgets = {
+            "ranking": forms.widgets.NumberInput(attrs={"min": 0, "max": 2}),
+            "observations": forms.Textarea(attrs={"rows": 2}),
         }

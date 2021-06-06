@@ -4,10 +4,14 @@
       <div class="row">
         <div class="col-9">
           {{ object.center }}
+          {% if object.aspect != "--" %}
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <em>{{ object.get_aspect_display }}</em>
+          {% endif %}
         </div>
         <div class="col-3 text-right">
-          {% if object.aspect %}
-          <span class="badge badge-pill badge-success">{{ object.get_aspect_display }}</span>
+          {% if object.reg %}
+          <span class="badge badge-pill badge-secondary">{{ object.reg }}</span>
           {% endif %}
           {% if not object.is_active %}
           <span class="badge badge-pill badge-danger">inactive</span>

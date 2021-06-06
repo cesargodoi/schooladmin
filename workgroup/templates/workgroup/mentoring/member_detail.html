@@ -9,7 +9,7 @@
       {% if tab == "frequencies" %}
       <a type="button" 
         class="btn btn-light text-primary" 
-        href="{ url 'add_frequency' object.id %}">
+        href="{% url 'membership_add_frequency' group_pk object.id %}">
         <i class="fas fa-plus"></i> Add frequency
       </a>
       {% endif %}

@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from person.models import Person
 from schooladmin.common import ASPECTS, STATUS, paginator
 
@@ -12,10 +12,10 @@ from base.searchs import search_person
 @login_required
 @permission_required("workgroup.add_membership")
 def membership_insert(request, workgroup_id):
-    workgroup = get_object_or_404(Workgroup, pk=workgroup_id)
+    workgroup = Workgroup.objects.get(pk=workgroup_id)
 
     if request.GET.get("pk"):
-        person = get_object_or_404(Person, pk=request.GET.get("pk"))
+        person = Person.objects.get(pk=request.GET.get("pk"))
 
         if request.method == "POST":
             workgroup.members.add(person)
@@ -53,7 +53,7 @@ def membership_insert(request, workgroup_id):
 @login_required
 @permission_required("workgroup.change_membership")
 def membership_update(request, workgroup_id, pk):
-    membership = get_object_or_404(Membership, pk=pk)
+    membership = Membership.objects.get(pk=pk)
 
     if request.method == "POST":
         form = MembershipForm(request.POST, instance=membership)
@@ -74,7 +74,7 @@ def membership_update(request, workgroup_id, pk):
 @login_required
 @permission_required("workgroup.delete_membership")
 def membership_delete(request, workgroup_id, pk):
-    membership = get_object_or_404(Membership, pk=pk)
+    membership = Membership.objects.get(pk=pk)
     if request.method == "POST":
         membership.delete()
         return redirect("workgroup_detail", pk=workgroup_id)

@@ -58,4 +58,9 @@ urlpatterns += [
         mentoring.mentoring_member_historics,
         name="mentoring_member_historics",
     ),
+    path(
+        "mentoring/<int:group_pk>/member/<uuid:person_pk>/add-frequency/",
+        mentoring.membership_add_frequency,
+        name="membership_add_frequency",
+    ),
 ]
