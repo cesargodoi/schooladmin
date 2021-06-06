@@ -33,8 +33,8 @@
     <table class="table table-hover table-sm">
       <thead>
         <tr>
+          <th>name</th>
           <th>type</th>
-          <th>code</th>
           <th class="text-right">active</th>
           <th class="text-right"></th>
         </tr>
@@ -43,7 +43,7 @@
         {% for object in object_list %}
         <tr onclick="location.href='{% url 'paytype_update' object.pk %}';">
           <td>{{ object.name }}</td>
-          <td>{{ object.code }}</td>
+          <td>{{ object.get_pay_type_display }}</td>
           <td class="text-right">
             {% if object.is_active %}
             <i class="fas fa-check-square text-primary"></i>

@@ -6,13 +6,13 @@ from django.db import models
 from django.conf import settings
 from person.models import Person
 from event.models import Event
-from schooladmin.common import ORDER_STATUS, PAYFORM_TYPES
+from schooladmin.common import ORDER_STATUS, PAYFORM_TYPES, PAY_TYPES
 
 
 #  PayTypes
 class PayTypes(models.Model):
     name = models.CharField(max_length=50)
-    code = models.CharField(max_length=10)
+    pay_type = models.CharField(max_length=3, choices=PAY_TYPES, default="MON")
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

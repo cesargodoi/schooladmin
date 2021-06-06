@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from schooladmin.common import paginator
 
@@ -43,7 +43,7 @@ def paytype_create(request):
 @login_required
 @permission_required("treasury.change_paytypes")
 def paytype_update(request, pk):
-    object = get_object_or_404(PayTypes, pk=pk)
+    object = PayTypes.objects.get(pk=pk)
     if request.method == "POST":
         form = PayTypeForm(request.POST, instance=object)
         if form.is_valid():
@@ -65,7 +65,7 @@ def paytype_update(request, pk):
 @login_required
 @permission_required("treasury.delete_paytypes")
 def paytype_delete(request, pk):
-    object = get_object_or_404(PayTypes, pk=pk)
+    object = PayTypes.objects.get(pk=pk)
     if request.method == "POST":
         if object.payment_set.all():
             object.is_active = False

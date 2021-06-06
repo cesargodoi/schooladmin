@@ -68,6 +68,11 @@ ORDER_STATUS = (
     ("PND", "pending"),
     ("CCD", "concluded"),
 )
+PAY_TYPES = (
+    ("MON", "monthly"),
+    ("EVE", "by event"),
+    ("CAM", "campaign"),
+)
 PAYFORM_TYPES = (
     ("PIX", "pix"),
     ("CSH", "cash"),
