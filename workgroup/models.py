@@ -8,7 +8,8 @@ from schooladmin.common import (
     WORKGROUP_TYPES,
 )
 
-##  Workgroup  ##
+
+#  Workgroup
 class Workgroup(models.Model):
     name = models.CharField(max_length=50)
     center = models.ForeignKey("center.Center", on_delete=models.PROTECT)
@@ -36,14 +37,14 @@ class Workgroup(models.Model):
         verbose_name_plural = "workgroups"
 
 
-##  Membership  ##
+#  Membership
 class Membership(models.Model):
     workgroup = models.ForeignKey(Workgroup, on_delete=models.PROTECT)
     person = models.ForeignKey(Person, on_delete=models.PROTECT)
     role_type = models.CharField(
         "role", max_length=3, choices=ROLE_TYPES, default="MBR"
     )
-    observations = models.TextField(null=True, blank=True)
+    observations = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"{self.workgroup} - {self.person} [{self.role_type}]"

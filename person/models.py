@@ -81,7 +81,7 @@ class Historic(models.Model):
         max_length=3, choices=OCCURRENCES, default="ACT"
     )
     date = models.DateField(null=True, blank=True)
-    description = models.TextField(blank=True)
+    description = models.CharField(max_length=200, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
     made_by = models.ForeignKey(

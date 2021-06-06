@@ -44,7 +44,7 @@ class Center(models.Model):
     conf_center = models.ForeignKey(
         "self", on_delete=models.PROTECT, null=True, blank=True
     )
-    observations = models.TextField(blank=True)
+    observations = models.CharField(max_length=200, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)

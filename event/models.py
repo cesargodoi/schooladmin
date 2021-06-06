@@ -39,7 +39,7 @@ class Event(models.Model):
     status = models.CharField(
         max_length=3, choices=EVENT_STATUS, default="OPN"
     )
-    description = models.TextField(null=True, blank=True)
+    description = models.CharField(max_length=200, null=True, blank=True)
     frequencies = models.ManyToManyField(
         Person, through="Frequency", blank=True
     )

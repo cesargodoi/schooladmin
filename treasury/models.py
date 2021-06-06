@@ -162,7 +162,7 @@ class Order(models.Model):
     status = models.CharField(
         max_length=3, choices=ORDER_STATUS, default="PND"
     )
-    description = models.TextField(null=True, blank=True)
+    description = models.CharField(max_length=200, null=True, blank=True)
     self_payed = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
@@ -175,7 +175,9 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f"{self.center} - {self.person.name} ${self.amount} ({self.status})"
+        return "{} - {} ${} ({})".format(
+            self.center, self.person.name, self.amount, self.status
+        )
 
     class Meta:
         verbose_name = "order"

@@ -94,7 +94,7 @@ class Lecture(models.Model):
     type = models.CharField(max_length=3, choices=LECTURE_TYPES, default="CTT")
     theme = models.CharField(max_length=100)
     date = models.DateField(null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.CharField(max_length=200, null=True, blank=True)
     listeners = models.ManyToManyField(Seeker, through="Listener", blank=True)
     is_active = models.BooleanField(default=True)
     created_on = models.DateTimeField(auto_now_add=True)
