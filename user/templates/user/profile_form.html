@@ -8,7 +8,7 @@
   <div class="btn-group btn-group-sm mt-1" role="group">
     <button 
       class="btn btn-warning" 
-      onclick="document.getElementById('form').submit();">
+      onclick="checkForm();">
       <i class="fas fa-check"></i> 
       Save
     </button>
@@ -131,3 +131,93 @@
   </div>
 </article>
 {% endblock content %}
+
+{% block scripts %}
+
+<script>
+  // label para e-mail input
+  var hint_email = document.getElementById("hint_id_email")
+  hint_email.innerHTML = "Enter a valid e-mail: your@mail.com"
+
+  // handlers functions
+  function alertNameInput(){
+    var socialName = document.getElementById("id_social_name")
+    var invalidName = document.createElement("p")
+    invalidName.classList.add("invalid-feedback")
+    var invalidText = document.createTextNode("Por favor, escreva como gostaria de ser chamado.")
+    invalidName.appendChild(invalidText)
+    socialName.parentElement.appendChild(invalidName)
+    socialName.classList.add("is-invalid")
+    socialName.focus();
+    }
+
+  function alertEmailInput(){
+    var email = document.getElementById("id_email")
+    var invalidEmail = document.createElement("p")
+    invalidEmail.classList.add("invalid-feedback")
+    var invalidText = document.createTextNode("Por favor, indique um e-mail válido")
+    invalidEmail.appendChild(invalidText)
+    email.parentElement.appendChild(invalidEmail)
+    email.classList.add("is-invalid")
+    email.focus();
+  }
+
+  function alertPhoneOneInput(){
+    var phone_1 = document.getElementById("id_phone_1")
+    var invalidPhone = document.createElement("p")
+    invalidPhone.classList.add("invalid-feedback")
+    var invalidText = document.createTextNode("Por favor, cadastre um número de telefone válido!")
+    invalidPhone.appendChild(invalidText)
+    phone_1.parentElement.appendChild(invalidPhone)
+    phone_1.classList.add("is-invalid")
+    phone_1.focus();
+  }
+
+  function alertPhoneTwoInput(){
+    var phone_2 = document.getElementById("id_phone_2")
+    var invalidPhone = document.createElement("p")
+    invalidPhone.classList.add("invalid-feedback")
+    var invalidText = document.createTextNode("Por favor, cadastre um número de telefone válido!")
+    invalidPhone.appendChild(invalidText)
+    phone_2.parentElement.appendChild(invalidPhone)
+    phone_2.classList.add("is-invalid")
+    phone_2.focus();
+  }
+
+  // main check function
+  function checkForm(){
+    var socialName = document.getElementById("id_social_name").value
+    var email = document.getElementById("id_email").value
+    var phone_1 = document.getElementById("id_phone_1").value
+    var phone_2 = document.getElementById("id_phone_2").value
+
+    // checking name input
+    if(socialName.length < 2 || socialName == "" || socialName === null){
+      alertNameInput()
+      return false;
+    }
+    
+    // checking e-mail input
+    if(email.indexOf("@") == -1 ||
+      email.indexOf(".") == -1 ||
+      email == "" ||
+      email == null) {
+        alertEmailInput()
+        return false;
+    }
+
+    if(phone_1.length < 10 || phone_1 == "" || phone_1 === null){
+      alertPhoneOneInput()
+      return false;
+    }
+
+    if(phone_2.length > 0 && phone_2.length < 10){
+      alertPhoneTwoInput()
+      return false;
+    }
+
+    // submit after checked form
+    document.getElementById('form').submit()
+  }
+</script>
+{% endblock %}
