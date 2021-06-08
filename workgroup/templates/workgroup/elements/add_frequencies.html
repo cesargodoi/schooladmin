@@ -1,0 +1,131 @@
+{% if not request.session.frequencies.event %}
+  <h4>Select an event</h4>
+  <form class="form-control-sm border-top" method="GET">
+    {% csrf_token %}
+    {% include "base/searchs/event.html" %}
+  </form>
+  <br>
+
+  {% if object_list %}
+
+  {% if object_list.has_other_pages %}
+  {% include "base/paginator.html" %}
+  {% endif %}
+
+  <table class="table table-hover table-sm">
+    <thead>
+      <tr>
+        <th width="15%">date</th>
+        <th>event</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in object_list %}
+      <tr>
+        <td>{{ obj.date|date:'d/m/Y'}}</td>
+        <td>
+          {{ obj.activity.name }}
+          <small class="text-muted">{{ obj.center }}</small>
+        </td>
+        <td class="text-right">
+          <a type="button" 
+            href="{% url 'mentoring_add_frequencies' group_pk %}?event_pk={{ obj.pk }}"
+            class="btn btn-outline-light btn-sm text-primary">
+            <i class="fas fa-check"></i> select
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% else %}
+
+  <div class="alert alert-secondary" role="alert">
+    <h4 class="alert-heading">frequencies not found</h4>
+  </div>
+
+  {% endif %}
+
+{% else %}
+
+  <h4>Event</h4>
+  <br>
+  <table class="table table-hover table-sm">
+    <thead>
+      <tr>
+        <th width="15%">{{ request.session.frequencies.event.date }}</th>
+        <th>{{ request.session.frequencies.event.name }}</th>
+        <th>{{ request.session.frequencies.event.center }}</th>
+      </tr>
+    </thead>
+  </table>
+  <br>
+  <h4>Mark who participated</h4>
+  <br>
+  
+  <table class="table table-hover table-sm">
+    <thead>
+      <tr>
+        <th width="3%"></th>
+        <th>person</th>
+        <th class="text-right">freq</th>
+        <th>rank</th>
+        <th>observations</th>
+      </tr>
+    </thead>
+    <tbody>
+      <form class="form-control-sm border-top" method="POST" id="form">
+        {% csrf_token %}
+        {% for listener in request.session.frequencies.listeners %}
+        <tr>
+          <th width="3%">{{ forloop.counter }}</th>
+          <td width="27%">
+            {% if not listener.frequency %}
+            <input type="hidden" value="{{ listener.person.id }}" name="id-{{ forloop.counter }}">
+            <input type="hidden" value="{{ listener.aspect }}" name="asp-{{ forloop.counter }}">
+            {% endif %}
+            {{ listener.person.name }} 
+            <small class="text-muted">
+              &nbsp;&nbsp;
+              <em>
+              {{ listener.person.center }}
+              </em>
+            </small>
+          </td>
+          <td width="5%" class="text-right">
+            {% if not listener.frequency %}
+            <input type="checkbox" 
+                   class="form-check-input"  
+                   value="on" 
+                   name="freq-{{ forloop.counter }}">
+            {% endif %}
+          </td>
+          <td width="5%" class="text-center">
+            {% if not listener.frequency %}
+            <input type="number" min="0" max="2"
+                   class="form-control form-control-sm" 
+                   value="0"
+                   name="rank-{{ forloop.counter }}">
+            {% else %}
+            {% if listener.ranking > 0 %}{{ listener.ranking }}{% endif %}
+            {% endif %}
+          </td>
+          <td width="60%">
+            {% if not listener.frequency %}
+            <input type="text" 
+                   class="form-control form-control-sm" 
+                   value="{{ listener.observations }}"
+                   name="obs-{{ forloop.counter }}">
+            {% else %}
+            {% if listener.observations %}{{ listener.observations }}  {% endif %}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </form>
+    </tbody>
+  </table>
+
+{% endif %}

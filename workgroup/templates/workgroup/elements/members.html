@@ -1,0 +1,46 @@
+<h4>Members</h4>
+
+{% if object_list %}
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+<table class="table table-hover table-sm">
+  <tr>
+    <th></th>
+    <th>person</th>
+    <th>aspect</th>
+    <th>role</th>
+    <th></th>
+  </tr>
+  {% for member in object_list %}
+  <tr>
+    <th>{{ forloop.counter }}</th>
+    <td>{{ member.person.name }}
+      &nbsp;&nbsp;
+      <small class="text-muted">
+        <em>{{ member.person.center }}</em>
+      </small>
+    </td>
+    <td>{{ member.person.get_aspect_display }}</td>
+    <td>{{ member.get_role_type_display }}</td>
+    <td class="text-right">
+      <a type="button" 
+        href="{% url 'mentoring_member_detail' object.id member.person.pk %}"
+        class="btn btn-outline-light btn-sm text-info">
+        <i class="fas fa-eye"></i>
+        detail
+      </a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% else %}
+
+<div class="alert alert-secondary" role="alert">
+  <h4 class="alert-heading">members not found</h4>
+</div>
+
+{% endif %}

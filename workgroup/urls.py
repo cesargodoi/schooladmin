@@ -59,6 +59,11 @@ urlpatterns += [
         name="mentoring_member_historics",
     ),
     path(
+        "mentoring/<int:group_pk>/add-frequencies/",
+        mentoring.mentoring_add_frequencies,
+        name="mentoring_add_frequencies",
+    ),
+    path(
         "mentoring/<int:group_pk>/member/<uuid:person_pk>/add-frequency/",
         mentoring.membership_add_frequency,
         name="membership_add_frequency",
@@ -67,5 +72,10 @@ urlpatterns += [
         "mentoring/<int:group_pk>/member/<uuid:person_pk>/update-frequency/<int:freq_pk>",
         mentoring.membership_update_frequency,
         name="membership_update_frequency",
+    ),
+    path(
+        "mentoring/<int:group_pk>/member/<uuid:person_pk>/remove-frequency/<int:freq_pk>",
+        mentoring.membership_remove_frequency,
+        name="membership_remove_frequency",
     ),
 ]

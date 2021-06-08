@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime, date
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
@@ -26,16 +26,21 @@ def mentoring_home(request):
 @login_required
 @permission_required("workgroup.view_workgroup")
 def mentoring_group_detail(request, pk):
-    object = Workgroup.objects.get(pk=pk)
+    if request.session.get("frequencies"):
+        del request.session["frequencies"]
 
-    queryset = object.membership_set.all().order_by("person__name_sa")
+    workgroup = Workgroup.objects.get(pk=pk)
+
+    queryset = workgroup.membership_set.all().order_by("person__name_sa")
 
     object_list = paginator(queryset, 25, request.GET.get("page"))
 
     context = {
-        "object": object,
+        "object": workgroup,
         "object_list": object_list,
         "title": "workgroup detail",
+        "tab": "members",
+        "goback": reverse("mentoring_home"),
     }
     return render(request, "workgroup/mentoring/group_detail.html", context)
 
@@ -95,20 +100,20 @@ def mentoring_member_historics(request, group_pk, person_pk):
 @login_required
 @permission_required("workgroup.view_workgroup")
 def membership_add_frequency(request, group_pk, person_pk):
-    object = Person.objects.get(pk=person_pk)
+    person = Person.objects.get(pk=person_pk)
 
     if request.GET.get("pk"):
         event = Event.objects.get(pk=request.GET.get("pk"))
 
         if request.method == "POST":
-            object.frequency_set.create(
-                person=object,
+            person.frequency_set.create(
+                person=person,
                 event=event,
-                aspect=object.aspect,
+                aspect=person.aspect,
                 ranking=request.POST.get("ranking"),
                 observations=request.POST.get("observations"),
             )
-            messages.success(request, "The Frequency has been inserted!")
+            messages.success(request, "The frequency has been inserted!")
             return redirect(
                 "mentoring_member_frequencies",
                 group_pk=group_pk,
@@ -116,7 +121,7 @@ def membership_add_frequency(request, group_pk, person_pk):
             )
 
         context = {
-            "person": object,
+            "person": person,
             "form": MentoringFrequencyForm,
             "insert_to": f"{event.activity.name} {event.center}",
             "title": "confirm to insert",
@@ -129,11 +134,11 @@ def membership_add_frequency(request, group_pk, person_pk):
     object_list = paginator(queryset, page=page)
 
     context = {
-        "object": object,
+        "object": person,
         "object_list": object_list,
         "title": "insert frequencies",
         "type_list": ACTIVITY_TYPES,
-        "pre_freqs": [obj.event.pk for obj in object.frequency_set.all()],
+        "pre_freqs": [obj.event.pk for obj in person.frequency_set.all()],
         "group_pk": group_pk,
     }
     return render(
@@ -153,7 +158,7 @@ def membership_update_frequency(request, group_pk, person_pk, freq_pk):
         )
         frequency.observations = request.POST["observations"]
         frequency.save()
-        messages.success(request, "The Frequency has been updated!")
+        messages.success(request, "The frequency has been updated!")
         return redirect(
             "mentoring_member_frequencies",
             group_pk=group_pk,
@@ -172,3 +177,130 @@ def membership_update_frequency(request, group_pk, person_pk, freq_pk):
     return render(
         request, "workgroup/mentoring/update_frequency.html", context
     )
+
+
+@login_required
+@permission_required("workgroup.view_workgroup")
+def membership_remove_frequency(request, group_pk, person_pk, freq_pk):
+    frequency = Frequency.objects.get(pk=freq_pk)
+
+    if request.method == "POST":
+        frequency.delete()
+        messages.success(request, "The frequency has been removed!")
+        return redirect(
+            "mentoring_member_frequencies",
+            group_pk=group_pk,
+            person_pk=person_pk,
+        )
+
+    context = {"object": frequency, "title": "confirm to delete"}
+    return render(request, "base/confirm_delete.html", context)
+
+
+@login_required
+@permission_required("workgroup.view_workgroup")
+def mentoring_add_frequencies(request, group_pk):
+    workgroup = Workgroup.objects.get(pk=group_pk)
+
+    if request.GET.get("event_pk"):
+        # get event
+        event = Event.objects.get(pk=request.GET["event_pk"])
+        # create and prepare frequencies object in session, if necessary
+        if not request.session.get("frequencies"):
+            request.session["frequencies"] = {
+                "event": {},
+                "listeners": [],
+            }
+            preparing_the_session(request, workgroup.members.all(), event)
+
+    if request.method == "POST":
+        listeners = get_listeners_dict(request)
+        if listeners:
+            for listener in listeners:
+                new_freq = dict(
+                    event=event,
+                    person_id=listener["id"],
+                    aspect=listener["asp"],
+                    ranking=listener["rank"],
+                    observations=listener["obs"],
+                )
+                Frequency.objects.create(**new_freq)
+        return redirect("mentoring_group_detail", pk=group_pk)
+
+    queryset, page = search_event(request, Event)
+    object_list = paginator(queryset, page=page)
+    context = {
+        "object": workgroup,
+        "object_list": object_list,
+        "title": "workgroup add members",
+        "tab": "add_frequencies",
+        "goback": reverse("mentoring_group_detail", args=[group_pk]),
+        "group_pk": group_pk,
+    }
+    return render(request, "workgroup/mentoring/group_detail.html", context)
+
+
+# handlers
+def preparing_the_session(request, persons, event):
+    # check which frequencies have already been entered
+    inserteds = [
+        [str(ev.person.pk), ev.person.aspect, ev.ranking, ev.observations]
+        for ev in event.frequency_set.all()
+    ]
+    # adjust frequencies on session
+    frequencies = request.session["frequencies"]
+    # add event
+    frequencies["event"] = {
+        "id": str(event.pk),
+        "date": str(datetime.strftime(event.date, "%d/%m/%Y")),
+        "name": event.activity.name,
+        "center": str(event.center),
+    }
+    # add listeners
+    frequencies["listeners"] = []
+    for per in persons:
+        for ins in inserteds:
+            if str(per.pk) == ins[0]:
+                listener = {
+                    "person": {
+                        "id": str(per.pk),
+                        "name": per.name,
+                        "center": str(per.center),
+                    },
+                    "frequency": "on",
+                    "aspect": ins[1],
+                    "ranking": ins[2],
+                    "observations": ins[3],
+                }
+                break
+            else:
+                listener = {
+                    "person": {
+                        "id": str(per.pk),
+                        "name": per.name,
+                        "center": str(per.center),
+                    },
+                    "frequency": "",
+                    "aspect": per.aspect,
+                    "ranking": 0,
+                    "observations": "",
+                }
+        frequencies["listeners"].append(listener)
+    # save session
+    request.session.modified = True
+
+
+def get_listeners_dict(request):
+    from_post = [
+        obj for obj in request.POST.items() if obj[0] != "csrfmiddlewaretoken"
+    ]
+    listeners = []
+    for i in range(1, len(request.session["frequencies"]["listeners"]) + 1):
+        listener = {}
+        for _lis in from_post:
+            lis = _lis[0].split("-")
+            if lis[1] == str(i):
+                listener[lis[0]] = _lis[1]
+        if "freq" in listener.keys():
+            listeners.append(listener)
+    return listeners

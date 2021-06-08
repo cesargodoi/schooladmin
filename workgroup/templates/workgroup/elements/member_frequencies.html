@@ -37,7 +37,7 @@
   </div>
   <div class="col-sm-1 text-right">
     <a type="button" 
-      href="{ url 'remove_frequency' object.pk freq.pk %}"
+      href="{% url 'membership_remove_frequency' group_pk object.pk freq.pk %}"
       class="btn btn-outline-light btn-sm">
       <i class="fas fa-trash-alt text-danger"></i>
     </a>
