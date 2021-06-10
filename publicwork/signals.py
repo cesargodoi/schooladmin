@@ -9,12 +9,12 @@ from .models import Seeker, Historic
 def insert_historic(sender, instance, created, **kwargs):
     if created:
         date = timezone.now().date()
-        instance.status = "new"
+        instance.status = "NEW"
         instance.status_date = date
         instance.save()
         Historic.objects.create(
             seeker=instance,
-            occurrence="new",
+            occurrence="NEW",
             date=date,
             description="entered as a seeker",
             made_by=instance.made_by,

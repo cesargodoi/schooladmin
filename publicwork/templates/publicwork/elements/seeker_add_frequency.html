@@ -1,6 +1,6 @@
 <form class="form-control-sm mt-1 mb-2" method="GET">
   {% csrf_token %}
-  {% include "publicwork/elements/search_lecture.html" %}
+  {% include "base/searchs/lecture.html" %}
 </form>
 
 {% if object_list %}
