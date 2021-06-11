@@ -1,7 +1,7 @@
 from django import forms
 from schooladmin.common import HIDDEN_AUTH_FIELDS
 
-from .models import Seeker, Lecture, Listener, Historic
+from .models import Seeker, Lecture, Listener, Historic_of_seeker
 
 
 class SeekerForm(forms.ModelForm):
@@ -42,7 +42,7 @@ class ListenerForm(forms.ModelForm):
 
 class HistoricForm(forms.ModelForm):
     class Meta:
-        model = Historic
+        model = Historic_of_seeker
         exclude = ["listeners"]
         widgets = {
             "descriptions": forms.Textarea(attrs={"rows": 2}),

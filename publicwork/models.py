@@ -47,6 +47,7 @@ class Seeker(models.Model):
     def save(self, *args, **kwargs):
         self.name_sa = us_inter_char(self.name)
         self.short_name = short_name(self.name)
+        self.state = str(self.state).upper()
         super(Seeker, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -58,7 +59,7 @@ class Seeker(models.Model):
 
 
 # Historic of seeker
-class Historic(models.Model):
+class Historic_of_seeker(models.Model):
     seeker = models.ForeignKey(Seeker, on_delete=models.PROTECT)
     occurrence = models.CharField(
         max_length=3, choices=SEEKER_STATUS, default="NEW"

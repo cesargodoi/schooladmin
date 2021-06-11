@@ -9,7 +9,7 @@ from center.models import Center
 from base.searchs import search_seeker, search_lecture
 
 from ..forms import ListenerForm
-from ..models import Lecture, Seeker, Listener, Historic
+from ..models import Lecture, Seeker, Listener, Historic_of_seeker
 
 
 @login_required
@@ -22,7 +22,10 @@ def add_listener(request, lect_pk):
 
         if request.method == "POST":
             # isert historic if necessary
-            if seeker.historic_set.last().occurrence in ["NEW", "MT1"]:
+            if seeker.historic_of_seeker_set.last().occurrence in [
+                "NEW",
+                "MT1",
+            ]:
                 insert_historic_if_necessary(request, seeker)
             # create listener
             Listener.objects.create(
@@ -107,7 +110,10 @@ def add_frequency(request, pk):
 
         if request.method == "POST":
             # isert historic if necessary
-            if seeker.historic_set.last().occurrence in ["NEW", "MT1"]:
+            if seeker.historic_of_seeker_set.last().occurrence in [
+                "NEW",
+                "MT1",
+            ]:
                 insert_historic_if_necessary(request, seeker)
             # create listener
             Listener.objects.create(
@@ -188,15 +194,17 @@ def remove_frequency(request, seek_pk, freq_pk):
 
 # handlers
 def insert_historic_if_necessary(request, obj):
-    new_historic = dict(
-        seeker=obj,
-        date=timezone.now().date(),
-        description="automatically added by frequency",
-        made_by=request.user,
-    )
-    if obj.historic_set.last().occurrence == "NEW":
-        new_historic["occurrence"] = "MT1"
-    elif obj.historic_set.last().occurrence == "MT1":
-        new_historic["occurrence"] = "MT2"
+    if obj.historic_of_seeker_set.last().occurrence in ["NEW", "MT1"]:
+        new_historic = dict(
+            seeker=obj,
+            date=timezone.now().date(),
+            description="automatically added by frequency",
+            made_by=request.user,
+        )
 
-    Historic.objects.create(**new_historic)
+        if obj.historic_of_seeker_set.last().occurrence == "NEW":
+            new_historic["occurrence"] = "MT1"
+        elif obj.historic_of_seeker_set.last().occurrence == "MT1":
+            new_historic["occurrence"] = "MT2"
+
+        Historic_of_seeker.objects.create(**new_historic)

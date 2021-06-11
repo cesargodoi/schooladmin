@@ -16,7 +16,9 @@
     </span>
   </div>
   <div class="col-sm-9">
+    {% if hist.description %}
     {{ hist.description }}
+    {% endif %}
   </div> 
   <div class="col-sm-1 text-right">
     <a type="button" 

@@ -10,8 +10,8 @@
           {% endif %}
         </div>
         <div class="col-3 text-right">
-          {% if object.historic_set.last %}
-          <span class="badge badge-pill badge-success">{{ object.historic_set.last.get_occurrence_display }}</span>
+          {% if object.status %}
+          <span class="badge badge-pill badge-success">{{ object.get_status_display }}</span>
           {% endif %}
           {% if not object.is_active %}
           <span class="badge badge-pill badge-danger">inactive</span>

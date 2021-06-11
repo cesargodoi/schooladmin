@@ -20,9 +20,9 @@
           {% if not object.is_active %}
           <span class="badge badge-pill badge-danger">inactive</span>
           {% endif %}
-          {% if object.historic_set.last %}
-          <span class="badge badge-pill badge-{% if object.historic_set.last.occurrence == 'RST' %}danger{% else %}success{% endif %}">
-            {{ object.historic_set.last.get_occurrence_display }}
+          {% if object.status %}
+          <span class="badge badge-pill badge-{% if object.status == 'RST' %}danger{% else %}success{% endif %}">
+            {{ object.get_status_display }}
           </span>
           {% endif %}
         </div>
