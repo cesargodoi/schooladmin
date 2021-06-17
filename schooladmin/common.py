@@ -187,7 +187,7 @@ phone_regex = RegexValidator(
 )
 
 
-def phone_format(num):
+def phone_format(num, country="BR"):
     num = (
         "+{}".format("".join(re.findall(r"\d", num)))
         if num.startswith("+")
@@ -197,26 +197,19 @@ def phone_format(num):
     if not num:
         return ""
 
-    if num.startswith("00") and len(num) in (14, 15):
-        num = (
-            f"+{num[2:4]} {num[4:6]} {num[6:11]}.{num[11:]}"
-            if len(num) == 15
-            else f"+{num[2:4]} {num[4:6]} {num[6:10]}.{num[10:]}"
-        )
-
-    elif num.startswith("+") and len(num) in (13, 14):
-        num = (
-            f"+{num[1:3]} {num[3:5]} {num[5:10]}.{num[10:]}"
-            if len(num) == 14
-            else f"+{num[1:3]} {num[3:5]} {num[5:9]}.{num[9:]}"
-        )
-
-    elif not num.startswith("+") and len(num) in (10, 11):
-        num = (
-            f"{num[:2]} {num[2:7]}.{num[7:]}"
-            if len(num) == 11
-            else f"{num[:2]} {num[2:6]}.{num[6:]}"
-        )
+    if country == "BR":
+        if num.startswith("+"):
+            num = (
+                f"+{num[1:3]} {num[3:5]} {num[5:10]}-{num[10:]}"
+                if len(num) == 14
+                else f"+{num[1:3]} {num[3:5]} {num[5:9]}-{num[9:]}"
+            )
+        elif len(num) in (10, 11):
+            num = (
+                f"+55 {num[:2]} {num[2:7]}-{num[7:]}"
+                if len(num) == 11
+                else f"+55 {num[:2]} {num[2:6]}-{num[6:]}"
+            )
 
     return num
 
