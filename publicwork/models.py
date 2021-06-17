@@ -3,9 +3,11 @@ from django.db import models
 from schooladmin.common import (
     us_inter_char,
     short_name,
+    phone_format,
     GENDER_TYPES,
     LECTURE_TYPES,
     SEEKER_STATUS,
+    COUNTRIES,
 )
 
 
@@ -27,8 +29,8 @@ class Seeker(models.Model):
     )
     city = models.CharField(max_length=50, blank=True)
     state = models.CharField("state", max_length=2, blank=True)
-    country = models.CharField(max_length=50, blank=True)
-    phone = models.CharField("phone", max_length=15, blank=True)
+    country = models.CharField(max_length=2, choices=COUNTRIES, default="BR")
+    phone = models.CharField("phone", max_length=20, blank=True)
     email = models.EmailField()
     status = models.CharField(max_length=3, choices=SEEKER_STATUS, blank=True)
     status_date = models.DateField(null=True, blank=True)
@@ -48,6 +50,7 @@ class Seeker(models.Model):
         self.name_sa = us_inter_char(self.name)
         self.short_name = short_name(self.name)
         self.state = str(self.state).upper()
+        self.phone = phone_format(self.phone)
         super(Seeker, self).save(*args, **kwargs)
 
     def __str__(self):

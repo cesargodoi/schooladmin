@@ -1,14 +1,13 @@
 from PIL import Image
 from django.db import models
 from django.utils import timezone
-# from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin,
     BaseUserManager,
 )
-from schooladmin.common import phone_format, GENDER_TYPES
+from schooladmin.common import phone_format, GENDER_TYPES, COUNTRIES
 
 
 class UserManager(BaseUserManager):
@@ -73,7 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _("users")
 
 
-##  Profile  ##
+# Profile
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     social_name = models.CharField(max_length=80)
@@ -89,14 +88,14 @@ class Profile(models.Model):
     district = models.CharField(max_length=50, blank=True)
     city = models.CharField(max_length=50, blank=True)
     state = models.CharField("state", max_length=2, blank=True)
-    country = models.CharField(max_length=50, blank=True)
+    country = models.CharField(max_length=2, choices=COUNTRIES, default="BR")
     zip_code = models.CharField("zip", max_length=15, blank=True)
-    phone_1 = models.CharField("phone", max_length=15, blank=True)
-    phone_2 = models.CharField("backup phone", max_length=15, blank=True)
+    phone_1 = models.CharField("phone", max_length=20, blank=True)
+    phone_2 = models.CharField("backup phone", max_length=20, blank=True)
     sos_contact = models.CharField(
         "emergency contact", max_length=50, blank=True
     )
-    sos_phone = models.CharField("emergency phone", max_length=15, blank=True)
+    sos_phone = models.CharField("emergency phone", max_length=20, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.social_name:

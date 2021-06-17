@@ -1,10 +1,9 @@
 import re
 from django import forms
 from unicodedata import normalize
-from django.urls.base import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.urls.resolvers import URLPattern
 from django.http.response import Http404
+from django.core.validators import RegexValidator
 
 
 # hidden auth fields
@@ -179,6 +178,13 @@ def cpf_validation(num):
 def cpf_format(num):
     cpf = "".join(re.findall(r"\d", num))
     return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
+
+
+phone_regex = RegexValidator(
+    regex=r"^\+?1?\d{9,15}$",
+    message="Phone number must be entered in the format: '+999999999'. \
+        Up to 15 digits allowed.",
+)
 
 
 def phone_format(num):

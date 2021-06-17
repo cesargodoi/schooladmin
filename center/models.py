@@ -19,8 +19,8 @@ class Center(models.Model):
     state = models.CharField("state", max_length=2, blank=True)
     country = models.CharField(max_length=2, choices=COUNTRIES, default="BR")
     zip_code = models.CharField("zip code", max_length=15, blank=True)
-    phone_1 = models.CharField("phone", max_length=15, blank=True)
-    phone_2 = models.CharField("backup phone", max_length=15, blank=True)
+    phone_1 = models.CharField("phone", max_length=20, blank=True)
+    phone_2 = models.CharField("backup phone", max_length=20, blank=True)
     email = models.CharField(max_length=60, blank=True)
     secretary = models.ForeignKey(
         settings.AUTH_USER_MODEL,
