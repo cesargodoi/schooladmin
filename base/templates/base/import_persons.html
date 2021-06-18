@@ -6,7 +6,7 @@
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
-    <input type="file" name="persons_csv" id="persons_csv" />
+    <input type="file" name="import_file" id="import_file" />
     <hr>
     <div class="form-group">
       <button class="btn btn-outline-danger" type="submit">Import</button>

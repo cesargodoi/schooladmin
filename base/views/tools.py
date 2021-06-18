@@ -3,8 +3,10 @@ from io import StringIO
 from datetime import datetime, timedelta
 from django.utils import timezone
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.models import Group
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from center.models import Center
 from user.models import User
@@ -15,28 +17,31 @@ from schooladmin.common import short_name
 
 @login_required
 def import_persons(request):
+    print()
     if request.method == "POST":
-        center = get_object_or_404(Center, id=request.POST.get("conf_center"))
+        center = Center.objects.get(id=request.POST.get("conf_center"))
         user = request.user
+        user_group = Group.objects.get(name="user")
 
-        _csv = request.FILES.get("persons_csv")
-        _dict = csv.DictReader(StringIO(_csv.read().decode("utf-8")))
+        _file = request.FILES.get("import_file")
+        _dict = csv.DictReader(StringIO(_file.read().decode("utf-8")))
 
         importeds = []
         not_importeds = []
         for person in _dict:
             if not person.get("email"):
-                print("não tem email")
-                print(person["name"])
                 not_importeds.append(person["name"])
             else:
                 password = BaseUserManager().make_random_password()
 
                 # creating a new user
-                _user = User.objects.create(
+                new_user = dict(
                     email=person["email"],
-                    password=password,
+                    password=make_password(password),
                 )
+                _user = User.objects.create(**new_user)
+
+                user_group.user_set.add(_user)
 
                 # updating the user.profile
                 _profile = _user.profile
@@ -76,7 +81,7 @@ def import_persons(request):
                 _person.short_name = short_name(person["name"])
                 _person.birth = person["birthday"]
                 _person.observations = (
-                    f"\nfirst password: {password} " + person["ps"]
+                    f"first password: {password}\n{person['ps']}"
                 )
                 _person.made_by = user
 
@@ -120,7 +125,13 @@ def import_persons(request):
                         Historic.objects.create(**new_aspect)
 
                 # updating Status
-                if person["restriction"] in ("ACT", "LIC", "DEA", "DIS", "REM"):
+                if person["restriction"] in (
+                    "ACT",
+                    "LIC",
+                    "DEA",
+                    "DIS",
+                    "REM",
+                ):
                     new_status = {
                         "person": _person,
                         "occurrence": person["restriction"],
