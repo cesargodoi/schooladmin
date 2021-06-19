@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Q
 from django.http.response import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
