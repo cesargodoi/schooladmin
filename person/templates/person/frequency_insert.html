@@ -2,20 +2,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "person/elements/header.html" %}
 
-{% block buttons %}
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      href="{% url 'frequency_ps_list' person.id %}" 
-      class="btn btn-light btn-sm text-info">
-      <i class="fas fa-chevron-left"></i>
-      Go back
-    </a>
-  </div>
+<div class="text-right mb-3">
+  <a class="btn btn-light mt-2 mr-3"
+    href="{% url 'frequency_ps_list' person.id %}">
+    <i class="fas fa-chevron-left"></i> 
+    Go back
+  </a>
 </div>
-{% endblock %}
+
+{% include "person/elements/header.html" %}
 
 <article class="media content-section mb-1">
   <div class="media-body">

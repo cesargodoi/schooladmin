@@ -24,6 +24,7 @@ def membership_ps_list(request, person_id):
         "object_list": object_list,
         "title": "membership list",
         "person": person,  # to header element
+        "nav": "detail",
         "tab": "membership",
     }
     return render(request, "person/person_detail.html", context)

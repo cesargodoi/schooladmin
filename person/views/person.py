@@ -25,6 +25,7 @@ def person_home(request):
         "aspect_list": ASPECTS,
         "status_list": STATUS,
         "title": "person home",
+        "nav": "home",
     }
 
     return render(request, "person/person_home.html", context)
@@ -47,6 +48,7 @@ def person_detail(request, id):
         "object": person,
         "title": "person detail",
         "person": person,  # to header element
+        "nav": "detail",
         "tab": "info",
         "date": timezone.now().date(),
     }

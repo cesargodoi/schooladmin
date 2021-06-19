@@ -24,6 +24,7 @@ def person_historic(request, person_id):
         "object_list": object_list,
         "title": "historic list",
         "person": person,  # to header element
+        "nav": "detail",
         "tab": "historic",
     }
     return render(request, "person/person_detail.html", context)
