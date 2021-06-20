@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from schooladmin.common import paginator
 from base.searchs import search_center
@@ -19,6 +18,7 @@ def center_home(request):
     context = {
         "object_list": object_list,
         "title": "center home",
+        "nav": "home",
     }
     return render(request, "center/center_home.html", context)
 
@@ -26,13 +26,14 @@ def center_home(request):
 @login_required
 @permission_required("center.view_center")
 def center_detail(request, pk):
-    center = get_object_or_404(Center, pk=pk)
+    center = Center.objects.get(pk=pk)
     users = len([p.id for p in center.person_set.all() if p.is_active])
 
     context = {
         "object": center,
         "title": "center detail",
         "users": users,
+        "nav": "detail",
     }
     return render(request, "center/center_detail.html", context)
 
@@ -62,7 +63,7 @@ def center_create(request):
 @login_required
 @permission_required("center.change_center")
 def center_update(request, pk):
-    center = get_object_or_404(Center, pk=pk)
+    center = Center.objects.get(pk=pk)
     if request.method == "POST":
         form = CenterForm(request.POST, request.FILES, instance=center)
         if form.is_valid():
@@ -85,12 +86,10 @@ def center_update(request, pk):
 @login_required
 @permission_required("center.delete_center")
 def center_delete(request, pk):
-    center = get_object_or_404(Center, pk=pk)
+    center = Center.objects.get(pk=pk)
     if request.method == "POST":
         if request.POST.get("conf_center"):
-            _center = get_object_or_404(
-                Center, pk=request.POST.get("conf_center")
-            )
+            _center = Center.objects.get(pk=request.POST.get("conf_center"))
             persons = center.person_set.all()
             for person in persons:
                 person.center = _center
@@ -110,7 +109,7 @@ def center_delete(request, pk):
 @login_required
 @permission_required("center.add_center")
 def center_reinsert(request, pk):
-    center = get_object_or_404(Center, pk=pk)
+    center = Center.objects.get(pk=pk)
     if request.method == "POST":
         center.is_active = True
         center.save()

@@ -1,6 +1,9 @@
 {% extends "base/base.html" %}
 
 {% block content %}
+
+{% include "center/elements/center_navbar.html" %}
+
 <article class="media content-section mb-1">
   <div class="media-body">
     <h2>Center</h2>
@@ -10,23 +13,6 @@
     </form>
   </div>
 </article>
-
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    {% if request.user.is_superuser %}
-    <a type="button" 
-      class="btn btn-light text-primary" 
-      href="{% url 'center_create' %}">
-      <i class="fas fa-plus"></i> Add
-    </a>
-    {% endif %}
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'home' %}">
-      <i class="fas fa-chevron-left "></i> Go back
-    </a>
-  </div>
-</div>
 
 {% if object_list %}
 

@@ -1,0 +1,77 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-transp mb-1">
+  <a class="navbar-brand" href="
+  {% if nav == 'detail' %}
+  {% url 'center_detail' object.id %}
+  {% else %}
+  {% url 'center_home' %}
+  {% endif %}
+  ">Center</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarProfile"
+    aria-controls="navbarProfile" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarProfile">
+    <!-- menu items -->
+    <ul class="navbar-nav mr-auto">
+      <!-- <li class="nav-item">
+        <a class="nav-link { if tab == 'historic' %}active{ endif %}" 
+           href="{ url 'person_historic' person.id %}">
+          link
+        </a>
+      </li> -->
+    </ul>
+
+    <!-- controlers -->
+    <div class="navbar-nav">
+
+      {% if nav == "home" %}
+      <li class="nav-item">
+        <a class="btn btn-light" href="{% url 'center_create' %}">
+          <i class="fas fa-plus"></i> 
+          Add center
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-light" href="{% url 'home' %}">
+          <i class="fas fa-chevron-left"></i> 
+          Go back
+        </a>
+      </li>
+      {% endif %}
+
+      {% if nav == "detail" %}
+        {% if request.user.is_superuser %}
+        <li class="nav-item">
+          <a class="btn btn-light" href="{% url 'center_update' object.id %}">
+            <i class="fas fa-edit"></i> 
+            Edit
+          </a>
+        </li>
+          {% if object.is_active %}
+          <li class="nav-item">
+            <a class="btn btn-light" href="{% url 'center_delete' object.id %}">
+              <i class="fas fa-trash-alt"></i> 
+              Delete
+            </a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="btn btn-light" href="{% url 'center_reinsert' object.id %}">
+              <i class="fas fa-sign-in-al"></i> 
+              Reinsert
+            </a>
+          </li>
+          {% endif %}
+        {% endif %}
+        <li class="nav-item">
+          <a class="btn btn-light" href="{% url 'center_home' %}">
+            <i class="fas fa-chevron-left"></i> 
+            Go back
+          </a>
+        </li>
+      {% endif %}
+            
+    </div>
+  </div>
+</nav>

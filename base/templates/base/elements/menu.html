@@ -1,33 +1,35 @@
 {% load base_extras %}
 
 {% if request.user.is_superuser or request.user|has_group:"office" %}
-<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-        aria-haspopup="true" aria-expanded="false">Secretary</a>
-    <div class="dropdown-menu">
-        <a class="dropdown-item" href="{% url 'center_home' %}">Centers</a>
-        <a class="dropdown-item" href="{% url 'person_home' %}">Persons</a>
-        <a class="dropdown-item" href="{% url 'event_home' %}?d30=on&lastNext=last">Events</a>
-        <a class="dropdown-item" href="{% url 'workgroup_home' %}">Workgroups</a>
-    </div>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'center_home' %}">Centers</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'person_home' %}">Persons</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'event_home' %}">Events</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'workgroup_home' %}">Workgroups</a>
 </li>
 {% endif %}
 
 {% if request.user.is_superuser or request.user|has_group:"treasury" or request.user|has_group:"treasury_jr" %}
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'treasury_home' %}">Treasury</a>
+  <a class="nav-link" href="{% url 'treasury_home' %}">Treasury</a>
 </li>
 {% endif %}
 
 {% if request.user.is_superuser or request.user|has_group:"mentoring" %}
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'mentoring_home' %}">Mentoring</a>
+  <a class="nav-link" href="{% url 'mentoring_home' %}">Mentoring</a>
 </li>
 {% endif %}
 
 {% if request.user.is_superuser or request.user|has_group:"publicwork" or request.user|has_group:"publicwork_jr" %}
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'publicwork_home' %}">Public Work</a>
+  <a class="nav-link" href="{% url 'publicwork_home' %}">Public Work</a>
 </li>
 {% endif %}
 
