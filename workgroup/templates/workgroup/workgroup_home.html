@@ -2,32 +2,16 @@
 
 {% block content %}
 
+{% include "workgroup/elements/workgroup_navbar.html" %}
+
 <article class="media content-section mb-1">
   <div class="media-body">
-    <h2>Workgroup</h2>
-    <form class="form-control-sm border-top" method="GET">
+    <form class="form-control-sm mt-1" method="GET">
       {% csrf_token %}
       {% include "base/searchs/workgroup.html" %}
     </form>
   </div>
 </article>
-
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      class="btn btn-light text-primary" 
-      href="{% url 'workgroup_create' %}">
-      <i class="fas fa-plus"></i> 
-      Add
-    </a>
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'home' %}">
-      <i class="fas fa-chevron-left "></i> 
-      Go back
-    </a>
-  </div>
-</div>
 
 {% if object_list %}
 

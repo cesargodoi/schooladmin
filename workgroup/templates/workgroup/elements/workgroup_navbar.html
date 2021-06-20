@@ -1,11 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-transp mb-1">
   <a class="navbar-brand" href="
   {% if nav == 'detail' %}
-  {% url 'event_detail' object.id %}
+  {% url 'workgroup_detail' object.id %}
   {% else %}
-  {% url 'event_home' %}
+  {% url 'workgroup_home' %}
   {% endif %}
-  ">{% if nav == 'home' %}Events{% else %}Event{% endif %}</a>
+  ">{% if nav == 'home' %}Workgroups{% else %}Workgroup{% endif %}</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarProfile"
     aria-controls="navbarProfile" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -27,9 +27,9 @@
 
       {% if nav == "home" %}
       <li class="nav-item">
-        <a class="btn btn-light" href="{% url 'event_create' %}">
+        <a class="btn btn-light" href="{% url 'workgroup_create' %}">
           <i class="fas fa-plus"></i> 
-          Add event
+          Add workgroup
         </a>
       </li>
       <li class="nav-item">
@@ -41,32 +41,30 @@
       {% endif %}
 
       {% if nav == "detail" %}
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'frequencies_add' object.pk %}">
-            <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
-            Insert frequencies
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'event_update' object.id %}">
-            <i class="fas fa-edit"></i> 
-            Edit
-          </a>
-        </li>
-        {% if not object_list %}
-          <li class="nav-item">
-            <a class="btn btn-light" href="{% url 'event_delete' object.id %}">
-              <i class="fas fa-trash-alt"></i> 
-              Delete
-            </a>
-          </li>
-        {% endif %}
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'event_home' %}">
-            <i class="fas fa-chevron-left"></i> 
-            Go back
-          </a>
-        </li>
+      <li class="nav-item">
+        <a class="btn btn-light" href="{% url 'membership_insert' object.id %}">
+          <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
+          Insert member
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-light" href="{% url 'workgroup_update' object.id %}">
+          <i class="fas fa-edit"></i> 
+          Edit
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-light" href="{% url 'workgroup_delete' object.id %}">
+          <i class="fas fa-trash-alt"></i> 
+          Delete
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-light" href="{% url 'workgroup_home' %}">
+          <i class="fas fa-chevron-left"></i> 
+          Go back
+        </a>
+      </li>
       {% endif %}
     </div>
   </div>

@@ -1,36 +1,10 @@
 {% extends "base/base.html" %}
 
 {% block content %}
-{% include "workgroup/elements/header.html" %}
 
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      href="{% url 'membership_insert' object.id %}" 
-      class="btn btn-light btn-sm text-primary">
-      <i class="fas fa-plus"></i> <i class="fas fa-user"></i> 
-      Insert
-    </a>
-    <a type="button" 
-      class="btn btn-light text-warning" 
-      href="{% url 'workgroup_update' object.id %}">
-      <i class="fas fa-edit"></i> 
-      Edit
-    </a>
-    <a type="button" 
-      class="btn btn-light text-danger" 
-      href="{% url 'workgroup_delete' object.id %}">
-      <i class="fas fa-trash-alt"></i> 
-      Delete
-    </a>
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'workgroup_home' %}">
-      <i class="fas fa-chevron-left"></i> 
-      Go back
-    </a>
-  </div>
-</div>
+{% include "workgroup/elements/workgroup_navbar.html" %}
+
+{% include "workgroup/elements/header.html" %}
 
 <article class="media content-section">
   <div class="media-body">

@@ -19,6 +19,7 @@ def workgroup_home(request):
         "object_list": object_list,
         "title": "workgroups",
         "workgroup_types": WORKGROUP_TYPES,
+        "nav": "home",
     }
     return render(request, "workgroup/workgroup_home.html", context)
 
@@ -36,6 +37,7 @@ def workgroup_detail(request, pk):
         "object": object,
         "object_list": object_list,
         "title": "workgroup detail",
+        "nav": "detail",
     }
     return render(request, "workgroup/workgroup_detail.html", context)
 
