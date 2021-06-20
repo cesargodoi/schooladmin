@@ -1,38 +1,10 @@
 {% extends "base/base.html" %}
 
 {% block content %}
-{% include 'event/elements/event_header.html' %}
 
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      href="{% url 'frequencies_add' object.pk %}" 
-      class="btn btn-light btn-sm text-primary">
-      <i class="fas fa-plus"></i> <i class="fas fa-users"></i> 
-      insert
-    </a>
-    <a type="button" 
-      class="btn btn-light text-warning" 
-      href="{% url 'event_update' object.id %}">
-      <i class="fas fa-edit"></i> 
-      Edit
-    </a>
-    {% if not object_list %}
-    <a type="button" 
-      class="btn btn-light text-danger" 
-      href="{% url 'event_delete' object.id %}">
-      <i class="fas fa-trash-alt"></i> 
-      Delete
-    </a>
-    {% endif %}
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'event_home' %}">
-      <i class="fas fa-chevron-left"></i> 
-      Go back
-    </a>
-  </div>
-</div>
+{% include "event/elements/event_navbar.html" %}
+
+{% include 'event/elements/event_header.html' %}
 
 <article class="media content-section">
   <div class="media-body">

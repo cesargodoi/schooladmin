@@ -21,6 +21,7 @@ def event_home(request):
         "object_list": object_list,
         "title": "event home",
         "type_list": ACTIVITY_TYPES,
+        "nav": "home",
     }
     return render(request, "event/event_home.html", context)
 
@@ -36,6 +37,7 @@ def event_detail(request, pk):
         "object": object,
         "object_list": object_list,
         "title": "event detail",
+        "nav": "detail",
     }
     return render(request, "event/event_detail.html", context)
 
