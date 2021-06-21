@@ -19,7 +19,7 @@ def mentoring_home(request):
     groups = Membership.objects.filter(
         person=request.user.person, role_type="MTR"
     )
-    context = {"groups": groups, "title": "mentoring"}
+    context = {"groups": groups, "title": "mentoring", "nav": "home"}
     return render(request, "workgroup/mentoring/home.html", context)
 
 
@@ -39,6 +39,7 @@ def mentoring_group_detail(request, pk):
         "object": workgroup,
         "object_list": object_list,
         "title": "workgroup detail",
+        "nav": "detail",
         "tab": "members",
         "goback": reverse("mentoring_home"),
     }
@@ -53,6 +54,7 @@ def mentoring_member_detail(request, group_pk, person_pk):
     context = {
         "object": object,
         "title": "member detail",
+        "nav": "detail",
         "tab": "info",
         "age": age,
         "goback": reverse("mentoring_group_detail", args=[group_pk]),
@@ -72,6 +74,7 @@ def mentoring_member_frequencies(request, group_pk, person_pk):
         "object": object,
         "title": "member detail | frequencies",
         "object_list": paginator(object_list, page=page),
+        "nav": "detail",
         "tab": "frequencies",
         "ranking": ranking,
         "goback": reverse("mentoring_group_detail", args=[group_pk]),
@@ -82,15 +85,16 @@ def mentoring_member_frequencies(request, group_pk, person_pk):
 
 @login_required
 @permission_required("workgroup.view_workgroup")
-def mentoring_member_historics(request, group_pk, person_pk):
+def mentoring_member_historic(request, group_pk, person_pk):
     object = Person.objects.get(pk=person_pk)
     page = request.GET["page"] if request.GET.get("page") else 1
     object_list = object.historic_set.all().order_by("-date")
     context = {
         "object": object,
-        "title": "member detail | frequencies",
+        "title": "member detail | historic",
         "object_list": paginator(object_list, page=page),
-        "tab": "historics",
+        "nav": "detail",
+        "tab": "historic",
         "goback": reverse("mentoring_group_detail", args=[group_pk]),
         "group_pk": group_pk,
     }
@@ -233,6 +237,7 @@ def mentoring_add_frequencies(request, group_pk):
         "object": workgroup,
         "object_list": object_list,
         "title": "workgroup add members",
+        "nav": "detail",
         "tab": "add_frequencies",
         "goback": reverse("mentoring_group_detail", args=[group_pk]),
         "group_pk": group_pk,
@@ -247,6 +252,7 @@ def preparing_the_session(request, persons, event):
         [str(ev.person.pk), ev.person.aspect, ev.ranking, ev.observations]
         for ev in event.frequency_set.all()
     ]
+    inserteds_pks = [ins[0] for ins in inserteds]
     # adjust frequencies on session
     frequencies = request.session["frequencies"]
     # add event
@@ -259,32 +265,33 @@ def preparing_the_session(request, persons, event):
     # add listeners
     frequencies["listeners"] = []
     for per in persons:
-        for ins in inserteds:
-            if str(per.pk) == ins[0]:
-                listener = {
-                    "person": {
-                        "id": str(per.pk),
-                        "name": per.name,
-                        "center": str(per.center),
-                    },
-                    "frequency": "on",
-                    "aspect": ins[1],
-                    "ranking": ins[2],
-                    "observations": ins[3],
-                }
-                break
-            else:
-                listener = {
-                    "person": {
-                        "id": str(per.pk),
-                        "name": per.name,
-                        "center": str(per.center),
-                    },
-                    "frequency": "",
-                    "aspect": per.aspect,
-                    "ranking": 0,
-                    "observations": "",
-                }
+        if str(per.pk) in inserteds_pks:
+            for ins in inserteds:
+                if str(per.pk) == ins[0]:
+                    listener = {
+                        "person": {
+                            "id": str(per.pk),
+                            "name": per.name,
+                            "center": str(per.center),
+                        },
+                        "frequency": "on",
+                        "aspect": ins[1],
+                        "ranking": ins[2],
+                        "observations": ins[3],
+                    }
+                    break
+        else:
+            listener = {
+                "person": {
+                    "id": str(per.pk),
+                    "name": per.name,
+                    "center": str(per.center),
+                },
+                "frequency": "",
+                "aspect": per.aspect,
+                "ranking": 0,
+                "observations": "",
+            }
         frequencies["listeners"].append(listener)
     # save session
     request.session.modified = True

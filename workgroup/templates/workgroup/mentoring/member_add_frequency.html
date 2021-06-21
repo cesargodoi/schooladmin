@@ -2,20 +2,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "workgroup/elements/member_header.html" %}
 
-{% block buttons %}
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      href="{% url 'mentoring_member_frequencies' group_pk object.pk %}" 
-      class="btn btn-light btn-sm text-info">
-      <i class="fas fa-chevron-left"></i>
-      Go back
-    </a>
-  </div>
+<div class="text-right mb-2 mt-4">
+  <a class="btn btn-light mt-2 mr-3"
+    href="{% url 'mentoring_member_frequencies' group_pk object.pk %}">
+    <i class="fas fa-chevron-left"></i> 
+    Go back
+  </a>
 </div>
-{% endblock %}
+
+{% include "workgroup/elements/member_header.html" %}
 
 <article class="media content-section mb-1">
   <div class="media-body">

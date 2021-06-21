@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib import messages
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.decorators import login_required, permission_required
@@ -43,11 +45,13 @@ def person_detail(request, id):
     if id not in center_persons and not request.user.is_superuser:
         raise Http404
     person = get_object_or_404(Person, id=id)
+    age = (date.today() - person.birth).days // 365
 
     context = {
         "object": person,
         "title": "person detail",
         "person": person,  # to header element
+        "age": age,
         "nav": "detail",
         "tab": "info",
         "date": timezone.now().date(),

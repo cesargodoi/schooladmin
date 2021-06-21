@@ -1,64 +1,22 @@
 {% extends "base/base.html" %}
 
 {% block content %}
+
+{% include "workgroup/elements/member_navbar.html" %}
+
 {% include "workgroup/elements/member_header.html" %}
-
-<div class="text-right mb-2">
-  <div class="btn-group-sm mt-2" role="group">
-    {% if object.is_active %}
-      {% if tab == "frequencies" %}
-      <a type="button" 
-        class="btn btn-light text-primary" 
-        href="{% url 'membership_add_frequency' group_pk object.id %}">
-        <i class="fas fa-plus"></i> Add frequency
-      </a>
-      {% endif %}
-    {% endif %}
-
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{{ goback }}">
-      <i class="fas fa-chevron-left"></i> Go back
-    </a>
-  </div>
-</div>
 
 <article class="media content-section">
   <div class="media-body">
 
-    <ul class="nav nav-pills mb-3">
-      <li class="nav-item">
-        <a class="nav-link {% if tab == 'info' %}active{% endif %}" 
-           id="info-tab" 
-           href="{% url 'mentoring_member_detail' group_pk object.pk %}">
-          <i class="fas fa-user"></i>
-          Info
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if tab == 'frequencies' %}active{% endif %}" 
-           id="frequencies-tab"
-           href="{% url 'mentoring_member_frequencies' group_pk object.pk %}">
-          <i class="fas fa-list"></i>
-          Frequencies
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if tab == 'historics' %}active{% endif %}" 
-           id="historics-tab"
-           href="{% url 'mentoring_member_historics' group_pk object.pk %}">
-          <i class="fas fa-list"></i>
-          Historics
-        </a>
-      </li>
-    </ul>
-
     {% if tab == "info" %}
     {% include "workgroup/elements/member_info.html" %}
     {% elif tab == "frequencies" %}
+    <h4>Frequencies</h4>
     {% include "workgroup/elements/member_frequencies.html" %}
-    {% elif tab == "historics" %}
-    {% include "workgroup/elements/member_historics.html" %}
+    {% elif tab == "historic" %}
+    <h4>Historic</h4>
+    {% include "workgroup/elements/member_historic.html" %}
     {% endif %}
     
   </div>

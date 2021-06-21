@@ -1,0 +1,67 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-transp mb-1">
+  <a class="navbar-brand" href="
+  {% if nav == 'detail' %}
+  {% url 'mentoring_group_detail' object.pk %}
+  {% else %}
+  {% url 'mentoring_home' %}
+  {% endif %}
+  ">{% if nav == 'home' %}Workgroups{% else %}Workgroup{% endif %}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarProfile"
+    aria-controls="navbarProfile" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarProfile">
+    <!-- menu items -->
+    <ul class="navbar-nav mr-auto">
+      <!-- <li class="nav-item">
+        <a class="nav-link { if tab == 'historic' %}active{ endif %}" 
+           href="{ url 'person_historic' person.id %}">
+          link
+        </a>
+      </li> -->
+    </ul>
+
+    <!-- controlers -->
+    <div class="navbar-nav">
+
+      {% if nav == "home" %}
+      <li class="nav-item">
+        <a class="btn btn-light" href="{% url 'home' %}">
+          <i class="fas fa-chevron-left"></i> 
+          Go back
+        </a>
+      </li>
+      {% endif %}
+
+      {% if nav == "detail" %}
+
+        {% if not request.session.frequencies.event and tab == "members" %}
+        <li class="nav-item">
+          <a class="btn btn-light" href="{% url 'mentoring_add_frequencies' object.id %}">
+            <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
+            Insert frequencies
+          </a>
+        </li>
+        {% endif %}
+
+        {% if request.session.frequencies.event %}
+        <li class="nav-item">
+          <a class="btn btn-primary" href="#" onclick="document.getElementById('form').submit();">
+            <i class="fas fa-check"></i> 
+            Add
+          </a>
+        </li>
+        {% endif %}
+
+      <li class="nav-item">
+        <a class="btn btn-light" href="{{ goback }}">
+          <i class="fas fa-chevron-left"></i> 
+          Go back
+        </a>
+      </li>
+      
+      {% endif %}
+    </div>
+  </div>
+</nav>

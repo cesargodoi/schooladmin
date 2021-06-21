@@ -54,9 +54,9 @@ urlpatterns += [
         name="mentoring_member_frequencies",
     ),
     path(
-        "mentoring/<int:group_pk>/member/<uuid:person_pk>/historics/",
-        mentoring.mentoring_member_historics,
-        name="mentoring_member_historics",
+        "mentoring/<int:group_pk>/member/<uuid:person_pk>/historic/",
+        mentoring.mentoring_member_historic,
+        name="mentoring_member_historic",
     ),
     path(
         "mentoring/<int:group_pk>/add-frequencies/",
