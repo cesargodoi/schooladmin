@@ -2,26 +2,25 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "user/elements/header.html" %}
 
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    {% if request.session.my_order.total_payments != 0.0 %}
-    <button 
-      class="btn btn-primary" 
-      onclick="document.getElementById('form').submit();">
-      <i class="fas fa-money-bill-wave-alt"></i> 
-      Pay now
-    </button>
-    {% endif %}
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'user_payments' %}">
-      <i class="fas fa-chevron-left "></i> 
-      Go back
-    </a>
-  </div>
+<div class="text-right mb-2 mt-4">
+  {% if request.session.my_order.total_payments != 0.0 %}
+  <button 
+    class="btn btn-primary" 
+    onclick="document.getElementById('form').submit();">
+    <i class="fas fa-money-bill-wave-alt"></i> 
+    Pay now
+  </button>
+  {% endif %}
+  <a type="button" 
+    class="btn btn-light mr-3"
+    href="{% url 'user_payments' %}">
+    <i class="fas fa-chevron-left "></i> 
+    Go back
+  </a>
 </div>
+
+{% include "user/elements/header.html" %}
 
 {% if request.session.my_order.person %}
 <article class="media content-section">

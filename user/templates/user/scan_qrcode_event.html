@@ -1,18 +1,16 @@
 {% extends "base/base.html" %}
 
 {% block content %}
-{% include "user/elements/header.html" %}
 
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'user_frequencies' %}">
-      <i class="fas fa-chevron-left"></i> 
-      Go back
-    </a>
-  </div>
+<div class="text-right mb-2 mt-4">
+  <a class="btn btn-light mr-3" 
+    href="{% url 'user_frequencies' %}">
+    <i class="fas fa-chevron-left"></i> 
+    Go back
+  </a>
 </div>
+
+{% include "user/elements/header.html" %}
 
 <div class="row">
   <div class="col-md-6">
