@@ -1,6 +1,9 @@
 {% extends "base/base.html" %}
 
 {% block content %}
+
+{% include "treasury/elements/treasury_navbar.html" %}
+
 <article class="media content-section mb-1">
   <div class="media-body">
     <h2>Cash Balance</h2>
@@ -10,16 +13,6 @@
     </form>
   </div>
 </article>
-
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'treasury_home' %}">
-      <i class="fas fa-chevron-left "></i> Go back
-    </a>
-  </div>
-</div>
 
 <div class="row row-col-2">
   <div class="col-lg-4 mb-4">

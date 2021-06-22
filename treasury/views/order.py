@@ -32,6 +32,7 @@ def orders(request):
         "object_list": object_list,
         "status_list": ORDER_STATUS,
         "title": "Orders",
+        "nav": "order",
     }
     return render(request, "treasury/orders.html", context)
 

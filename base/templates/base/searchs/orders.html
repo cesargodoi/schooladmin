@@ -31,7 +31,7 @@
         {% if request.session.search.term %}value={{ request.session.search.term }}{% endif %} placeholder="person">
     </div>
   </div>
-  <div class="col-sm-2 mb-1">
+  <div class="col-sm-3 mb-1">
     <div class="input-group">
       <select class="form-control" name="status" id="status">
         <option value="">all status</option>
@@ -47,6 +47,7 @@
         class="btn btn btn-outline-success ml-2" 
         type="submit">
         <i class="fas fa-search"></i>
+        Search
       </button>
     </div>
   </div>
