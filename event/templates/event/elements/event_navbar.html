@@ -24,49 +24,36 @@
 
     <!-- controlers -->
     <div class="navbar-nav">
-
       {% if nav == "home" %}
-      <li class="nav-item">
-        <a class="btn btn-light" href="{% url 'event_create' %}">
-          <i class="fas fa-plus"></i> 
-          Add event
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="btn btn-light" href="{% url 'home' %}">
-          <i class="fas fa-chevron-left"></i> 
-          Go back
-        </a>
-      </li>
+      <a class="btn btn-light btn-sm" href="{% url 'event_create' %}">
+        <i class="fas fa-plus"></i> 
+        Add event
+      </a>
+      <a class="btn btn-light btn-sm" href="{% url 'home' %}">
+        <i class="fas fa-chevron-left"></i> 
+        Go back
+      </a>
       {% endif %}
 
       {% if nav == "detail" %}
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'frequencies_add' object.pk %}">
-            <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
-            Insert frequencies
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'event_update' object.id %}">
-            <i class="fas fa-edit"></i> 
-            Edit
-          </a>
-        </li>
+      <a class="btn btn-light btn-sm" href="{% url 'frequencies_add' object.pk %}">
+        <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
+        Insert frequencies
+      </a>
+      <a class="btn btn-light btn-sm" href="{% url 'event_update' object.id %}">
+        <i class="fas fa-edit"></i> 
+        Edit
+      </a>
         {% if not object_list %}
-          <li class="nav-item">
-            <a class="btn btn-light" href="{% url 'event_delete' object.id %}">
-              <i class="fas fa-trash-alt"></i> 
-              Delete
-            </a>
-          </li>
+        <a class="btn btn-light btn-sm" href="{% url 'event_delete' object.id %}">
+          <i class="fas fa-trash-alt"></i> 
+          Delete
+        </a>
         {% endif %}
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'event_home' %}">
-            <i class="fas fa-chevron-left"></i> 
-            Go back
-          </a>
-        </li>
+      <a class="btn btn-light btn-sm" href="{% url 'event_home' %}">
+        <i class="fas fa-chevron-left"></i> 
+        Go back
+      </a>
       {% endif %}
     </div>
   </div>

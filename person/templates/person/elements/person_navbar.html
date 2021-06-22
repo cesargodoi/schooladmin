@@ -40,84 +40,64 @@
 
     <!-- controlers -->
     <div class="navbar-nav">
-
       {% if nav == "home" %}
-      <li class="nav-item">
-        <a class="btn btn-light" href="{% url 'person_create' %}">
-          <i class="fas fa-plus"></i> 
-          Add person
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="btn btn-light" href="{% url 'home' %}">
-          <i class="fas fa-chevron-left"></i> 
-          Go back
-        </a>
-      </li>
+      <a class="btn btn-light btn-sm" href="{% url 'person_create' %}">
+        <i class="fas fa-plus"></i> 
+        Add person
+      </a>
+      <a class="btn btn-light btn-sm" href="{% url 'home' %}">
+        <i class="fas fa-chevron-left"></i> 
+        Go back
+      </a>
       {% endif %}
 
       {% if nav == "detail" %}
+        {% if tab == "info" %}
+        <a class="btn btn-light btn-sm" href="{% url 'person_update' object.id %}">
+          <i class="fas fa-edit"></i> 
+          Edit
+        </a>
+          {% if object.user.is_active %}
+          <a class="btn btn-light btn-sm" href="{% url 'person_delete' object.id %}">
+            <i class="fas fa-trash-alt"></i> 
+            Delete
+          </a>
+          {% else %}
+          <a class="btn btn-light btn-sm" href="{% url 'person_reinsert' object.id %}">
+            <i class="fas fa-sign-in-al"></i> 
+            Reinsert
+          </a>
+          {% endif %}
+        {% endif %}
+
         {% if person.is_active %}
 
-          {% if tab == "info" %}
-          <li class="nav-item">
-            <a class="btn btn-light" href="{% url 'person_update' object.id %}">
-              <i class="fas fa-edit"></i> 
-              Edit
-            </a>
-          </li>
-            {% if object.user.is_active %}
-            <li class="nav-item">
-              <a class="btn btn-light" href="{% url 'person_delete' object.id %}">
-                <i class="fas fa-trash-alt"></i> 
-                Delete
-              </a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="btn btn-light" href="{% url 'person_reinsert' object.id %}">
-                <i class="fas fa-sign-in-al"></i> 
-                Reinsert
-              </a>
-            </li>
-            {% endif %}
-          {% endif %}
-
           {% if tab == "historic" %}
-          <li class="nav-item">
-            <a class="btn btn-light" href="{% url 'historic_create' person.id %}">
-              <i class="fas fa-plus"></i> 
-              Add historic
-            </a>
-          </li>
+          <a class="btn btn-light btn-sm" href="{% url 'historic_create' person.id %}">
+            <i class="fas fa-plus"></i> 
+            Add historic
+          </a>
           {% endif %}
 
           {% if tab == "frequencies" %}
-          <li class="nav-item">
-            <a class="btn btn-light" href="{% url 'frequency_ps_insert' person.id %}">
-              <i class="fas fa-plus"></i> 
-              Add frequencies
-            </a>
-          </li>
+          <a class="btn btn-light btn-sm" href="{% url 'frequency_ps_insert' person.id %}">
+            <i class="fas fa-plus"></i> 
+            Add frequencies
+          </a>
           {% endif %}
 
           {% if tab == "membership" %}
-          <li class="nav-item">
-            <a class="btn btn-light" href="{% url 'membership_ps_create' person.id %}">
-              <i class="fas fa-plus"></i> 
-              Add membership
-            </a>
-          </li>
+          <a class="btn btn-light btn-sm" href="{% url 'membership_ps_create' person.id %}">
+            <i class="fas fa-plus"></i> 
+            Add membership
+          </a>
           {% endif %}
 
         {% endif %}
-
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'person_home' %}">
-            <i class="fas fa-chevron-left"></i> 
-            Go back
-          </a>
-        </li>
+        <a class="btn btn-light btn-sm" href="{% url 'person_home' %}">
+          <i class="fas fa-chevron-left"></i> 
+          Go back
+        </a>
       {% endif %}
       
     </div>

@@ -1,37 +1,32 @@
 {% extends "base/base.html" %}
 
 {% block content %}
-{% include "publicwork/elements/seeker_header.html" %}
 
-<div class="text-right mb-2">
-  <div class="btn-group-sm mt-2" role="group">
-    {% if tab == "historic" %}
-    <button 
-      class="btn btn-{% if add %}primary{% else %}warning{% endif %}"
-      onclick="document.getElementById('form').submit();">
-      {% if add %}
-      <i class="fas fa-check"></i> Add
-      {% else %}
-      <i class="fas fa-check"></i> Edit
-      {% endif %}
-    </button>
-    {% endif %}
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{{ goback }}">
-      <i class="fas fa-chevron-left"></i> 
-      Go back
-    </a>
-  </div>
+<div class="text-right mb-2 mt-4">
+  {% if tab == "historic" %}
+  <a class="btn btn-{% if add %}primary{% else %}warning{% endif %} mt-2" href="#"
+    onclick="document.getElementById('form').submit();">
+    <i class="fas fa-check"></i>
+    {% if add %} Add {% else %} Edit {% endif %}
+  </a>
+  {% endif %}
+
+  <a class="btn btn-light mt-2 mr-3"
+    href="{{ goback }}">
+    <i class="fas fa-chevron-left"></i> 
+    Go back
+  </a>
 </div>
+
+{% include "publicwork/elements/seeker_header.html" %}
 
 <article class="media content-section">
   <div class="media-body">
 
-    {% if tab == "historic" %}
-    {% include "publicwork/elements/seeker_create_historic.html" %}
-    {% else %}
+    {% if tab == "frequencies" %}
     {% include "publicwork/elements/seeker_add_frequency.html" %}
+    {% elif tab == "historic" %}
+    {% include "publicwork/elements/seeker_create_historic.html" %}
     {% endif %}
     
   </div>

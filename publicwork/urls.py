@@ -31,9 +31,9 @@ urlpatterns += [
         name="seeker_frequencies",
     ),
     path(
-        "seeker/<int:pk>/historics/",
-        seeker.seeker_historics,
-        name="seeker_historics",
+        "seeker/<int:pk>/historic/",
+        seeker.seeker_historic,
+        name="seeker_historic",
     ),
 ]
 

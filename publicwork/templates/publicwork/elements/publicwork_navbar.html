@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-transp mb-1">
+  <a class="navbar-brand" href="{% url 'publicwork_home' %}">
+    Public work
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarProfile"
+    aria-controls="navbarProfile" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarProfile">
+    <!-- menu items -->
+    <ul class="navbar-nav mr-auto">
+      {% if nav == 'pw_home' or nav == 'sk_home' or nav == 'lc_home' or nav == 'rp_home' %}
+        {% include 'publicwork/elements/publicwork_items.html' %}
+      {% endif %}
+      {% if nav == "seeker" %}
+      <li class="nav-item">
+        <a class="nav-link {% if nav == 'seeker' %}active{% endif %}" 
+          href="#">
+          Seekers
+        </a>
+      </li>
+      {% endif %}
+      
+    </ul>
+
+    <!-- controlers -->
+    <div class="navbar-nav">
+      {% if nav == "sk_home" %}
+      <a class="btn btn-light btn-sm" href="{% url 'seeker_create' %}">
+        <i class="fas fa-plus"></i> 
+        Add seeker
+      </a>
+      {% endif %}
+
+      {% if nav == "lc_home" %}
+      <a class="btn btn-light btn-sm" href="{% url 'lecture_create' %}">
+        <i class="fas fa-plus"></i> 
+        Add lecture
+      </a>
+      {% endif %}
+
+      <a class="btn btn-light btn-sm" 
+          href="
+          {% if nav == 'pw_home' %}
+          {% url 'home' %}
+          {% else %}
+          {% url 'publicwork_home' %}
+          {% endif %}
+          ">
+        <i class="fas fa-chevron-left"></i> 
+        Go back
+      </a>
+
+    </div>
+  </div>
+</nav>

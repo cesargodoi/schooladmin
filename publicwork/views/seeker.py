@@ -23,6 +23,7 @@ def seeker_home(request):
         "object_list": object_list,
         "title": "seeker home",
         "centers": [[str(cnt.pk), str(cnt)] for cnt in Center.objects.all()],
+        "nav": "sk_home",
     }
 
     return render(request, "publicwork/seeker_home.html", context)
@@ -38,6 +39,7 @@ def seeker_detail(request, pk):
     context = {
         "object": seeker,
         "title": "seeker detail",
+        "nav": "seeker",
         "tab": "info",
         "age": age,
     }
@@ -148,6 +150,7 @@ def seeker_frequencies(request, pk):
         "object": seeker,
         "title": "seeker detail | frequencies",
         "object_list": paginator(frequencies, page=page),
+        "nav": "seeker",
         "tab": "frequencies",
         "ranking": ranking,
     }
@@ -155,10 +158,10 @@ def seeker_frequencies(request, pk):
     return render(request, "publicwork/seeker_detail.html", context)
 
 
-# seeker historics
+# seeker historic
 @login_required
 @permission_required("publicwork.view_seeker")
-def seeker_historics(request, pk):
+def seeker_historic(request, pk):
     belongs_center(request, pk, Seeker)
     page = request.GET["page"] if request.GET.get("page") else 1
 
@@ -167,9 +170,10 @@ def seeker_historics(request, pk):
 
     context = {
         "object": seeker,
-        "title": "seeker detail | historics",
+        "title": "seeker detail | historic",
         "object_list": paginator(historics, page=page),
-        "tab": "historics",
+        "nav": "seeker",
+        "tab": "historic",
     }
 
     return render(request, "publicwork/seeker_detail.html", context)

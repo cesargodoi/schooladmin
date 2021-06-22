@@ -15,19 +15,19 @@
     <!-- menu items -->
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link { if tab == 'info' %}active{ endif %}" 
+        <a class="nav-link {% if tab == 'info' %}active{% endif %}" 
            href="{% url 'mentoring_member_detail' group_pk object.pk %}">
           Member
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link { if tab == 'info' %}active{ endif %}" 
+        <a class="nav-link {% if tab == 'frequencies' %}active{% endif %}" 
            href="{% url 'mentoring_member_frequencies' group_pk object.pk %}">
           Frequencies
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link { if tab == 'info' %}active{ endif %}" 
+        <a class="nav-link {% if tab == 'historic' %}active{% endif %}" 
            href="{% url 'mentoring_member_historic' group_pk object.pk %}">
           Historic
         </a>
@@ -38,23 +38,16 @@
     <div class="navbar-nav">
 
       {% if nav == "detail" %}
-
         {% if tab == "frequencies" and object.is_active %}
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'membership_add_frequency' group_pk object.id %}">
-            <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
-            Add frequency
-          </a>
-        </li>
-        {% endif %}
-
-      <li class="nav-item">
-        <a class="btn btn-light" href="{{ goback }}">
-          <i class="fas fa-chevron-left"></i> 
-          Go back
+        <a class="btn btn-light btn-sm" href="{% url 'membership_add_frequency' group_pk object.id %}">
+          <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
+          Add frequency
         </a>
-      </li>
-      
+        {% endif %}
+      <a class="btn btn-light btn-sm" href="{{ goback }}">
+        <i class="fas fa-chevron-left"></i> 
+        Go back
+      </a>
       {% endif %}
     </div>
   </div>

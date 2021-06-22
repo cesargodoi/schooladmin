@@ -147,7 +147,7 @@ def add_frequency(request, pk):
         "object_list": object_list,
         "title": "add frequency",
         "pre_freqs": [lect.pk for lect in seeker.lecture_set.all()],
-        "tab": "frequency",
+        "tab": "frequencies",
         "add": True,
         "goback": reverse("seeker_frequencies", args=[pk]),
     }

@@ -24,43 +24,32 @@
 
     <!-- controlers -->
     <div class="navbar-nav">
-
       {% if nav == "home" %}
-      <li class="nav-item">
-        <a class="btn btn-light" href="{% url 'home' %}">
-          <i class="fas fa-chevron-left"></i> 
-          Go back
-        </a>
-      </li>
+      <a class="btn btn-light btn-sm" href="{% url 'home' %}">
+        <i class="fas fa-chevron-left"></i> 
+        Go back
+      </a>
       {% endif %}
 
       {% if nav == "detail" %}
-
         {% if not request.session.frequencies.event and tab == "members" %}
-        <li class="nav-item">
-          <a class="btn btn-light" href="{% url 'mentoring_add_frequencies' object.id %}">
-            <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
-            Insert frequencies
-          </a>
-        </li>
+        <a class="btn btn-light btn-sm" href="{% url 'mentoring_add_frequencies' object.id %}">
+          <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
+          Insert frequencies
+        </a>
         {% endif %}
 
         {% if request.session.frequencies.event %}
-        <li class="nav-item">
-          <a class="btn btn-primary" href="#" onclick="document.getElementById('form').submit();">
-            <i class="fas fa-check"></i> 
-            Add
-          </a>
-        </li>
+        <a class="btn btn-primary btn-sm" href="#" onclick="document.getElementById('form').submit();">
+          <i class="fas fa-check"></i> 
+          Add
+        </a>
         {% endif %}
 
-      <li class="nav-item">
-        <a class="btn btn-light" href="{{ goback }}">
+        <a class="btn btn-light btn-sm" href="{{ goback }}">
           <i class="fas fa-chevron-left"></i> 
           Go back
         </a>
-      </li>
-      
       {% endif %}
     </div>
   </div>

@@ -2,20 +2,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "publicwork/elements/lecture_header.html" %}
 
-{% block buttons %}
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      href="{% url 'lecture_detail' object.pk %}" 
-      class="btn btn-light btn-sm text-info">
-      <i class="fas fa-chevron-left"></i>
-      Go back
-    </a>
-  </div>
+<div class="text-right mb-3">
+  <a class="btn btn-light mt-2 mr-3"
+    href="{% url 'lecture_detail' object.pk %}">
+    <i class="fas fa-chevron-left"></i> 
+    Go back
+  </a>
 </div>
-{% endblock %}
+
+{% include "publicwork/elements/lecture_header.html" %}
 
 <article class="media content-section">
   <div class="media-body">

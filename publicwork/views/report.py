@@ -18,7 +18,7 @@ from schooladmin.common import SEEKER_STATUS, LECTURE_TYPES
 def publicwork_home(request):
     if request.session.get("search"):
         del request.session["search"]
-    context = {"title": "Public work"}
+    context = {"title": "Public work", "nav": "pw_home"}
     return render(request, "publicwork/publicwork_home.html", context)
 
 

@@ -21,6 +21,7 @@ def lecture_home(request):
         "object_list": object_list,
         "title": "lecture home",
         "type_list": LECTURE_TYPES,
+        "nav": "lc_home",
     }
 
     return render(request, "publicwork/lecture_home.html", context)

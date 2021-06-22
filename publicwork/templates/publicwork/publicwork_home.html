@@ -2,22 +2,8 @@
 {% load static %}
 
 {% block content %}
-<article class="media content-section mb-1">
-  <div class="media-body">
-    <h2>Public Work &nbsp;<small class="text-muted">{{ user.person.center }}</small> </h2>
-  </div>
-</article>
 
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'home' %}">
-      <i class="fas fa-chevron-left "></i> 
-      Go back
-    </a>
-  </div>
-</div>
+{% include 'publicwork/elements/publicwork_navbar.html' %}
 
 <div class="row-pg-initial">
   <div class="col-lg-3 card-principal-col-lg-3"
