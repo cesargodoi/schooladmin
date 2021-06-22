@@ -12,7 +12,7 @@
 
 {% include "user/elements/header.html" %}
 
-<div class="row">
+<div class="row-qrcode">
   <div class="col-md-6">
     <article class="media content-section">
       <div class="media-body">
@@ -21,7 +21,7 @@
           <fieldset class="form-group">
             <legend class="border-bottom mb-4">Scan the Event QR-CODE</legend>
             <div class="input-group">
-              <input class="form-control" type="text" name="id" id="id">
+              <input class="form-control" type="text" name="qrcode" id="qrcode" required>
               <span class="input-group-append">
                 <button class="btn btn btn-outline-success" type="submit">
                   <i class="fas fa-signature"></i> Sign in</button>
@@ -34,9 +34,11 @@
   </div>
   <div class="col-md-6">
     <div class="text-center">
-      <video width="320" id="preview" visible="false"></video>
+      <video class="img-fluid" id="preview" visible="false"></video>
     </div>
   </div>
+</div>
+  
   {% endblock %}
 
   {% block scripts %}
@@ -46,10 +48,10 @@
     // function scanQrCode() {
     let preview = document.getElementById('preview')
     let scanner = new Instascan.Scanner({ video: preview });
-    let _id = document.getElementById('id');
+    let _qrcode = document.getElementById('qrcode');
 
     scanner.addListener('scan', function (content) {
-      _id.value = content;
+      _qrcode.value = content;
       preview.style.display = 'none';
       scanner.stop();
     });
@@ -63,4 +65,19 @@
     });
     // };
   </script>
+
+  <style>
+    .row-qrcode {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+      background-color: var(--background-card);
+      border: 1px solid var(--content-border);
+      border-radius: 3px;
+    }
+  </style>
   {% endblock %}

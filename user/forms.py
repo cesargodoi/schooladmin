@@ -31,6 +31,9 @@ class MyPaymentForm(forms.ModelForm):
             "ref_month": forms.widgets.DateInput(
                 format="%Y-%m-%d", attrs={"type": "date"}
             ),
+            "value": forms.widgets.NumberInput(
+                attrs={"placeholder": "enter value"}
+            ),
             "person": forms.HiddenInput(),
         }
 
