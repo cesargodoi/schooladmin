@@ -34,15 +34,38 @@
           class="btn btn-light btn-sm text-info float-right" 
           href="{% url 'user_add_payment' %}">
           <i class="fas fa-plus "></i> 
-          Add
+          Add payment
         </a>
       </div>
     </div>
 
     {% if not request.session.my_order.payments %}
-    <div class="alert alert-secondary">Aqui vai alguma coisa</div>
+    
+    <div class="alert alert-secondary mt-2">
+      <h4 class="profile-payments-title">Para fazer suas contribuições e pagamentos siga as instruções:</h4>
+      <div class="row">
+        <div class="col-sm-4" id="payform_type">
+          <img 
+            src="{{ object.person.center.pix_image.url }}" 
+            class="img-fluid">
+        </div>
+        <div class="col-sm-6">
+          <p><strong>Chave-pix: </strong></p>
+          {{ object.person.center.pix_key }}
+
+          <hr>
+          <ul>
+            <li>Realize a transferência, depósito ou PIX em seu banco.</li>
+            <li>Use o campo de "Descrição" no aplicativo de seu banco para identificar sua contribuição via PIX.</li>
+            <li>Pegue o comprovante digital em .pdf ou .jpg fornecido por seu banco</li>
+            <li>Neste programa você conseguirá fazer os pagamentos e contribuições apenas em seu nome.</li>
+            <li>Para pagamentos e contribuições coletivas (duas ou mais pessoas) procure a tesouraria de seu núcleo.</li>
+            <li>Para iniciar, clique em <strong>+ Add payment</strong> </li>
+          </ul>
+        </div>
+      </div>
+    </div>
     {% else %}
-    <!-- { if request.session.my_order.payments %} -->
 
     {% for object in request.session.my_order.payments %}
     {% include "treasury/elements/payment.html" %}
@@ -145,6 +168,7 @@
 
 {% block scripts %}
 <script>
+  //faz campo de valor não ser editável no profile>payments
   const paymentValue = document.getElementById("id_value")
   paymentValue.setAttribute('readonly', 'readonly')
 
@@ -153,7 +177,7 @@
   const ctrlNumberField = document.getElementById("id_ctrl_number")
 
   
-
+  //verifica se todos os campos estão válidos no formulário antes de salvar
   function checkFormOfPayment(){
     
     if(bancFlagField.value == ''){
