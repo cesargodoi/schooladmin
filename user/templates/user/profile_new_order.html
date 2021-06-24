@@ -7,7 +7,7 @@
   {% if request.session.my_order.total_payments != 0.0 %}
   <button 
     class="btn btn-primary" 
-    onclick="document.getElementById('form').submit();">
+    onclick="checkFormOfPayment()" id="pay-now">
     <i class="fas fa-money-bill-wave-alt"></i> 
     Pay now
   </button>
@@ -39,7 +39,10 @@
       </div>
     </div>
 
-    {% if request.session.my_order.payments %}
+    {% if not request.session.my_order.payments %}
+    <div class="alert alert-secondary">Aqui vai alguma coisa</div>
+    {% else %}
+    <!-- { if request.session.my_order.payments %} -->
 
     {% for object in request.session.my_order.payments %}
     {% include "treasury/elements/payment.html" %}
@@ -61,24 +64,142 @@
 {% endif %}
 
 {% if request.session.my_order.payments %}
-{% include 'user/elements/profile_payment_form.html' %}
+<article class="media content-section">
+  <div class="media-body">
+    <div class="row">
+      <div class="col-lg-6">
+        <h5>Form of Payment</h5>
+        <form id="form" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-lg-6" id="payform_type">
+              {{ form.type | as_crispy_field }}
+            </div>
+            <div class="col-lg-6">
+              {{ form.value | as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              {{ form.bank_flag | as_crispy_field }}
+            </div>
+            <div class="col-lg-6">
+              {{ form.ctrl_number | as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              {{ form.voucher_img | as_crispy_field }}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" 
+              class="form-control" 
+              id="description" 
+              name="description"
+              value="{{ request.session.my_order.description }}">
+          </div>
+        </form>
+      </div>
+      <div class="col-lg-6">
+
+        <div class="alert alert-secondary">
+          <div class="row">
+            <div class="col-sm-12">
+              <p>Para concluir sua contribuição tenha o comprovante de depósito, transferência ou PIX digitalizado (.pdf ou .jpg)</p>
+              <p><strong>Voucher img: </strong>Carregue o arquivo para o sistema</p>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-sm-12">
+              <p> <strong>Bank-flag: </strong>escolha a opção que corresponda ao seu banco.</p>
+              <p> <strong>Ctrl number: </strong>Número de identificação do depósito, transferência ou PIX.</p>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-sm-6" id="payform_type">
+              <img 
+                src="{{ object.person.center.pix_image.url }}" 
+                class="img-fluid">
+            </div>
+            <div class="col-sm-6">
+              <p>Pagamentos com PIX: use a chave-pix ou o QR-Code</p>
+              <p><strong>Chave-pix: </strong></p>
+              {{ object.person.center.pix_key }}
+              <hr>
+              <p>Use o campo de "Descrição" no aplicativo de seu banco para identificar sua contribuição via PIX.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
 {% endif %}
 
 {% endblock %}
 
 {% block scripts %}
 <script>
-  var form = new Vue({
-    el: '#form',
-    data: {
-      seen: true,
-      selected: 'PIX',
-    },
-    methods: {
-      viewPix: function () {
-        this.seen = this.selected != "PIX" ? false : true
-      }
+  const paymentValue = document.getElementById("id_value")
+  paymentValue.setAttribute('readonly', 'readonly')
+
+  const voucherImg = document.getElementById("id_voucher_img")
+  const bancFlagField = document.getElementById("id_bank_flag")
+  const ctrlNumberField = document.getElementById("id_ctrl_number")
+
+  
+
+  function checkFormOfPayment(){
+    
+    if(bancFlagField.value == ''){
+      alertPaymentIdentification("id_bank_flag");
+      return false;
     }
-  })
+    if(ctrlNumberField.value == ''){
+      alertPaymentIdentification("id_ctrl_number");
+      return false;
+    }
+    if(voucherImg.value == ''){
+          alertVoucherImg();
+          return false;
+    }
+    document.getElementById('form').submit()
+
+  }
+
+  function alertVoucherImg(){
+    var voucherImg = document.getElementById("id_voucher_img")
+    var divVoucherImg = document.getElementById("div_id_voucher_img")
+    
+    var invalideValue = document.createElement("p");
+    invalideValue.classList.add("invalid-feedback");
+    invalideValue.style.display = 'block'
+    var invalidText = document.createTextNode(
+      "Please send a voucher for your pay."
+    );
+    invalideValue.appendChild(invalidText);
+    divVoucherImg.appendChild(invalideValue)
+    divVoucherImg.classList.add("is-invalid")
+    voucherImg.focus();
+  }
+
+  function alertPaymentIdentification(id){
+    var identificationField = document.getElementById(id)
+
+    var invalidValueField = document.createElement("p");
+    invalidValueField.classList.add("invalid-feedback");
+    var invalidText = document.createTextNode(
+      "Don't forget this field."
+    );
+    invalidValueField.appendChild(invalidText);
+    identificationField.parentElement.appendChild(invalidValueField);
+    identificationField.classList.add("is-invalid");
+    identificationField.focus();
+  }
 </script>
 {% endblock %}

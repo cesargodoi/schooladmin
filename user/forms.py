@@ -49,4 +49,4 @@ class MyFormOfPaymentForm(forms.ModelForm):
     class Meta:
         model = FormOfPayment
         fields = "__all__"
-        exclude = ["payform_type"]
+        exclude = ["payform_type", "complement"]
