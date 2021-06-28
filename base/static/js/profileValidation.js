@@ -3,109 +3,78 @@
 var hint_email = document.getElementById("hint_id_email");
 hint_email.innerHTML = "Enter a valid e-mail: your@mail.com";
 
-// handlers functions
-function alertNameInput() {
-  var socialName = document.getElementById("id_social_name");
-  var invalidName = document.createElement("p");
-  invalidName.classList.add("invalid-feedback");
-  var invalidText = document.createTextNode(
-    "Por favor, escreva como gostaria de ser chamado."
-  );
-  invalidName.appendChild(invalidText);
-  socialName.parentElement.appendChild(invalidName);
-  socialName.classList.add("is-invalid");
-  socialName.focus();
-}
+//fields
+const socialName = document.getElementById("id_social_name");
+const email = document.getElementById("id_email");
+const phone_1 = document.getElementById("id_phone_1");
+const phone_2 = document.getElementById("id_phone_2");
+const sosContact = document.getElementById("id_sos_contact");
+const sosPhone = document.getElementById("id_sos_phone");
 
-function alertEmailInput() {
-  var email = document.getElementById("id_email");
-  var invalidEmail = document.createElement("p");
-  invalidEmail.classList.add("invalid-feedback");
-  var invalidText = document.createTextNode(
-    "Por favor, indique um e-mail válido"
-  );
-  invalidEmail.appendChild(invalidText);
-  email.parentElement.appendChild(invalidEmail);
-  email.classList.add("is-invalid");
-  email.focus();
-}
+// handler function
+function alertField(input, message) {
+  const invalidField = document.getElementById(input);
 
-function alertPhoneInput(id) {
-  var phone = document.getElementById(id);
-  var invalidPhone = document.createElement("p");
-  invalidPhone.classList.add("invalid-feedback");
-  var invalidText = document.createTextNode(
-    "Por favor, cadastre um número de telefone válido!"
-  );
-  invalidPhone.appendChild(invalidText);
-  phone.parentElement.appendChild(invalidPhone);
-  phone.classList.add("is-invalid");
-  phone.focus();
-}
-
-function alertSOSContactInput() {
-  var contact_sos = document.getElementById("id_sos_contact");
-  var invalidContact = document.createElement("p");
-  invalidContact.classList.add("invalid-feedback");
-  var invalidText = document.createTextNode(
-    "Qual o nome do seu contato de emergência?"
-  );
-  invalidContact.appendChild(invalidText);
-  contact_sos.parentElement.appendChild(invalidContact);
-  contact_sos.classList.add("is-invalid");
-  contact_sos.focus();
+  var invalidValueField = document.createElement("p");
+  invalidValueField.classList.add("invalid-feedback");
+  var invalidText = document.createTextNode(message);
+  invalidValueField.appendChild(invalidText);
+  invalidField.parentElement.appendChild(invalidValueField);
+  invalidField.classList.add("is-invalid");
+  invalidField.focus();
 }
 
 // main check function
 function checkForm() {
-  var socialName = document.getElementById("id_social_name").value;
-  var email = document.getElementById("id_email").value;
-  var phone_1 = document.getElementById("id_phone_1").value;
-  var phone_2 = document.getElementById("id_phone_2").value;
-  var sosContact = document.getElementById("id_sos_contact").value;
-  var sosPhone = document.getElementById("id_sos_phone").value;
-
   // checking name input
-  if (socialName.length < 2 || socialName == "" || socialName === null) {
-    alertNameInput();
+  if (
+    socialName.value.length < 2 ||
+    socialName.value == "" ||
+    socialName.value === null
+  ) {
+    let message = "Please write what you would like to be called.";
+    alertField("id_social_name", message);
     return false;
   }
-
   // checking e-mail input
   if (
-    email.indexOf("@") == -1 ||
-    email.indexOf(".") == -1 ||
-    email == "" ||
-    email == null
+    email.value.indexOf("@") == -1 ||
+    email.value.indexOf(".") == -1 ||
+    email.value == "" ||
+    email.value == null
   ) {
-    alertEmailInput();
+    let message = "Please enter a valid email address";
+    alertField("id_email", message);
     return false;
   }
-
-  if (phone_1.length < 10 || phone_1 == "" || phone_1 === null) {
-    alertPhoneInput("id_phone_1");
+  if (
+    phone_1.value.length < 10 ||
+    phone_1.value == "" ||
+    phone_1.value === null
+  ) {
+    let message = "Please register a valid phone number: xx-98765.4321";
+    alertField("id_phone_1", message);
     return false;
   }
-
-  if (phone_2.length > 0 && phone_2.length < 10) {
-    alertPhoneInput("id_phone_2");
+  if (phone_2.value.length > 0 && phone_2.value.length < 10) {
+    let message = "Please register a valid phone number: xx-98765.4321";
+    alertField("id_phone_2", message);
     return false;
   }
-
-  if (sosContact) {
-    if (sosPhone.length >= 0 && sosPhone.length < 10) {
-      alertPhoneInput("id_sos_phone");
+  if (sosContact.value) {
+    if (sosPhone.value.length >= 0 && sosPhone.value.length < 10) {
+      let message = "Please register a valid phone number: xx-98765.4321";
+      alertField("id_sos_phone", message);
       return false;
     }
   }
-
-  if (sosPhone) {
-    if (sosContact == "" || sosContact == null) {
-      alertSOSContactInput();
+  if (sosPhone.value) {
+    if (sosContact.value == "" || sosContact.value == null) {
+      let message = "What's the name of your emergency contact?";
+      alertField("id_sos_contact", message);
       return false;
     }
   }
-
   // submit after checked form
   document.getElementById("form").submit();
 }
@@ -113,10 +82,10 @@ function checkForm() {
 //Address filled by ZIP Code
 // aplicating function in tag
 let inputCep = document.querySelector("input[id=id_zip_code]");
-inputCep.addEventListener("change", buscaCep);
+inputCep.addEventListener("change", searchZIPCode);
 
 // handlers functions
-function preencheCampos(json) {
+function fillField(json) {
   document.querySelector("input[id=id_address]").value = json.logradouro;
   document.querySelector("input[id=id_district]").value = json.bairro;
   document.querySelector("input[id=id_complement]").value = json.complemento;
@@ -125,7 +94,7 @@ function preencheCampos(json) {
 }
 
 // main function
-function buscaCep() {
+function searchZIPCode() {
   let inputCep = document.querySelector("input[id=id_zip_code]");
   let cep = inputCep.value.replace("-", "");
 
@@ -135,7 +104,7 @@ function buscaCep() {
   xhr.open("GET", url, true);
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
-      if (xhr.status == 200) preencheCampos(JSON.parse(xhr.responseText));
+      if (xhr.status == 200) fillField(JSON.parse(xhr.responseText));
     }
   };
   xhr.send();
