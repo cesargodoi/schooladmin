@@ -1,0 +1,78 @@
+<h4>Event</h4>
+<table class="table table-hover table-sm">
+  <thead>
+    <tr>
+      <th width="15%">{{ request.session.frequencies.event.date }}</th>
+      <th>{{ request.session.frequencies.event.name }}</th>
+      <th>{{ request.session.frequencies.event.center }}</th>
+    </tr>
+  </thead>
+</table>
+<br>
+<h4>Who participated?</h4>
+<br>
+
+<table class="table table-hover table-sm">
+  <thead>
+    <tr>
+      <th width="3%"></th>
+      <th>person</th>
+      <th class="text-right">freq</th>
+      <th>rank</th>
+      <th>observations</th>
+    </tr>
+  </thead>
+  <tbody>
+    <form class="form-control-sm border-top" method="POST" id="form">
+      {% csrf_token %}
+      {% for listener in request.session.frequencies.listeners %}
+      <tr>
+        <th width="3%">{{ forloop.counter }}</th>
+        <td width="27%">
+          {% if not listener.frequency %}
+          <input type="hidden" value="{{ listener.person.id }}" name="id-{{ forloop.counter }}">
+          <input type="hidden" value="{{ listener.aspect }}" name="asp-{{ forloop.counter }}">
+          {% endif %}
+          {{ listener.person.name }} 
+          <small class="text-muted">
+            &nbsp;&nbsp;
+            <em>
+            {{ listener.person.center }}
+            </em>
+          </small>
+        </td>
+        <td width="5%" class="text-right">
+          {% if not listener.frequency %}
+          <input type="checkbox" 
+                  class="form-check-input"  
+                  value="on" 
+                  name="freq-{{ forloop.counter }}">
+          {% else %}
+          <small class="mr-2"><i class="fas fa-check-square"></i></small>
+          {% endif %}
+        </td>
+        <td width="5%" class="text-center">
+          {% if not listener.frequency %}
+          <input type="number" min="0" max="2"
+                  class="form-control form-control-sm" 
+                  value="0"
+                  name="rank-{{ forloop.counter }}">
+          {% else %}
+          {% if listener.ranking > 0 %}{{ listener.ranking }}{% endif %}
+          {% endif %}
+        </td>
+        <td width="60%">
+          {% if not listener.frequency %}
+          <input type="text" 
+                  class="form-control form-control-sm" 
+                  value="{{ listener.observations }}"
+                  name="obs-{{ forloop.counter }}">
+          {% else %}
+          {% if listener.observations %}{{ listener.observations }}  {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </form>
+  </tbody>
+</table>

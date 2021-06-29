@@ -29,10 +29,10 @@
   <div class="col-sm-2 mb-1">
     <select class="form-control" name="type">
       <option value="">all types</option>
-      {% for tp in type_list %}
-      <option value="{% if tp.0 != '---' %}{{ tp.0 }}{% endif %}"
-              {% if tp.0 == request.session.search.type %}selected{% endif %}>
-        {% if tp.0 == "---" %}type{% else %}{{ tp.1 }}{% endif %}
+      {% for key, value in type_list %}
+      <option value="{{ key }}"
+              {% if key == request.session.search.type %}selected{% endif %}>
+        {{ value }}
       </option>
       {% endfor %}
     </select>

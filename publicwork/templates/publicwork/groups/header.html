@@ -1,0 +1,48 @@
+<article class="media content-section mb-1">
+  <div class="media-body">
+    <div class="article-metadata">
+      <div class="row">
+        <div class="col-8">
+          {{ object.center }}
+          {% if object.center != request.user.person.center %}
+          &nbsp;&nbsp;&nbsp;
+          <span class="badge badge-pill badge-danger">another center - only view</span>
+          {% endif %}
+        </div>
+        <div class="col-4 text-right">
+          {% if not object.is_active %}
+          <span class="badge badge-pill badge-danger">inactive</span>
+          {% endif %}
+          {% if object.mentors.count > 0 %}
+          &nbsp;&nbsp;<strong>mentors:</strong>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <h3>
+          {{ object.name }} &nbsp;&nbsp;
+          <small class="text-muted">
+            <em>{{ object.description }}</em>
+          </small>
+        </h3>
+      </div>
+      <div class="col-6 text-right pt-2">
+        {% if object.mentors.count > 0 %}
+          {% for mentor in object.mentors.all %}
+            &nbsp;&nbsp;{{ mentor.short_name }} 
+            {% if nav == 'info' %}
+            <a type="button" 
+              href="{% url 'group_remove_mentor' object.pk mentor.pk %}"
+              class="btn btn-outline-light btn-sm">
+              <i class="fas fa-trash-alt text-danger"></i>
+            </a>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</article>

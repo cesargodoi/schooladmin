@@ -22,6 +22,12 @@
           Lectures
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link {% if nav == 'gp_home' %}active{% endif %}" 
+          href="{% url 'group_home' %}">
+          Groups
+        </a>
+      </li>
       {% include 'publicwork/reports/menu.html' %}     
     </ul>
 

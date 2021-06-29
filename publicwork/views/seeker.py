@@ -35,6 +35,8 @@ def seeker_detail(request, pk):
     belongs_center(request, pk, Seeker)
     seeker = Seeker.objects.get(pk=pk)
     age = (date.today() - seeker.birth).days // 365
+    if request.GET.get("pwg"):
+        request.session["pwg"] = request.GET["pwg"]
 
     context = {
         "object": seeker,

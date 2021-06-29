@@ -65,29 +65,33 @@ def person_create(request):
     if request.method == "POST":
         # creating a new user
         password = BaseUserManager().make_random_password()
-        email = request.POST["email"]
-        new_user = User.objects.create_user(
-            email=email,
-            password=password,
-        )
-        # updating the user.profile
-        profile_form = ProfileForm(
-            request.POST, request.FILES, instance=new_user.profile
-        )
-        if profile_form.is_valid():
-            profile_form.save()
-        # updating the user.person
-        person_form = PersonForm(request.POST, instance=new_user.person)
-        if person_form.is_valid():
-            person_form.save()
-        # add password in observations
-        new_user.person.observations += f"\nfirst password: {password}"
-        # the center is the same as the center of the logged in user
-        new_user.person.center = request.user.person.center
-        new_user.person.save()
-        message = f"The Person '{request.POST['name']}' has been created!"
-        messages.success(request, message)
-        return redirect("person_home")
+        if request.POST.get("email"):
+            email = request.POST["email"]
+            new_user = User.objects.create_user(
+                email=email,
+                password=password,
+            )
+            # updating the user.profile
+            profile_form = ProfileForm(
+                request.POST, request.FILES, instance=new_user.profile
+            )
+            if profile_form.is_valid():
+                profile_form.save()
+            # updating the user.person
+            person_form = PersonForm(request.POST, instance=new_user.person)
+            if person_form.is_valid():
+                person_form.save()
+            # add password in observations
+            new_user.person.observations += f"\nfirst password: {password}"
+            # the center is the same as the center of the logged in user
+            new_user.person.center = request.user.person.center
+            new_user.person.save()
+            message = f"The Person '{request.POST['name']}' has been created!"
+            messages.success(request, message)
+            return redirect("person_home")
+        else:
+            message = "Enter a valid email!"
+            messages.success(request, message)
 
     user_form = UserForm()
     profile_form = ProfileForm()

@@ -1,0 +1,44 @@
+{% if object_list %}
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+<table class="table table-striped table-sm">
+  <thead>
+    <th>#</th>
+    <th>name</th>
+    <th>status</th>
+    <th class="text-right">rank</th>
+    <th class="text-right">freq</th>
+  </thead>
+  <tbody>
+    {% for obj in object_list%}
+    <tr>
+      <th>{{ forloop.counter }}</th>
+      <td>{{ obj.name }}</td>
+      <td>
+        <span class="badge badge-pill badge-info">
+          {{ obj.status }}
+        </span>
+        <small class="text-muted">
+          <em>
+            &nbsp;&nbsp; since &nbsp;&nbsp;
+            {{ obj.date|timesince:now }}
+          </em>
+        </small>
+      </td>
+      <td class="text-right font-weight-bold">{{ obj.rank }}</td>
+      <td class="text-right font-weight-bold">{{ obj.freq }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% else %}
+
+<div class="alert alert-secondary" role="alert">
+  <h4 class="alert-heading">no frequencies found</h4>
+</div>
+
+{% endif %}

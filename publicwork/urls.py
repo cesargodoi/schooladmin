@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import seeker, lecture, listener, report, historic
+from .views import seeker, lecture, listener, report, historic, group
 
 # publicwork
 urlpatterns = [
@@ -108,6 +108,50 @@ urlpatterns += [
         "seeker/<int:seek_pk>/delete-historic/<int:hist_pk>",
         historic.delete_historic,
         name="delete_historic",
+    ),
+]
+
+# groups
+urlpatterns += [
+    path("group/", group.group_home, name="group_home"),
+    path("group/<int:pk>/detail/", group.group_detail, name="group_detail"),
+    path("group/create/", group.group_create, name="group_create"),
+    path("group/<int:pk>/update/", group.group_update, name="group_update"),
+    path("group/<int:pk>/delete/", group.group_delete, name="group_delete"),
+    path(
+        "group/<int:pk>/reinsert/",
+        group.group_reinsert,
+        name="group_reinsert",
+    ),
+    path(
+        "group/<int:pk>/frequencies/",
+        group.group_frequencies,
+        name="group_frequencies",
+    ),
+    path(
+        "group/<int:pk>/frequencies/add",
+        group.group_add_frequencies,
+        name="group_add_frequencies",
+    ),
+    path(
+        "group/<int:pk>/member/add",
+        group.group_add_member,
+        name="group_add_member",
+    ),
+    path(
+        "group/<int:group_pk>/member/<int:member_pk>/remove",
+        group.group_remove_member,
+        name="group_remove_member",
+    ),
+    path(
+        "group/<int:pk>/mentor/add",
+        group.group_add_mentor,
+        name="group_add_mentor",
+    ),
+    path(
+        "group/<int:group_pk>/mentor/<uuid:mentor_pk>/remove",
+        group.group_remove_mentor,
+        name="group_remove_mentor",
     ),
 ]
 

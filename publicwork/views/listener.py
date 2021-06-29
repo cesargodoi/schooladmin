@@ -21,12 +21,6 @@ def add_listener(request, lect_pk):
         seeker = Seeker.objects.get(pk=request.GET["seek_pk"])
 
         if request.method == "POST":
-            # isert historic if necessary
-            if seeker.historic_of_seeker_set.last().occurrence in [
-                "NEW",
-                "MT1",
-            ]:
-                insert_historic_if_necessary(request, seeker)
             # create listener
             Listener.objects.create(
                 lecture=lecture,
@@ -109,12 +103,6 @@ def add_frequency(request, pk):
         lecture = Lecture.objects.get(pk=request.GET["lect_pk"])
 
         if request.method == "POST":
-            # isert historic if necessary
-            if seeker.historic_of_seeker_set.last().occurrence in [
-                "NEW",
-                "MT1",
-            ]:
-                insert_historic_if_necessary(request, seeker)
             # create listener
             Listener.objects.create(
                 lecture=lecture,
@@ -190,21 +178,3 @@ def remove_frequency(request, seek_pk, freq_pk):
 
     context = {"object": listener, "title": "confirm to delete"}
     return render(request, "base/confirm_delete.html", context)
-
-
-# handlers
-def insert_historic_if_necessary(request, obj):
-    if obj.historic_of_seeker_set.last().occurrence in ["NEW", "MT1"]:
-        new_historic = dict(
-            seeker=obj,
-            date=timezone.now().date(),
-            description="automatically added by frequency",
-            made_by=request.user,
-        )
-
-        if obj.historic_of_seeker_set.last().occurrence == "NEW":
-            new_historic["occurrence"] = "MT1"
-        elif obj.historic_of_seeker_set.last().occurrence == "MT1":
-            new_historic["occurrence"] = "MT2"
-
-        Historic_of_seeker.objects.create(**new_historic)
