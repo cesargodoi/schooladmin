@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Seeker,
-    Historic_of_seeker,
+    HistoricOfSeeker,
     Lecture,
     Listener,
     PublicworkGroup,
@@ -25,7 +25,7 @@ class SeekerAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-admin.site.register(Historic_of_seeker)
+admin.site.register(HistoricOfSeeker)
 
 
 @admin.register(Lecture)

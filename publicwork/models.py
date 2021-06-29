@@ -62,7 +62,7 @@ class Seeker(models.Model):
 
 
 # Historic of seeker
-class Historic_of_seeker(models.Model):
+class HistoricOfSeeker(models.Model):
     seeker = models.ForeignKey(Seeker, on_delete=models.PROTECT)
     occurrence = models.CharField(
         max_length=3, choices=SEEKER_STATUS, default="MBR"

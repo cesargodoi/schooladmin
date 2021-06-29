@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from ..forms import HistoricForm
-from ..models import Seeker, Historic_of_seeker
+from ..models import Seeker, HistoricOfSeeker
 
 
 @login_required
@@ -51,7 +51,7 @@ def create_historic(request, pk):
 @permission_required("publicwork.change_historic")
 def update_historic(request, seek_pk, hist_pk):
     seeker = Seeker.objects.get(pk=seek_pk)
-    historic = Historic_of_seeker.objects.get(pk=hist_pk)
+    historic = HistoricOfSeeker.objects.get(pk=hist_pk)
     if request.method == "POST":
         form = HistoricForm(request.POST, instance=historic)
         if form.is_valid():
@@ -78,7 +78,7 @@ def update_historic(request, seek_pk, hist_pk):
 @login_required
 @permission_required("publicwork.add_historic")
 def delete_historic(request, seek_pk, hist_pk):
-    historic = Historic_of_seeker.objects.get(pk=hist_pk)
+    historic = HistoricOfSeeker.objects.get(pk=hist_pk)
     if request.method == "POST":
         historic.delete()
         return redirect("seeker_historic", pk=seek_pk)

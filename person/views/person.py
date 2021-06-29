@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http.response import Http404
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.urls import reverse
 
@@ -44,7 +44,7 @@ def person_detail(request, id):
     ]
     if id not in center_persons and not request.user.is_superuser:
         raise Http404
-    person = get_object_or_404(Person, id=id)
+    person = Person.objects.get(id=id)
     age = (date.today() - person.birth).days // 365
 
     context = {
@@ -122,7 +122,7 @@ def person_update(request, id):
     if id not in center_persons and not request.user.is_superuser:
         raise Http404
 
-    person = get_object_or_404(Person, id=id)
+    person = Person.objects.get(id=id)
     if request.method == "POST":
         # updating the user
         user_form = UserForm(request.POST, instance=person.user)
@@ -167,7 +167,7 @@ def person_update(request, id):
 @login_required
 @permission_required("person.delete_person")
 def person_delete(request, id):
-    person = get_object_or_404(Person, id=id)
+    person = Person.objects.get(id=id)
     if request.method == "POST":
         if person.historic_set.all():
             person.user.is_active = False
@@ -187,7 +187,7 @@ def person_delete(request, id):
 @login_required
 @permission_required("person.add_person")
 def person_reinsert(request, id):
-    person = get_object_or_404(Person, id=id)
+    person = Person.objects.get(id=id)
     if request.method == "POST":
         person.user.is_active = True
         person.user.save()

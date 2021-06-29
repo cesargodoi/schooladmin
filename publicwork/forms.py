@@ -5,7 +5,7 @@ from .models import (
     Seeker,
     Lecture,
     Listener,
-    Historic_of_seeker,
+    HistoricOfSeeker,
     PublicworkGroup,
 )
 
@@ -48,7 +48,7 @@ class ListenerForm(forms.ModelForm):
 
 class HistoricForm(forms.ModelForm):
     class Meta:
-        model = Historic_of_seeker
+        model = HistoricOfSeeker
         exclude = ["listeners"]
         widgets = {
             "descriptions": forms.Textarea(attrs={"rows": 2}),

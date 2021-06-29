@@ -3,13 +3,12 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from schooladmin.common import paginator
 from django.urls import reverse
-from django.utils import timezone
 
 from center.models import Center
 from base.searchs import search_seeker, search_lecture
 
 from ..forms import ListenerForm
-from ..models import Lecture, Seeker, Listener, Historic_of_seeker
+from ..models import Lecture, Seeker, Listener
 
 
 @login_required

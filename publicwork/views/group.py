@@ -54,7 +54,7 @@ def group_detail(request, pk):
 
     context = {
         "object": pw_group,
-        "object_list": pw_group.members.all(),
+        "object_list": pw_group.members.all().order_by("name"),
         "title": "group detail",
         "nav": "info",
     }
@@ -164,7 +164,10 @@ def group_frequencies(request, pk):
     context = {
         "object": pw_group,
         "title": "group detail | frequencies",
-        "object_list": paginator(frequencies, page=page),
+        "object_list": paginator(
+            sorted(frequencies, key=lambda x: x["rank"], reverse=True),
+            page=page,
+        ),
         "nav": "frequencies",
         "now": datetime.now().date(),
     }
