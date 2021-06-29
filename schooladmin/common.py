@@ -91,15 +91,9 @@ PROFILE_PAYFORM_TYPES = (
 COUNTRIES = (("BR", "Brasil"),)
 LECTURE_TYPES = (("CTT", "contact"), ("MET", "meeting"))
 SEEKER_STATUS = (
-    ("NEW", "new"),
-    ("MT1", "meeting 1"),
-    ("MT2", "meeting 2"),
-    ("DNL", "did not like"),
-    ("REG", "regular"),
-    ("SVC", "service"),
-    ("CNF", "conference"),
+    ("MBR", "member"),
+    ("RCP", "reception"),
     ("INS", "installing"),
-    ("TKG", "thinking"),
     ("RST", "restriction"),
 )
 
@@ -226,10 +220,16 @@ def paginator(queryset, limit=10, page=1):
     return object_list
 
 
-def belongs_center(request, pk, Object):
+def belongs_center(request, pk, obj):
     object_list = [
         pk.pk
-        for pk in Object.objects.filter(center=request.user.person.center.id)
+        for pk in obj.objects.filter(center=request.user.person.center.id)
     ]
     if pk not in object_list and not request.user.is_superuser:
         raise Http404
+
+
+def clear_session(request, items):
+    for item in items:
+        if request.session.get(item):
+            del request.session[item]

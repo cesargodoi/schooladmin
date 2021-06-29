@@ -27,20 +27,22 @@
     <!-- controlers -->
     <div class="navbar-nav">
       {% if tab == "info" %}
+        {% if not request.session.pwg %}
         <a class="btn btn-light btn-sm" href="{% url 'seeker_update' object.id %}">
           <i class="fas fa-edit"></i> 
           Edit
         </a>
-        {% if object.is_active %}
-        <a class="btn btn-light btn-sm" href="{% url 'seeker_delete' object.id %}">
-          <i class="fas fa-edit"></i> 
-          Delete
-        </a>
-        {% else %}
-        <a class="btn btn-light btn-sm" href="{% url 'seeker_reinsert' object.pk %}">
-          <i class="fas fa-edit"></i> 
-          Reinsert
-        </a>
+          {% if object.is_active %}
+          <a class="btn btn-light btn-sm" href="{% url 'seeker_delete' object.id %}">
+            <i class="fas fa-edit"></i> 
+            Delete
+          </a>
+          {% else %}
+          <a class="btn btn-light btn-sm" href="{% url 'seeker_reinsert' object.pk %}">
+            <i class="fas fa-edit"></i> 
+            Reinsert
+          </a>
+          {% endif %}
         {% endif %}
       {% endif %}
 
@@ -58,7 +60,14 @@
         </a>
       {% endif %}
       
-      <a class="btn btn-light btn-sm" href="{% url 'seeker_home' %}">
+      <a class="btn btn-light btn-sm" 
+         href="
+         {% if request.session.pwg %}
+         {% url 'group_detail' request.session.pwg %}
+         {% else %}
+         {% url 'seeker_home' %}
+         {% endif %}
+         ">
         <i class="fas fa-chevron-left"></i> 
         Go back
       </a>

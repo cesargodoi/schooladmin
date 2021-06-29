@@ -62,10 +62,10 @@ class Seeker(models.Model):
 
 
 # Historic of seeker
-class Historic_of_seeker(models.Model):
+class HistoricOfSeeker(models.Model):
     seeker = models.ForeignKey(Seeker, on_delete=models.PROTECT)
     occurrence = models.CharField(
-        max_length=3, choices=SEEKER_STATUS, default="NEW"
+        max_length=3, choices=SEEKER_STATUS, default="MBR"
     )
     date = models.DateField(null=True, blank=True)
     description = models.CharField(max_length=100, null=True, blank=True)
@@ -133,3 +133,28 @@ class Listener(models.Model):
     class Meta:
         verbose_name = "listener"
         verbose_name_plural = "listeners"
+
+
+#  PublicworkGroup
+class PublicworkGroup(models.Model):
+    name = models.CharField(max_length=50)
+    center = models.ForeignKey("center.Center", on_delete=models.PROTECT)
+    description = models.CharField(max_length=200, null=True, blank=True)
+    mentors = models.ManyToManyField("person.Person", blank=True)
+    members = models.ManyToManyField(Seeker, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    made_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="made_by_publicwork_group",
+        on_delete=models.PROTECT,
+        blank=True,
+    )
+
+    def __str__(self):
+        return f"{self.name} - {self.center}"
+
+    class Meta:
+        verbose_name = "publicwork group"
+        verbose_name_plural = "publicwork groups"

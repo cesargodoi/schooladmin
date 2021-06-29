@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.http.response import Http404
 from django.urls import reverse
 from schooladmin.common import paginator, LECTURE_TYPES
@@ -30,13 +30,13 @@ def lecture_home(request):
 @login_required
 @permission_required("publicwork.view_lecture")
 def lecture_detail(request, pk):
-    object = get_object_or_404(Lecture, pk=pk)
-    queryset = object.listener_set.all().order_by("seeker__name_sa")
+    lect_object = Lecture.objects.get(pk=pk)
+    queryset = lect_object.listener_set.all().order_by("seeker__name_sa")
 
     object_list = paginator(queryset, page=request.GET.get("page"))
 
     context = {
-        "object": object,
+        "object": lect_object,
         "object_list": object_list,
         "title": "lecture detail",
     }
@@ -77,11 +77,11 @@ def lecture_create(request):
 @login_required
 @permission_required("publicwork.change_lecture")
 def lecture_update(request, pk):
-    object = Lecture.objects.get(pk=pk)
-    if object.center != request.user.person.center:
+    lect_object = Lecture.objects.get(pk=pk)
+    if lect_object.center != request.user.person.center:
         raise Http404
     if request.method == "POST":
-        form = LectureForm(request.POST, instance=object)
+        form = LectureForm(request.POST, instance=lect_object)
         if form.is_valid():
             form.save()
             message = (
@@ -91,7 +91,7 @@ def lecture_update(request, pk):
             return redirect("lecture_detail", pk=pk)
 
     lecture_form = LectureForm(
-        instance=object,
+        instance=lect_object,
         initial={"made_by": request.user},
     )
 
@@ -109,17 +109,17 @@ def lecture_update(request, pk):
 @login_required
 @permission_required("publicwork.delete_lecture")
 def lecture_delete(request, pk):
-    object = get_object_or_404(Lecture, pk=pk)
-    if object.center != request.user.person.center:
+    lect_object = Lecture.objects.get(pk=pk)
+    if lect_object.center != request.user.person.center:
         raise Http404
     if request.method == "POST":
-        object.delete()
+        lect_object.delete()
         message = "The lecture has been deleted!"
         messages.success(request, message)
         return redirect("lecture_home")
 
     context = {
-        "object": object,
+        "object": lect_object,
         "title": "confirm to delete",
     }
     return render(request, "base/confirm_delete.html", context)

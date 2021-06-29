@@ -35,6 +35,8 @@ def seeker_detail(request, pk):
     belongs_center(request, pk, Seeker)
     seeker = Seeker.objects.get(pk=pk)
     age = (date.today() - seeker.birth).days // 365
+    if request.GET.get("pwg"):
+        request.session["pwg"] = request.GET["pwg"]
 
     context = {
         "object": seeker,
@@ -166,7 +168,7 @@ def seeker_historic(request, pk):
     page = request.GET["page"] if request.GET.get("page") else 1
 
     seeker = Seeker.objects.get(pk=pk)
-    historics = seeker.historic_of_seeker_set.all().order_by("-date")
+    historics = seeker.historicofseeker_set.all().order_by("-date")
 
     context = {
         "object": seeker,

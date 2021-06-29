@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from schooladmin.common import paginator
 
@@ -62,7 +62,7 @@ def historic_create(request, person_id):
 @login_required
 @permission_required("person.change_historic")
 def historic_update(request, person_id, pk):
-    historic = get_object_or_404(Historic, pk=pk)
+    historic = Historic.objects.get(pk=pk)
     if request.method == "POST":
         form = HistoricForm(request.POST, instance=historic)
         if form.is_valid():
@@ -86,7 +86,7 @@ def historic_update(request, person_id, pk):
 @login_required
 @permission_required("person.delete_historic")
 def historic_delete(request, person_id, pk):
-    historic = get_object_or_404(Historic, pk=pk)
+    historic = Historic.objects.get(pk=pk)
     if request.method == "POST":
         adjust_status_or_aspect(historic)
         historic.delete()

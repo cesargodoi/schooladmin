@@ -232,7 +232,7 @@ def search_lecture(request, obj):
         request.session["search"] = {
             "dt1": "",
             "dt2": "",
-            "type": "CTT",
+            "type": "",
             "all": "",
             "page": 1,
         }
@@ -273,6 +273,48 @@ def search_lecture(request, obj):
         query.add(q, Q.AND)
 
     return (obj.objects.filter(query).order_by("-date"), search["page"])
+
+
+#  lecture  ###################################################################
+def search_pw_group(request, obj):
+    # checking for search in request.session
+    if not request.session.get("search"):
+        request.session["search"] = {
+            "name": "",
+            "center": request.user.person.center.pk,
+            "all": "",
+            "page": 1,
+        }
+    # adjust search
+    search = request.session["search"]
+    search["page"] = request.GET["page"] if request.GET.get("page") else 1
+    search["name"] = request.GET["name"] if request.GET.get("name") else ""
+    search["center"] = (
+        request.GET["center"] if request.GET.get("center") else ""
+    )
+    search["all"] = "on" if request.GET.get("all") else ""
+    # save session
+    request.session.modified = True
+    # basic query
+    _query = [
+        Q(is_active=True),
+        Q(center=request.user.person.center),
+        Q(name__icontains=search["name"]),
+    ]
+    # adding more complexity
+    if search["center"]:
+        _query.remove(Q(center=request.user.person.center))
+        _query.append(Q(center__pk=search["center"]))
+    if search["all"]:
+        _query.remove(Q(is_active=True))
+        if Q(center=request.user.person.center) in _query:
+            _query.remove(Q(center=request.user.person.center))
+    # generating query
+    query = Q()
+    for q in _query:
+        query.add(q, Q.AND)
+
+    return (obj.objects.filter(query).order_by("name"), search["page"])
 
 
 #  orders  ####################################################################
