@@ -28,7 +28,7 @@ from ..models import Seeker, Lecture, Listener, PublicworkGroup
 
 
 @login_required
-@permission_required("publicwork.view_seeker")
+@permission_required("publicwork.view_publicworkgroup")
 def group_home(request):
     clear_session(request, ["pwg", "search", "frequencies"])
 
@@ -46,7 +46,7 @@ def group_home(request):
 
 
 @login_required
-@permission_required("publicwork.view_seeker")
+@permission_required("publicwork.view_publicworkgroup")
 def group_detail(request, pk):
     clear_session(request, ["search", "frequencies"])
     belongs_center(request, pk, PublicworkGroup)
@@ -62,7 +62,7 @@ def group_detail(request, pk):
 
 
 @login_required
-@permission_required("publicwork.add_seeker")
+@permission_required("publicwork.add_publicworkgroup")
 def group_create(request):
     if request.method == "POST":
         pw_group_form = GroupForm(request.POST)
@@ -89,7 +89,7 @@ def group_create(request):
 
 
 @login_required
-@permission_required("publicwork.change_seeker")
+@permission_required("publicwork.change_publicworkgroup")
 def group_update(request, pk):
     belongs_center(request, pk, PublicworkGroup)
 
@@ -120,7 +120,7 @@ def group_update(request, pk):
 
 
 @login_required
-@permission_required("publicwork.delete_seeker")
+@permission_required("publicwork.delete_publicworkgroup")
 def group_delete(request, pk):
     pw_group = PublicworkGroup.objects.get(pk=pk)
     if request.method == "POST":
@@ -136,7 +136,7 @@ def group_delete(request, pk):
 
 
 @login_required
-@permission_required("publicwork.add_seeker")
+@permission_required("publicwork.add_publicworkgroup")
 def group_reinsert(request, pk):
     pw_group = PublicworkGroup.objects.get(pk=pk)
     if request.method == "POST":
@@ -152,7 +152,7 @@ def group_reinsert(request, pk):
 
 # seeker frequencies
 @login_required
-@permission_required("publicwork.view_seeker")
+@permission_required("publicwork.view_publicworkgroup")
 def group_frequencies(request, pk):
     clear_session(request, ["search", "frequencies"])
     belongs_center(request, pk, PublicworkGroup)
@@ -199,7 +199,7 @@ def get_frequencies(ids):
 
 
 @login_required
-@permission_required("publicwork.view_seeker")
+@permission_required("publicwork.add_listener")
 def group_add_frequencies(request, pk):
     belongs_center(request, pk, PublicworkGroup)
     pw_group = PublicworkGroup.objects.get(pk=pk)
@@ -245,7 +245,7 @@ def group_add_frequencies(request, pk):
 
 # add member
 @login_required
-@permission_required("publicwork.view_seeker")
+@permission_required("publicwork.change_publicworkgroup")
 def group_add_member(request, pk):
     belongs_center(request, pk, PublicworkGroup)
     pw_group = PublicworkGroup.objects.get(pk=pk)
@@ -285,7 +285,7 @@ def group_add_member(request, pk):
 
 
 @login_required
-@permission_required("publicwork.delete_listener")
+@permission_required("publicwork.change_publicworkgroup")
 def group_remove_member(request, group_pk, member_pk):
     pw_group = PublicworkGroup.objects.get(pk=group_pk)
     member = Seeker.objects.get(pk=member_pk)
@@ -306,7 +306,7 @@ def group_remove_member(request, group_pk, member_pk):
 
 # add mentor
 @login_required
-@permission_required("publicwork.view_seeker")
+@permission_required("publicwork.change_publicworkgroup")
 def group_add_mentor(request, pk):
     belongs_center(request, pk, PublicworkGroup)
     pw_group = PublicworkGroup.objects.get(pk=pk)
@@ -347,7 +347,7 @@ def group_add_mentor(request, pk):
 
 
 @login_required
-@permission_required("publicwork.delete_listener")
+@permission_required("publicwork.change_publicworkgroup")
 def group_remove_mentor(request, group_pk, mentor_pk):
     pw_group = PublicworkGroup.objects.get(pk=group_pk)
     mentor = Person.objects.get(pk=mentor_pk)
