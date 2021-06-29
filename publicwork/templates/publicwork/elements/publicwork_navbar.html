@@ -47,6 +47,13 @@
       </a>
       {% endif %}
 
+      {% if nav == 'gp_home' %}
+      <a class="btn btn-light btn-sm" href="{% url 'group_create' %}">
+        <i class="fas fa-plus"></i> 
+        Add group
+      </a>
+      {% endif %}
+
       <a class="btn btn-light btn-sm" 
           href="
           {% if nav == 'pw_home' %}
