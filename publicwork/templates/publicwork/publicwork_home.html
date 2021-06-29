@@ -26,7 +26,17 @@
     </div>
   </div>
 
-  <div class="col-lg-6 mb-4">
+  <div class="col-lg-3 card-principal-col-lg-3"
+      onclick="location.href='{% url 'group_home' %}';">
+    <div class="card h-100 card-principal-backimage">
+      <img src="{% static 'images/groups.png' %}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-principal-title">Groups</h5>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-3 mb-4">
     <div class="card-treasury-new bg-light mb-3">
       <div class="card-header-treasury-new">Reports</div>
       <ul class="list-group list-group-flush">
