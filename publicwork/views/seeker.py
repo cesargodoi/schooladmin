@@ -111,10 +111,12 @@ def seeker_update(request, pk):
 def seeker_delete(request, pk):
     seeker = Seeker.objects.get(pk=pk)
     if request.method == "POST":
-        if seeker.listener_set.all():
+        if seeker.listener_set.count():
             seeker.is_active = False
             seeker.save()
         else:
+            if seeker.historicofseeker_set.count():
+                seeker.historicofseeker_set.all().delete()
             seeker.delete()
         return redirect("seeker_home")
 
