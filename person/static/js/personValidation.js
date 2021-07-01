@@ -69,7 +69,7 @@ function checkForm() {
   }
   if (birthDay.value == "" || birthDay.value === null) {
     let message = "Don't forget this field.";
-    alertField("id_birth");
+    alertField("id_birth", message);
     return false;
   }
 

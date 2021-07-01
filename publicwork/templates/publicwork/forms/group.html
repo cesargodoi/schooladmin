@@ -3,3 +3,6 @@
   {% csrf_token %}
   {{ form | crispy }}
 </form>
+
+{% load static %}
+<script type="text/javascript" src="{% static 'js/group.js' %}"></script>
