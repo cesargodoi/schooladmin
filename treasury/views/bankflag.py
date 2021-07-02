@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from schooladmin.common import paginator
 
@@ -43,9 +43,9 @@ def bankflag_create(request):
 @login_required
 @permission_required("treasury.change_bankflags")
 def bankflag_update(request, pk):
-    object = get_object_or_404(BankFlags, pk=pk)
+    bank_flag = BankFlags.objects.get(pk=pk)
     if request.method == "POST":
-        form = BankFlagForm(request.POST, instance=object)
+        form = BankFlagForm(request.POST, instance=bank_flag)
         if form.is_valid():
             form.save()
             message = "The BankFlag has been updated!"
@@ -53,7 +53,7 @@ def bankflag_update(request, pk):
             return redirect("bankflags")
 
     context = {
-        "form": BankFlagForm(instance=object),
+        "form": BankFlagForm(instance=bank_flag),
         "form_name": "Bankflag",
         "form_path": "treasury/forms/bankflag.html",
         "goback": reverse("bankflags"),
@@ -65,17 +65,17 @@ def bankflag_update(request, pk):
 @login_required
 @permission_required("treasury.delete_bankflags")
 def bankflag_delete(request, pk):
-    object = get_object_or_404(BankFlags, pk=pk)
+    bank_flag = BankFlags.objects.get(pk=pk)
     if request.method == "POST":
-        if object.formofpayment_set.all():
-            object.is_active = False
-            object.save()
+        if bank_flag.formofpayment_set.all():
+            bank_flag.is_active = False
+            bank_flag.save()
             message = "The BankFlag has been inactivated!"
         else:
-            object.delete()
+            bank_flag.delete()
             message = "The BankFlag has been deleted!"
         messages.success(request, message)
         return redirect("bankflags")
 
-    context = {"object": object, "title": "confirm to delete"}
+    context = {"object": bank_flag, "title": "confirm to delete"}
     return render(request, "base/confirm_delete.html", context)

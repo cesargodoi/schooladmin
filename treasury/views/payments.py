@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from schooladmin.common import paginator
 
@@ -43,9 +43,9 @@ def payment_create(request):
 @login_required
 @permission_required("treasury.change_payment")
 def payment_update(request, pk):
-    object = get_object_or_404(Payment, pk=pk)
+    payment = Payment.objects.get(pk=pk)
     if request.method == "POST":
-        form = PaymentForm(request.POST, instance=object)
+        form = PaymentForm(request.POST, instance=payment)
         if form.is_valid():
             form.save()
             message = "The Payment has been updated!"
@@ -53,7 +53,7 @@ def payment_update(request, pk):
             return redirect("payments")
 
     context = {
-        "form": PaymentForm(instance=object),
+        "form": PaymentForm(instance=payment),
         "form_name": "Payment",
         "form_path": "treasury/forms/payment.html",
         "goback": reverse("payments"),
@@ -65,13 +65,13 @@ def payment_update(request, pk):
 @login_required
 @permission_required("treasury.delete_payment")
 def payment_delete(request, pk):
-    object = get_object_or_404(Payment, pk=pk)
+    payment = Payment.objects.get(pk=pk)
     if request.method == "POST":
-        if not object.order_set.all():
-            object.delete()
+        if not payment.order_set.all():
+            payment.delete()
             message = "The Payment has been deleted!"
             messages.success(request, message)
         return redirect("payments")
 
-    context = {"object": object, "title": "confirm to delete"}
+    context = {"object": payment, "title": "confirm to delete"}
     return render(request, "treasury/confirm_delete.html", context)

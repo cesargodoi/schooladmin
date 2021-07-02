@@ -43,9 +43,9 @@ def paytype_create(request):
 @login_required
 @permission_required("treasury.change_paytypes")
 def paytype_update(request, pk):
-    object = PayTypes.objects.get(pk=pk)
+    pay_types = PayTypes.objects.get(pk=pk)
     if request.method == "POST":
-        form = PayTypeForm(request.POST, instance=object)
+        form = PayTypeForm(request.POST, instance=pay_types)
         if form.is_valid():
             form.save()
             message = "The PayType has been updated!"
@@ -53,7 +53,7 @@ def paytype_update(request, pk):
             return redirect("paytypes")
 
     context = {
-        "form": PayTypeForm(instance=object),
+        "form": PayTypeForm(instance=pay_types),
         "form_name": "Paytype",
         "form_path": "treasury/forms/paytype.html",
         "goback": reverse("payments"),
@@ -65,17 +65,17 @@ def paytype_update(request, pk):
 @login_required
 @permission_required("treasury.delete_paytypes")
 def paytype_delete(request, pk):
-    object = PayTypes.objects.get(pk=pk)
+    pay_types = PayTypes.objects.get(pk=pk)
     if request.method == "POST":
-        if object.payment_set.all():
-            object.is_active = False
-            object.save()
+        if pay_types.payment_set.all():
+            pay_types.is_active = False
+            pay_types.save()
             message = "The PayType has been inactivated!"
         else:
-            object.delete()
+            pay_types.delete()
             message = "The PayType has been deleted!"
         messages.success(request, message)
         return redirect("paytypes")
 
-    context = {"object": object, "title": "confirm to delete"}
+    context = {"object": pay_types, "title": "confirm to delete"}
     return render(request, "base/confirm_delete.html", context)
