@@ -39,7 +39,7 @@
         <h5>{{ request.session.order.person.name }}</h5>
         {% endif %}
       </div>
-      <div class="floating-right">
+      <div class="floating-right col-sm-4">
         <form class="form-control-sm" method="GET" onsubmit="return isFormOk()">
           {% csrf_token %}
           {% include "treasury/elements/search_person.html" %}
@@ -195,6 +195,33 @@
   function isFormOk() {
     var person = document.getElementById("person").value
     return person.length < 8 ? false : true
+  }
+
+  const personCreateOrder = document.getElementById("person")
+
+  //main function
+  function checkForm() {
+    let message = "Don't forget this field.";
+    if (personCreateOrder.value == "") {
+      alertField("person", message);
+      return false;
+    }
+
+    document.getElementById("form").submit();
+
+  }
+
+  //handler function
+  function alertField(input, message) {
+    const invalidField = document.getElementById(input);
+
+    var invalidValueField = document.createElement("p");
+    invalidValueField.classList.add("invalid-feedback");
+    var invalidText = document.createTextNode(message);
+    invalidValueField.appendChild(invalidText);
+    invalidField.parentElement.appendChild(invalidValueField);
+    invalidField.classList.add("is-invalid");
+    invalidField.focus();
   }
 </script>
 {% endblock %}
