@@ -44,26 +44,12 @@
 
 {% block scripts %}
 <script>
-  // //hides the Bank flag, Ctrl number and Complement fields when payment is in cash
-  // var form = new Vue({
-  //   el: '#form',
-  //   data: {
-  //     seen: false,
-  //     selected: 'CSH',
-  //   },
-  //   methods: {
-  //     viewHide: function () {
-  //       this.seen = this.selected != "CSH" ? true : false
-  //     }
-  //   }
-  // })
-
   const valueFormPayment = document.getElementById("id_value")
   const payFormType = document.getElementById("id_payform_type")
   const flagFormPayment = document.getElementById("id_bank_flag")
   const ctrlFormPayment = document.getElementById("id_ctrl_number")
 
-  //hidden inputs if payform type !cash
+  //hidden inputs if payform type == cash
   const divcomplementFormPayment = document.getElementById("div_id_complement")
   const divctrlFormPayment = document.getElementById("div_id_ctrl_number")
   const divflagFormPayment = document.getElementById("div_id_bank_flag")
