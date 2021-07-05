@@ -5,7 +5,7 @@
 
 <div class="text-right mb-2 mt-4">
   <button class="btn btn-primary" 
-    onclick="checkFormAddPayment()">
+    onclick="checkForm()">
     <i class="fas fa-check"></i> 
     Add payment
   </button>
@@ -46,68 +46,7 @@
   </div>
 </article>
 
-<script>
-  const divEventChoices = document.getElementById("div_id_event")
-  divEventChoices.style.display = 'none'
+{% load static %}
+<script type="text/javascript" src="{% static 'js/profile_add_payment.js' %}"></script>
 
-  //faz campo Event aparecer ao clicar fora do campo Paytype
-  const paytypeField = document.getElementById("id_paytype")
-  paytypeField.addEventListener('blur', (evento) => {displayEventChoices()})
-
-  //verifica se todos os campos estão válidos no formulário antes de salvar
-  function checkFormAddPayment(){
-    const paytypeField = document.getElementById("id_paytype")
-    const valueField = document.getElementById("id_value")
-
-    if(paytypeField.value == ""){
-      alertPayType();
-      return false;
-    }
-    if(valueField.value == ""){
-      alertValueField();
-      return false;
-    }
-
-
-    document.getElementById('form').submit()
-  }
-
-  function alertPayType(){
-      var invalidPayType = document.createElement("p");
-      invalidPayType.classList.add("invalid-feedback");
-      var invalidText = document.createTextNode(
-        "Please choose one of the options."
-      );
-      invalidPayType.appendChild(invalidText);
-      paytypeField.parentElement.appendChild(invalidPayType);
-      paytypeField.classList.add("is-invalid");
-      paytypeField.focus();
-  }
-
-  function displayEventChoices(){
-    const paytypeChoices = document.getElementById("id_paytype")
-    const divEventChoices = document.getElementById("div_id_event")
-
-     if(paytypeChoices.value == "3"){
-      divEventChoices.style.display = 'block'
-    }else{
-      divEventChoices.style.display = 'none'
-    }
-  }
-
-  function alertValueField(){
-    var valueField = document.getElementById("id_value")
-
-    var invalidValueField = document.createElement("p");
-    invalidValueField.classList.add("invalid-feedback");
-    var invalidText = document.createTextNode(
-      "Please choose one of the options."
-    );
-    invalidValueField.appendChild(invalidText);
-    valueField.parentElement.appendChild(invalidValueField);
-    valueField.classList.add("is-invalid");
-    valueField.focus();
-  }
-
-</script>
 {% endblock %}
