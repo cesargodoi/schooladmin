@@ -14,7 +14,7 @@ class Workgroup(models.Model):
     name = models.CharField(max_length=50)
     center = models.ForeignKey("center.Center", on_delete=models.PROTECT)
     workgroup_type = models.CharField(
-        "type", max_length=3, choices=WORKGROUP_TYPES, default="ASP"
+        "type", max_length=3, choices=WORKGROUP_TYPES
     )
     description = models.CharField(max_length=200, null=True, blank=True)
     aspect = models.CharField(max_length=2, choices=ASPECTS, default="--")
