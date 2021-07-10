@@ -1,6 +1,9 @@
 import re
-from django import forms
 from unicodedata import normalize
+
+from django import forms
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http.response import Http404
 from django.core.validators import RegexValidator
@@ -233,3 +236,30 @@ def clear_session(request, items):
     for item in items:
         if request.session.get(item):
             del request.session[item]
+
+
+def send_email(
+    link,
+    text,
+    html,
+    _subject,
+    _to,
+    _from="no-reply@rosacruzaurea.org.br",
+    _extras=None,
+):
+    _link = "{}://{}{}".format("http", "localhost:8000", link)
+    context = {"link": _link} | _extras
+
+    text_content = render_to_string(text, context)
+    html_content = render_to_string(html, context)
+
+    subject = (f"Rosacruz Áurea - {_subject}",)
+
+    send_mail(
+        subject=subject,
+        from_email=_from,
+        message=text_content,
+        recipient_list=[_to],
+        html_message=html_content,
+        fail_silently=True,
+    )

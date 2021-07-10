@@ -1,4 +1,7 @@
+import uuid
+
 from django.conf import settings
+from django.utils import timezone
 from django.db import models
 from schooladmin.common import (
     us_inter_char,
@@ -9,6 +12,37 @@ from schooladmin.common import (
     SEEKER_STATUS,
     COUNTRIES,
 )
+
+
+# Temporary Registration of Seeker
+class TempRegOfSeeker(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=80)
+    birth = models.DateField()
+    gender = models.CharField(max_length=1, choices=GENDER_TYPES, default="M")
+    image = models.ImageField(
+        default="default_profile.jpg", upload_to="seeker_pics", blank=True
+    )
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=2)
+    country = models.CharField(max_length=2, choices=COUNTRIES, default="BR")
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    solicited_on = models.DateTimeField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        self.state = str(self.state).upper()
+        self.phone = phone_format(self.phone)
+        super(TempRegOfSeeker, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return "{} - {} ({}-{})".format(
+            self.name, self.city, self.state, self.country
+        )
+
+    class Meta:
+        verbose_name = "temporary registration of seeker"
+        verbose_name_plural = "temporary registration of seekers"
 
 
 # Seeker
@@ -25,7 +59,7 @@ class Seeker(models.Model):
     birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_TYPES, default="M")
     image = models.ImageField(
-        default="default_profile.jpg", upload_to="profile_pics"
+        default="default_profile.jpg", upload_to="seeker_pics", blank=True
     )
     city = models.CharField(max_length=50, blank=True)
     state = models.CharField("state", max_length=2, blank=True)

@@ -1,10 +1,39 @@
 from django.urls import path
 
-from .views import seeker, lecture, listener, report, historic, group
+# from django.contrib.auth import views
+
+from .views import (
+    seeker,
+    lecture,
+    listener,
+    report,
+    historic,
+    group,
+    insert_yourself,
+)
 
 # publicwork
 urlpatterns = [
     path("", report.publicwork_home, name="publicwork_home"),
+]
+
+# insert yourself as a member
+urlpatterns += [
+    path(
+        "i-want-to-be-a-member/",
+        insert_yourself.insert_yourself,
+        name="insert_yourself",
+    ),
+    path(
+        "i-want-to-be-a-member/feedback/",
+        insert_yourself.feedback,
+        name="feedback",
+    ),
+    path(
+        "i-want-to-be-a-member/confirm-email/<uuid:token>/",
+        insert_yourself.confirm_email,
+        name="confirm_email",
+    ),
 ]
 
 # seeker

@@ -5,7 +5,11 @@ from .models import (
     Lecture,
     Listener,
     PublicworkGroup,
+    TempRegOfSeeker,
 )
+
+
+admin.site.register(TempRegOfSeeker)
 
 
 @admin.register(Seeker)

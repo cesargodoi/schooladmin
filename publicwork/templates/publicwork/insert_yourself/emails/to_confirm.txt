@@ -1,0 +1,13 @@
+{% load i18n %}{% autoescape off %}{% blocktranslate %}
+Greetings {{ name }}!
+
+You are receiving this email because you have applied to be a member at the Spiritual School of the Golden Rosycross.
+
+Please, click on the link below to confirm your membership.
+{{ link }}
+
+If you have not made this request, please disregard this email.
+
+Thanks for using our site!
+
+{% endblocktranslate %}{% endautoescape %}
