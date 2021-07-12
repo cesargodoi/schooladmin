@@ -8,8 +8,8 @@
 
 {% block content %}
 
-<div class="row">
-  <div class="col-lg-5 alert alert-primary text-justify">
+<div class="row box-jady">
+  <div class="col-lg-5 alert-jady alert-primary-jady text-justify">
     <h2 class="text-left">Caro amigo buscador,</h2>
     <br>
     <p>Ficamos muito felizes, com sua decisão de participar do caminho 
@@ -29,10 +29,11 @@
     <br>
     <p>Por favor, preencha o formulário a seguir:</p>
   </div>
-  <div class="col-lg-7 alert alert-secondary">
+  <div class="col-lg-7 alert-jady alert-secondary">
     <form class="form-group text-justify" 
           method="post" 
-          enctype="multipart/form-data">
+          enctype="multipart/form-data"
+          id="form">
       {% csrf_token %}
       {{ form.name | as_crispy_field }}
       <div class="row">
@@ -67,7 +68,7 @@
         <input type="submit" 
           class="btn btn-primary btn-lg" 
           value="{% translate 'Register' %}" id="submit-button" disabled>
-        <a class="btn btn-info btn-lg" href="{% url 'login' %}" >Go back</a>
+        <a class="btn btn-info btn-lg" href="#" onclick="window.history.go(-1); return false;">Go back</a>
       </div>
     </form>
   </div>
@@ -80,6 +81,16 @@
   grecaptcha.ready(function() {
     grecaptcha.execute('{{recaptcha_site_key}}', {action: "/contact/"}).then(function(token) {
       document.getElementById('g-recaptcha-response').value = token;
+    });
+  });
+
+  // avoid submit with enter key
+  $(document).ready(function() {
+    $(window).keydown(function(event){
+      if(event.keyCode == 10) {
+        event.preventDefault();
+        return false;
+      }
     });
   });
 
@@ -96,7 +107,7 @@
     }
   }
   
-  aceptDataPolicy.addEventListener("blur", (evento) => {
+  aceptDataPolicy.addEventListener("click", (evento) => {
   submitButtonIsDisabled()
   });
 
@@ -104,8 +115,100 @@
     aceptDataPolicy.checked = true
     submitButtonIsDisabled()
   }
+
+  //validation form
+  //fields
+  const nameForm = document.getElementById("id_name")
+  const birthForm = document.getElementById("id_birth")
+  const cityForm = document.getElementById("id_city")
+  const UFForm = document.getElementById("id_state")
+  const phoneForm = document.getElementById("id_phone")
+  const emailForm = document.getElementById("id_email")
+
+  submitButton.onclick = () => {
+    checkForm()
+  }
+
+  function checkForm() {
+    if (nameForm.value == "" || nameForm.value == null) {
+      let message = "Don't forget this field.";
+      alertField("id_name", message);
+      return false;
+    }
+    if (birthForm.value == "" || birthForm.value === null) {
+      let message = "Don't forget this field.";
+      alertField("id_birth", message);
+      return false;
+    }
+    if (cityForm.value == "" || cityForm.value === null) {
+      let message = "Don't forget this field.";
+      alertField("id_city", message);
+      return false;
+    }
+    if (UFForm.value == "" || UFForm.value === null) {
+      let message = "Don't forget this field.";
+      alertField("id_state", message);
+      return false;
+    }
+    if (
+      phoneForm.value.length < 10 ||
+      phoneForm.value == "" ||
+      phoneForm.value === null
+    ) {
+      let message = "enter with a valid phone number: xx-98765.4321";
+      alertField("id_phone", message);
+      return false;
+    }
+    if (
+      emailForm.value.indexOf("@") == -1 ||
+      emailForm.value.indexOf(".") == -1 ||
+      emailForm.value == "" ||
+      emailForm.value == null
+    ) {
+      let message = "enter with a valid e-mail: your@mail.com";
+      alertField("id_email", message);
+      return false;
+    }
+  }
+
   
+  function alertField(input, message) {
+    const invalidField = document.getElementById(input);
+
+    var invalidValueField = document.createElement("p");
+    invalidValueField.classList.add("invalid-feedback");
+    var invalidText = document.createTextNode(message);
+    invalidValueField.appendChild(invalidText);
+    invalidField.parentElement.appendChild(invalidValueField);
+    invalidField.classList.add("is-invalid");
+    invalidField.focus();
+  }
+
 
 </script>
+
+<style>
+  /* Bootstrap class changes */
+  .modal-header{
+    padding: 1.5rem;
+  }
+  .modal-body{
+    padding: 1.5rem;
+  }
+  .alert-jady {
+      position: relative;
+      padding: .75rem 1.25rem;
+  }
+  .box-jady{
+    border: 2px solid #5f788a;
+    border-radius: .25rem;
+    padding: 1rem;
+  }
+  .alert-primary-jady {
+    color: #fff;
+    background-color: #5f788a;
+    border-color: #5f788a;
+}
+</style>
 
 {% endblock %}
