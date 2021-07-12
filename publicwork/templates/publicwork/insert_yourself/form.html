@@ -51,7 +51,7 @@
       {{ form.image | as_crispy_field }}
       {{ form.solicited_on | as_crispy_field }}
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="accept" value="accept">
+        <input class="form-check-input" type="checkbox" id="accept" name="accept">
         <label class="form-check-label" for="accept">
           Li e aceito os termos da 
           <a data-toggle="modal" 
@@ -62,10 +62,11 @@
       </div>
       <!-- reCAPTCHA input -->
       <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+      
       <div class="text-right mt-4">
         <input type="submit" 
           class="btn btn-primary btn-lg" 
-          value="{% translate 'Register' %}">
+          value="{% translate 'Register' %}" id="submit-button" disabled>
         <a class="btn btn-info btn-lg" href="{% url 'login' %}" >Go back</a>
       </div>
     </form>
@@ -81,6 +82,30 @@
       document.getElementById('g-recaptcha-response').value = token;
     });
   });
+
+  //Data Policy check
+  const aceptDataPolicy = document.getElementById("accept")
+  const submitButton = document.getElementById("submit-button")
+  const agreeButton = document.getElementById("agree-button")
+
+  function submitButtonIsDisabled(){
+    if(aceptDataPolicy.checked){
+    submitButton.disabled = false
+    }else{
+      submitButton.disabled = true
+    }
+  }
+  
+  aceptDataPolicy.addEventListener("blur", (evento) => {
+  submitButtonIsDisabled()
+  });
+
+  agreeButton.onclick = ()=>{
+    aceptDataPolicy.checked = true
+    submitButtonIsDisabled()
+  }
+  
+
 </script>
 
 {% endblock %}
