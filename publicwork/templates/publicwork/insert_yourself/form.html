@@ -54,7 +54,9 @@
         <input class="form-check-input" type="checkbox" id="accept" value="accept">
         <label class="form-check-label" for="accept">
           Li e aceito os termos da 
-          <a href="#"> politica de uso de dados</a>
+          <a data-toggle="modal" 
+             data-target="#modal"
+             href="#"> politica de uso de dados</a>
           da Rosacruz Áurea.
         </label>
       </div>
@@ -69,6 +71,8 @@
     </form>
   </div>
 </div>
+
+{% include "publicwork/insert_yourself/modal_data_policy.html" %}
 
 <script>
   //global grecaptcha
