@@ -1,13 +1,13 @@
-{% load i18n %}{% autoescape off %}{% blocktranslate %}
-Greetings {{ name }}!
+{% load i18n %}{% autoescape off %}
+Saudações {{ name }}!
 
-You are receiving this email because you have applied to be a member at the Spiritual School of the Golden Rosycross.
+Você está recebendo este e-mail porque se inscreveu para ser membro da
+Escola Espiritual da Rosacruz Áurea.
 
-Please, click on the link below to confirm your membership.
+Por favor, clique no link abaixo para confirmar sua inscrição.
 {{ link }}
 
-If you have not made this request, please disregard this email.
+Se você não fez essa solicitação, por favor, desconsidere este e-mail.
 
-Thanks for using our site!
-
-{% endblocktranslate %}{% endautoescape %}
+Atenciosamente.
+{% endautoescape %}
