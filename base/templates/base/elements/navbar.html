@@ -6,7 +6,7 @@
         <div class="container">
             <a class="navbar-brand mr-4"
                href="{% if request.user.groups.all|length > 1 or request.user.is_superuser %}{% url 'home' %}{% else %}#{% endif %}">
-              <img src="{% static 'images/9n-transp.png' %}" class="logo-img" alt="...">
+              <img src="{% static 'images/logo-white.png' %}" class="logo-img" alt="...">
 
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
