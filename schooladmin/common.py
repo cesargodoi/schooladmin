@@ -94,11 +94,16 @@ PROFILE_PAYFORM_TYPES = (
 COUNTRIES = (("BR", "Brasil"),)
 LECTURE_TYPES = (("CTT", "contact"), ("MET", "meeting"))
 SEEKER_STATUS = (
+    ("NEW", "new"),
     ("MBR", "member"),
     ("RCP", "reception"),
     ("INS", "installing"),
     ("RST", "restriction"),
 )
+BR_REGIONS = {
+    "SP": ["SP"],
+    "RJ": ["RJ", "ES"],
+}
 
 
 def us_inter_char(txt, codif="utf-8"):
@@ -239,19 +244,15 @@ def clear_session(request, items):
 
 
 def send_email(
-    link,
-    text,
-    html,
+    body_text,
+    body_html,
     _subject,
     _to,
     _from="no-reply@rosacruzaurea.org.br",
-    _extras=None,
+    _context={},
 ):
-    _link = "{}://{}{}".format("http", "localhost:8000", link)
-    context = {"link": _link} | _extras
-
-    text_content = render_to_string(text, context)
-    html_content = render_to_string(html, context)
+    text_content = render_to_string(body_text, _context)
+    html_content = render_to_string(body_html, _context)
 
     subject = (f"Rosacruz Áurea - {_subject}",)
 

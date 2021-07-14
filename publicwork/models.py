@@ -1,5 +1,6 @@
 import uuid
 
+from PIL import Image
 from django.conf import settings
 from django.utils import timezone
 from django.db import models
@@ -34,6 +35,10 @@ class TempRegOfSeeker(models.Model):
         self.state = str(self.state).upper()
         self.phone = phone_format(self.phone)
         super(TempRegOfSeeker, self).save(*args, **kwargs)
+        img = Image.open(self.image.path)
+        if img.height > 300 or img.width > 300:
+            img.thumbnail((300, 300))
+            img.save(self.image.path)
 
     def __str__(self):
         return "{} - {} ({}-{})".format(
