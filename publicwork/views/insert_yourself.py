@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.conf import settings
 
 from user.models import User
+from center.models import Center
 from ..forms import TempRegOfSeekerForm
 from ..models import TempRegOfSeeker, Seeker
 from schooladmin.common import clear_session, send_email
@@ -65,13 +66,17 @@ def insert_yourself(request):
                 email=form.cleaned_data.get("email")
             )
             # send email
+            _link = "{}://{}{}".format(
+                "http",
+                "localhost:8000",
+                reverse("confirm_email", args=[_seeker.id]),
+            )
             send_email(
-                link=reverse("confirm_email", args=[_seeker.id]),
-                text="publicwork/insert_yourself/emails/to_confirm.txt",
-                html="publicwork/insert_yourself/emails/to_confirm.html",
+                body_text="publicwork/insert_yourself/emails/to_confirm.txt",
+                body_html="publicwork/insert_yourself/emails/to_confirm.html",
                 _subject="confirmação de email",
                 _to=_seeker.email,
-                _extras={"name": _seeker.name},
+                _context={"name": _seeker.name, "link": _link},
             )
 
         request.session["fbk"] = {
@@ -107,6 +112,7 @@ def confirm_email(request, token):
 
     if time_now < token_time:
         new_seeker = dict(
+            center=get_seeker_center(_seeker),
             name=_seeker.name,
             birth=_seeker.birth,
             gender=_seeker.gender,
@@ -117,12 +123,49 @@ def confirm_email(request, token):
             phone=_seeker.phone,
             email=_seeker.email,
         )
+        # create new seeker
         Seeker.objects.create(**new_seeker)
-        _seeker.delete()
+        # send congratulations email
+        send_email(
+            body_text="publicwork/insert_yourself/emails/to_congratulate.txt",
+            body_html="publicwork/insert_yourself/emails/to_congratulate.html",
+            _subject="cadastro realizado",
+            _to=_seeker.email,
+            _context={"name": _seeker.name},
+        )
+        # pass context to feedbak
         context = {"feedback": "congratulations"}
+        # delete temp seeker
+        _seeker.delete()
     else:
         context = {"feedback": "token_expires"}
 
     return render(
         request, "publicwork/insert_yourself/pos_email_feedback.html", context
     )
+
+
+# handlers
+def get_seeker_center(seeker):
+    city = seeker.city
+    state = seeker.state
+    country = seeker.country
+
+    try:
+        center = Center.objects.get(city=city, state=state, country=country)
+    except Exception:
+        center = (
+            Center.objects.filter(state=state, country=country)
+            .order_by("created_on")
+            .first()
+        )
+    except Exception:
+        center = (
+            Center.objects.filter(country=country)
+            .order_by("created_on")
+            .first()
+        )
+    except Exception:
+        center = Center.objects.get(name="Web Core")
+
+    return center

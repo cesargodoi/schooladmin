@@ -10,4 +10,5 @@ Por favor, clique no link abaixo para confirmar sua inscrição.
 Se você não fez essa solicitação, por favor, desconsidere este e-mail.
 
 Atenciosamente.
+equipe school@admin
 {% endautoescape %}
