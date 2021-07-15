@@ -35,7 +35,7 @@ class Person(models.Model):
     )
     aspect = models.CharField(max_length=2, choices=ASPECTS, default="--")
     aspect_date = models.DateField(null=True, blank=True)
-    status = models.CharField(max_length=3, choices=STATUS, default="---")
+    status = models.CharField(max_length=3, choices=STATUS, default="ACT")
     observations = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     created_on = models.DateTimeField(auto_now_add=True)

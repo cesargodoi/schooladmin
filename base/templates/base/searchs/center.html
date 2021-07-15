@@ -6,6 +6,15 @@
             class="form-control" 
             placeholder="center"
             value="{{request.session.search.term }}">
+      <div class="input-group-append">
+        {% if request.session.search.term %}
+        <div class="input-group-text">
+          <a href="{% url 'center_home' %}?init=on" class="text-secondary">
+            <i class="fas fa-backspace"></i>
+          </a>
+        </div>
+        {% endif %}
+      </div>
     </div>
   </div>
   <div class="col-sm-3 mb-1">

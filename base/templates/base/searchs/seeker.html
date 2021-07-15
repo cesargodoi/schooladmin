@@ -7,6 +7,34 @@
              id="name"
              placeholder="seeker"
              {% if request.session.search.name %}value={{ request.session.search.name }}{% endif %}>
+      <div class="input-group-append">
+        {% if request.session.search.name %}
+        <div class="input-group-text">
+          <a href="{{ goback_link }}?init=on" class="text-secondary">
+            <i class="fas fa-backspace"></i>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-3 mb-1">
+    <div class="input-group">
+      <input name="city"
+             class="dateinput form-control"
+             id="city"
+             placeholder="city"
+             {% if request.session.search.city %}value={{ request.session.search.city }}{% endif %}>
+      <div class="input-group-append">
+        {% if request.session.search.city %}
+        <div class="input-group-text">
+          <a href="{{ goback_link }}?init=on" class="text-secondary">
+            <i class="fas fa-backspace"></i>
+          </a>
+        </div>
+        {% endif %}
+      </div>
     </div>
   </div>
 
@@ -22,16 +50,21 @@
   </div>
 
   <div class="col-sm-2 mb-1">
-    <div class="input-group">
-      <input name="city"
-             class="dateinput form-control"
-             id="city"
-             placeholder="city"
-             {% if request.session.search.city %}value={{ request.session.search.city }}{% endif %}>
-    </div>
+    <select class="form-control" name="status">
+      <option value="all"
+              {% if request.session.search.status == 'all' %}selected{% endif %}>
+        status
+      </option>
+      {% for stt in status_list %}
+      <option value="{% if stt.0 == '--' %}all{% else %}{{ stt.0 }}{% endif %}"
+              {% if stt.0 == request.session.search.status %}selected{% endif %}>
+        {% if stt.0 == "--" %}status{% else %}{{ stt.1 }}{% endif %}
+      </option>
+      {% endfor %}
+    </select>
   </div>
 
-  <div class="col-sm-3 mb-1">
+  <div class="col-sm-2 mb-1">
     <div class="input-group">
       <div class="form-check form-check-inline m-1">
         <input class="form-check-input"

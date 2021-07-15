@@ -2,10 +2,10 @@
 
 {% if request.user.is_superuser or request.user|has_group:"office" %}
 <li class="nav-item">
-  <a class="nav-link" href="{% url 'center_home' %}">Centers</a>
+  <a class="nav-link" href="{% url 'center_home' %}?init=on">Centers</a>
 </li>
 <li class="nav-item">
-  <a class="nav-link" href="{% url 'person_home' %}">Persons</a>
+  <a class="nav-link" href="{% url 'person_home' %}?init=on">Persons</a>
 </li>
 <li class="nav-item">
   <a class="nav-link" href="{% url 'event_home' %}">Events</a>

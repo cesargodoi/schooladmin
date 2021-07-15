@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.urls import reverse
 
-from schooladmin.common import ASPECTS, STATUS, paginator
+from schooladmin.common import ASPECTS, STATUS, paginator, clear_session
 from user.models import User
 from base.searchs import search_person
 
@@ -19,17 +19,22 @@ from ..models import Historic, Person
 @login_required
 @permission_required("person.view_person")
 def person_home(request):
-    queryset, page = search_person(request, Person)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_person(request, Person)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("person_home"),
         "aspect_list": ASPECTS,
         "status_list": STATUS,
         "title": "person home",
         "nav": "home",
     }
-
     return render(request, "person/person_home.html", context)
 
 
@@ -88,7 +93,7 @@ def person_create(request):
             new_user.person.save()
             message = f"The Person '{request.POST['name']}' has been created!"
             messages.success(request, message)
-            return redirect("person_home")
+            return redirect("person_detail", id=new_user.person.pk)
         else:
             message = "Enter a valid email!"
             messages.success(request, message)

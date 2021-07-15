@@ -4,7 +4,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from schooladmin.common import paginator, belongs_center
+from schooladmin.common import (
+    paginator,
+    belongs_center,
+    clear_session,
+    SEEKER_STATUS,
+)
 
 from center.models import Center
 from base.searchs import search_seeker
@@ -16,16 +21,22 @@ from ..models import Seeker
 @login_required
 @permission_required("publicwork.view_seeker")
 def seeker_home(request):
-    queryset, page = search_seeker(request, Seeker)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_seeker(request, Seeker)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("seeker_home"),
+        "status_list": SEEKER_STATUS,
         "title": "seeker home",
         "centers": [[str(cnt.pk), str(cnt)] for cnt in Center.objects.all()],
         "nav": "sk_home",
     }
-
     return render(request, "publicwork/seeker_home.html", context)
 
 

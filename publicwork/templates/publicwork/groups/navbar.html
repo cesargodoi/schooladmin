@@ -21,11 +21,11 @@
     <!-- controlers -->
     <div class="navbar-nav">
       {% if nav == "info" %}
-        <a class="btn btn-light btn-sm" href="{% url 'group_add_mentor' object.pk %}">
+        <a class="btn btn-light btn-sm" href="{% url 'group_add_mentor' object.pk %}?init=on">
           <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
           Add mentor
         </a>
-        <a class="btn btn-light btn-sm" href="{% url 'group_add_member' object.pk %}">
+        <a class="btn btn-light btn-sm" href="{% url 'group_add_member' object.pk %}?init=on">
           <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
           Add member
         </a>

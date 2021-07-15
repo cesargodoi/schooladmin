@@ -3,7 +3,7 @@
   {% if nav == 'detail' %}
   {% url 'person_detail' person.id %}
   {% else %}
-  {% url 'person_home' %}
+  {% url 'person_home' %}?init=on
   {% endif %}
   ">{% if nav == 'home' %}Persons{% else %}Person{% endif %}</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarProfile"

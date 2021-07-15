@@ -2,16 +2,25 @@
   <div class="col-sm-3 mb-1">
     <div class="input-group">
       <input name="term"
-             class="dateinput form-control"
-             id="term"
-             placeholder="person"
-             {% if request.session.search.term %}value={{ request.session.search.term }}{% endif %}>
+            class="form-control"
+            id="term"
+            placeholder="person"
+            {% if request.session.search.term %}value={{ request.session.search.term }}{% endif %}>
+      <div class="input-group-append">
+        {% if request.session.search.term %}
+        <div class="input-group-text">
+          <a href="{{ goback_link }}?init=on" class="text-secondary">
+            <i class="fas fa-backspace"></i>
+          </a>
+        </div>
+        {% endif %}
+      </div>
     </div>
   </div>
   <div class="col-sm-2 mb-1">
     <select class="form-control" name="aspect">
       {% for asp in aspect_list %}
-      <option value="{% if asp.0 != '--' %}{{ asp.0 }}{% endif %}"
+      <option value="{% if asp.0 == '--' %}all{% else %}{{ asp.0 }}{% endif %}"
               {% if asp.0 == request.session.search.aspect %}selected{% endif %}>
         {% if asp.0 == "--" %}aspect{% else %}{{ asp.1 }}{% endif %}
       </option>
@@ -21,27 +30,27 @@
   <div class="col-sm-2 mb-1">
     <select class="form-control" name="status">
       {% for stt in status_list %}
-      <option value="{% if stt.0 != '---' %}{{ stt.0 }}{% endif %}"
+      <option value="{% if stt.0 == '---' %}all{% else %}{{ stt.0 }}{% endif %}"
               {% if stt.0 == request.session.search.status %}selected{% endif %}>
         {% if stt.0 == "---" %}status{% else %}{{ stt.1 }}{% endif %}
       </option>
       {% endfor %}
     </select>
   </div>
-  <div class="col-sm-2 mb-1">
+  <div class="col-sm mb-1">
     <div class="input-group">
       <div class="form-check form-check-inline m-1">
         <input class="form-check-input"
-               type="checkbox"
-               id="all"
-               name="all"
-               {% if request.session.search.all %}checked{% endif %}>
+              type="checkbox"
+              id="all"
+              name="all"
+              {% if request.session.search.all %}checked{% endif %}>
         <label class="form-check-label" for="all">all</label>
       </div>
-      <button class="btn btn btn-outline-success ml-2" type="submit">
+      <button class="btn btn-outline-success ml-2" type="submit">
         <i class="fas fa-search"></i>
         Search
-      </button>
+      </button> 
     </div>
   </div>
 </div>

@@ -26,8 +26,6 @@ CENTER_TYPES = (
 )
 ASPECTS = (
     ("--", "--"),
-    ("PW", "Public Work"),
-    ("YW", "Youth Work"),
     ("A1", "1st. Aspect"),
     ("A2", "2nd. Aspect"),
     ("A3", "3rd. Aspect"),

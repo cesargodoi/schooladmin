@@ -7,7 +7,6 @@
 <article class="media content-section mb-1">
   <div class="media-body">
     <form class="form-control-sm mt-1" method="GET">
-      {% csrf_token %}
       {% include "base/searchs/person.html" %}
     </form>
   </div>
@@ -15,23 +14,29 @@
 
 {% if object_list %}
 
-{% if object_list.has_other_pages %}
-{% include "base/elements/paginator.html" %}
-{% endif %}
+  {% if object_list.has_other_pages %}
+    {% include "base/elements/paginator.html" %}
+  {% endif %}
 
-{% for object in object_list %}
-{% include 'person/elements/person_card.html' %}
-{% endfor %}
+  {% for object in object_list %}
+    {% include 'person/elements/person_card.html' %}
+  {% endfor %}
 
-{% if object_list.has_other_pages %}
-{% include "base/elements/paginator.html" %}
-{% endif %}
+  {% if object_list.has_other_pages %}
+    {% include "base/elements/paginator.html" %}
+  {% endif %}
 
 {% else %}
 
-<div class="alert alert-secondary" role="alert">
-  <h4 class="alert-heading">persons not found</h4>
-</div>
+  <div class="alert alert-secondary">
+    <h4 class="alert-heading">
+      {% if init %}
+      choose your search terms
+      {% else %}
+      persons not found in the search
+      {% endif %}
+    </h4> 
+  </div>  
 
 {% endif %}
 

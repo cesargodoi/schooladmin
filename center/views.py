@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from schooladmin.common import paginator
+from schooladmin.common import paginator, clear_session
 from base.searchs import search_center
 
 from .forms import CenterForm, SelectNewCenterForm
@@ -12,11 +12,16 @@ from .models import Center
 @login_required
 @permission_required("center.view_center")
 def center_home(request):
-    queryset, page = search_center(request, Center)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_center(request, Center)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
         "title": "center home",
         "nav": "home",
     }

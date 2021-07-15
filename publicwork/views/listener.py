@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
-from schooladmin.common import paginator
+from schooladmin.common import paginator, clear_session, SEEKER_STATUS
 from django.urls import reverse
 
 from center.models import Center
@@ -44,11 +44,18 @@ def add_listener(request, lect_pk):
             context,
         )
 
-    queryset, page = search_seeker(request, Seeker)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_seeker(request, Seeker)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("add_listener", args=[lecture.pk]),
+        "status_list": SEEKER_STATUS,
         "pre_listeners": [seek.pk for seek in lecture.listeners.all()],
         "title": "add listener",
         "object": lecture,

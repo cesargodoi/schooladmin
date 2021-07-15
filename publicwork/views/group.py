@@ -269,12 +269,19 @@ def group_add_member(request, pk):
             context,
         )
 
-    queryset, page = search_seeker(request, Seeker)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_seeker(request, Seeker)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object": pw_group,
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("group_add_member", args=[pw_group.pk]),
+        "status_list": SEEKER_STATUS,
         "title": "group add member",
         "nav": "add_member",
         "goback": reverse("group_detail", args=[pk]),
@@ -330,12 +337,18 @@ def group_add_mentor(request, pk):
             context,
         )
 
-    queryset, page = search_person(request, Person)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_person(request, Person)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object": pw_group,
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("group_add_mentor", args=[pw_group.pk]),
         "aspect_list": ASPECTS,
         "status_list": STATUS,
         "title": "group add mentor",
