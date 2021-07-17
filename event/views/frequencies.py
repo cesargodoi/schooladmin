@@ -43,7 +43,7 @@ def frequencies_add(request, pk):
                     aspect=person.aspect,
                 )
                 regs.append(reg)
-            except:
+            except Exception:
                 unknow.append(reg)
         if len(regs) > 0:
             message = f"{len(regs)} persons were launched at this Event. "

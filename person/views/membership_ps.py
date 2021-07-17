@@ -1,7 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
-from schooladmin.common import WORKGROUP_TYPES, paginator
+from django.urls import reverse
+
+from schooladmin.common import WORKGROUP_TYPES, paginator, clear_session
 from workgroup.forms import MembershipForm
 from workgroup.models import Membership, Workgroup
 from base.searchs import search_workgroup
@@ -33,6 +35,7 @@ def membership_ps_list(request, person_id):
 @login_required
 @permission_required("workgroup.add_membership")
 def membership_ps_create(request, person_id):
+    object_list = None
     person = Person.objects.get(id=person_id)
 
     if request.GET.get("pk"):
@@ -54,12 +57,17 @@ def membership_ps_create(request, person_id):
             request, "person/elements/confirm_to_insert.html", context
         )
 
-    queryset, page = search_workgroup(request, Workgroup)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_workgroup(request, Workgroup)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
         "title": "insert membership",
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("membership_ps_create", args=[person_id]),
         "person": person,  # to header element
         "workgroup_types": WORKGROUP_TYPES,
         "pre_groups": [

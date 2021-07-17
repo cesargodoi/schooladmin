@@ -33,7 +33,7 @@
 
       {% if nav == "detail" %}
         {% if not request.session.frequencies.event and tab == "members" %}
-        <a class="btn btn-light btn-sm" href="{% url 'mentoring_add_frequencies' object.id %}">
+        <a class="btn btn-light btn-sm" href="{% url 'mentoring_add_frequencies' object.id %}?init=on">
           <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
           Insert frequencies
         </a>
@@ -46,7 +46,7 @@
         </a>
         {% endif %}
 
-        <a class="btn btn-light btn-sm" href="{{ goback }}">
+        <a class="btn btn-light btn-sm" href="{{ goback }}?init=on">
           <i class="fas fa-chevron-left"></i> 
           Go back
         </a>

@@ -30,18 +30,23 @@ from ..models import Seeker, Lecture, Listener, PublicworkGroup
 @login_required
 @permission_required("publicwork.view_publicworkgroup")
 def group_home(request):
+    object_list = None
     clear_session(request, ["pwg", "search", "frequencies"])
 
-    queryset, page = search_pw_group(request, PublicworkGroup)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_pw_group(request, PublicworkGroup)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("person_home"),
         "title": "public work - groups",
         "centers": [[str(cnt.pk), str(cnt)] for cnt in Center.objects.all()],
         "nav": "gp_home",
     }
-
     return render(request, "publicwork/groups/home.html", context)
 
 
@@ -247,6 +252,7 @@ def group_add_frequencies(request, pk):
 @login_required
 @permission_required("publicwork.change_publicworkgroup")
 def group_add_member(request, pk):
+    object_list = None
     belongs_center(request, pk, PublicworkGroup)
     pw_group = PublicworkGroup.objects.get(pk=pk)
 
@@ -271,10 +277,12 @@ def group_add_member(request, pk):
 
     if request.GET.get("init"):
         clear_session(request, ["search"])
-        object_list = None
     else:
         queryset, page = search_seeker(request, Seeker)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.add_member_link = reverse("group_add_member", args=[pk])
 
     context = {
         "object": pw_group,

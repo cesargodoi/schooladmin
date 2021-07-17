@@ -25,7 +25,10 @@
         <td>{{ obj.date|date:'d/m/Y'}}</td>
         <td>
           {{ obj.activity.name }}
-          <small class="text-muted">{{ obj.center }}</small>
+          &nbsp;&nbsp;<small class="text-muted">{{ obj.center }}</small>
+          {% if not obj.is_active %}
+            &nbsp;&nbsp;<span class="badge badge-pill badge-danger">inactive</span>
+          {% endif %}
         </td>
         <td class="text-right">
           <a type="button" 
@@ -41,8 +44,14 @@
 
 {% else %}
 
-  <div class="alert alert-secondary" role="alert">
-    <h4 class="alert-heading">events not found</h4>
-  </div>
+  <div class="alert alert-secondary">
+    <h4 class="alert-heading">
+      {% if init %}
+      choose your search terms
+      {% else %}
+      events not found
+      {% endif %}
+    </h4> 
+  </div> 
 
 {% endif %}

@@ -24,48 +24,48 @@
 
     {% if object_list %}
 
-    {% if object_list.has_other_pages %}
-    {% include "base/paginator.html" %}
-    {% endif %}
+      {% if object_list.has_other_pages %}
+      {% include "base/paginator.html" %}
+      {% endif %}
 
-    <table class="table table-hover table-sm">
-      <thead>
-        <tr>
-          <th>workgroup</th>
-          <th>center</th>
-          <th>type</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for obj in object_list %}
-        <tr>
-          <td>{{ obj.name }}</td>
-          <td>{{ obj.center }}</td>
-          <td>
-            <span class="badge badge-pill badge-secondary">
-              {{ obj.get_workgroup_type_display }}
-            </span>
-          </td>
-          <td class="text-right">
-            {% if obj.pk not in pre_groups %}
-            <a type="button" 
-              href="{% url 'membership_ps_create' person.id %}?pk={{ obj.pk }}"
-              class="btn btn-outline-light btn-sm text-primary">
-              <i class="fas fa-plus"></i> Add
-            </a>
-            {% else %}
-              <span class="badge badge-pill badge-warning">inserted</span>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      <table class="table table-hover table-sm">
+        <thead>
+          <tr>
+            <th>workgroup</th>
+            <th>center</th>
+            <th>type</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in object_list %}
+          <tr>
+            <td>{{ obj.name }}</td>
+            <td>{{ obj.center }}</td>
+            <td>
+              <span class="badge badge-pill badge-secondary">
+                {{ obj.get_workgroup_type_display }}
+              </span>
+            </td>
+            <td class="text-right">
+              {% if obj.pk not in pre_groups %}
+              <a type="button" 
+                href="{% url 'membership_ps_create' person.id %}?pk={{ obj.pk }}"
+                class="btn btn-outline-light btn-sm text-primary">
+                <i class="fas fa-plus"></i> Add
+              </a>
+              {% else %}
+                <span class="badge badge-pill badge-warning">inserted</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
-    {% if object_list.has_other_pages %}
-    {% include "base/paginator.html" %}
-    {% endif %}
+      {% if object_list.has_other_pages %}
+      {% include "base/paginator.html" %}
+      {% endif %}
 
     {% else %}
 

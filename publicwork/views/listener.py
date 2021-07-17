@@ -14,6 +14,7 @@ from ..models import Lecture, Seeker, Listener
 @login_required
 @permission_required("publicwork.add_listener")
 def add_listener(request, lect_pk):
+    object_list = None
     lecture = Lecture.objects.get(pk=lect_pk)
 
     if request.GET.get("seek_pk"):
@@ -46,10 +47,12 @@ def add_listener(request, lect_pk):
 
     if request.GET.get("init"):
         clear_session(request, ["search"])
-        object_list = None
     else:
         queryset, page = search_seeker(request, Seeker)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.add_link = reverse("add_listener", args=[lect_pk])
 
     context = {
         "object_list": object_list,
@@ -99,10 +102,11 @@ def remove_listener(request, lect_pk, lstn_pk):
     return render(request, "base/confirm_delete.html", context)
 
 
-# from seeker side
+# from seeker side  ###########################################################
 @login_required
 @permission_required("publicwork.add_listener")
 def add_frequency(request, pk):
+    object_list = None
     seeker = Seeker.objects.get(pk=pk)
 
     if request.GET.get("lect_pk"):

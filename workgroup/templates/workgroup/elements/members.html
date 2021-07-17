@@ -12,11 +12,14 @@
     <th>person</th>
     <th>aspect</th>
     <th>role</th>
+    {% if object_list.0.del_link %}
+    <th></th>
+    {% endif %}
   </tr>
   {% for member in object_list %}
-  <tr onclick="location.href='{% url 'mentoring_member_detail' object.id member.person.pk %}';">
+  <tr onclick="location.href='{{ member.click_link }}';">
     <th>{{ forloop.counter }}</th>
-    <td>{{ member.person.name }}
+    <td>{{ member.person.short_name }}
       &nbsp;&nbsp;
       <small class="text-muted">
         <em>{{ member.person.center }}</em>
@@ -24,14 +27,33 @@
     </td>
     <td>{{ member.person.get_aspect_display }}</td>
     <td>{{ member.get_role_type_display }}</td>
+    {% if member.del_link %}
+    <td class="text-right">
+      <a type="button" 
+        href="{{ member.del_link }}"
+        class="btn btn-outline-light btn-sm">
+        <i class="fas fa-trash-alt text-danger"></i>
+      </a>
+    </td>
+    {% endif %}
   </tr>
   {% endfor %}
 </table>
 
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
 {% else %}
 
-<div class="alert alert-secondary" role="alert">
-  <h4 class="alert-heading">members not found</h4>
-</div>
+  <div class="alert alert-secondary">
+    <h4 class="alert-heading">
+      {% if init %}
+      choose your search terms
+      {% else %}
+      members not found
+      {% endif %}
+    </h4> 
+  </div> 
 
 {% endif %}

@@ -21,12 +21,16 @@ from ..models import Seeker
 @login_required
 @permission_required("publicwork.view_seeker")
 def seeker_home(request):
+    object_list = None
     if request.GET.get("init"):
         clear_session(request, ["search"])
-        object_list = None
     else:
         queryset, page = search_seeker(request, Seeker)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.click_link = reverse("seeker_detail", args=[item.pk])
+            # item.del_link = reverse("remove_listener", args=[pk, item.pk])
 
     context = {
         "object_list": object_list,

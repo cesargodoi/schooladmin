@@ -24,51 +24,60 @@
 
     {% if object_list %}
 
-    {% if object_list.has_other_pages %}
-    {% include "base/paginator.html" %}
-    {% endif %}
+      {% if object_list.has_other_pages %}
+      {% include "base/paginator.html" %}
+      {% endif %}
 
-    <table class="table table-hover table-sm">
-      <thead>
-        <tr>
-          <th width="15%">date</th>
-          <th>event</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for obj in object_list %}
-        <tr>
-          <td>{{ obj.date|date:'d/m/Y'}}</td>
-          <td>
-            {{ obj.activity.name }}
-            <small class="text-muted">{{ obj.center }}</small>
-          </td>
-          <td class="text-right">
-            {% if obj.pk not in pre_freqs %}
-              <a type="button" 
-                href="{% url 'membership_add_frequency' group_pk object.pk %}?pk={{ obj.pk }}"
-                class="btn btn-outline-light btn-sm text-primary">
-                <i class="fas fa-plus"></i> <i class="fas fa-user"></i> add
-              </a>
-            {% else %}
-              <span class="badge badge-pill badge-warning">inserted</span>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      <table class="table table-hover table-sm">
+        <thead>
+          <tr>
+            <th width="15%">date</th>
+            <th>event</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in object_list %}
+          <tr>
+            <td>{{ obj.date|date:'d/m/Y'}}</td>
+            <td>
+              {{ obj.activity.name }}
+              &nbsp;&nbsp;<small class="text-muted">{{ obj.center }}</small>
+              {% if not obj.is_active %}
+              &nbsp;&nbsp;<span class="badge badge-pill badge-danger">inactive</span>
+              {% endif %}
+            </td>
+            <td class="text-right">
+              {% if obj.pk not in pre_freqs %}
+                <a type="button" 
+                  href="{% url 'membership_add_frequency' group_pk object.pk %}?pk={{ obj.pk }}"
+                  class="btn btn-outline-light btn-sm text-primary">
+                  <i class="fas fa-plus"></i> <i class="fas fa-user"></i> add
+                </a>
+              {% else %}
+                <span class="badge badge-pill badge-warning">inserted</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
-    {% if object_list.has_other_pages %}
-    {% include "base/paginator.html" %}
-    {% endif %}
+      {% if object_list.has_other_pages %}
+      {% include "base/paginator.html" %}
+      {% endif %}
 
     {% else %}
 
-    <div class="alert alert-secondary" role="alert">
-      <h4 class="alert-heading">frequencies not found</h4>
-    </div>
+    <div class="alert alert-secondary">
+      <h4 class="alert-heading">
+        {% if init %}
+        choose your search terms
+        {% else %}
+        events not found
+        {% endif %}
+      </h4> 
+    </div> 
 
     {% endif %}
 

@@ -3,7 +3,7 @@
   {% if nav == 'detail' %}
   {% url 'center_detail' object.id %}
   {% else %}
-  {% url 'center_home' %}
+  {% url 'center_home' %}?init=on
   {% endif %}
   ">{% if nav == 'home' %}Centers{% else %}Center{% endif %}</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarProfile"

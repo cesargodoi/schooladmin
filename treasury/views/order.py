@@ -12,6 +12,7 @@ from schooladmin.common import (
     PAYFORM_TYPES,
     paginator,
     short_name,
+    clear_session,
 )
 from base.searchs import search_order
 
@@ -22,14 +23,18 @@ from ..models import BankFlags, Order, PayTypes
 @login_required
 @permission_required("treasury.view_order")
 def orders(request):
+    object_list = None
     if request.session.get("order"):
         del request.session["order"]
-
-    queryset, page = search_order(request, Order)
-    object_list = paginator(queryset, 25, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_order(request, Order)
+        object_list = paginator(queryset, 25, page=page)
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
         "status_list": ORDER_STATUS,
         "title": "Orders",
         "nav": "order",

@@ -1,0 +1,60 @@
+<h4>Listeners</h4>
+
+{% if object_list %}
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+<table class="table table-hover table-sm">
+  <tr>
+    <th>#</th>
+    <th>seeker</th>
+    <th>rank</th>
+    <th>observations</th>
+    {% if object_list.0.del_link %}
+    <th></th>
+    {% endif %}
+  </tr>
+  {% for freq in object_list %}
+    <tr onclick="location.href='{{ freq.click_link }}';">
+      <th>{{ forloop.counter }}</th>
+      <td>{{ freq.seeker.name }}
+        &nbsp;&nbsp;
+        <small class="text-muted"><em>{{ freq.seeker.center }}</em></small>
+        {% if not freq.seeker.is_active %}
+          &nbsp;&nbsp;
+          <small class="badge-pill badge-danger">inactive</small>
+        {% endif %}
+      </td>
+      <td>
+        {% if freq.ranking > 0 %}
+          {{ freq.ranking }}
+          <i class="fas fa-star"></i>
+        {% endif %}
+      </td>
+      <td>
+        <small>{{ freq.observations }}</small>
+      </td>
+      {% if freq.del_link %}
+      <td class="text-right">
+        <a type="button" 
+          href="{{ freq.del_link }}"
+          class="btn btn-outline-light btn-sm">
+          <i class="fas fa-trash-alt text-danger"></i>
+        </a>
+      </td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+</table>
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+{% else %}
+<div class="alert alert-secondary" role="alert">
+  <h4 class="alert-heading">no listeners found</h4>
+</div>
+{% endif %}

@@ -2,6 +2,8 @@
   {% csrf_token %}
   {% include "base/searchs/lecture.html" %}
 </form>
+<br>
+<h4>Lectures</h4>
 
 {% if object_list %}
 
@@ -33,8 +35,8 @@
         {% if obj.pk not in pre_freqs %}
           <a type="button" 
             href="{% url 'add_frequency' object.pk %}?lect_pk={{ obj.pk }}"
-            class="btn btn-outline-light btn-sm text-primary">
-            <i class="fas fa-plus"></i> <i class="fas fa-user"></i> add
+            class="btn btn-outline-light btn-sm text-success">
+            <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
           </a>
         {% else %}
           <span class="badge badge-pill badge-warning">inserted</span>

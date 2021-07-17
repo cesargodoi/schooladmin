@@ -1,0 +1,98 @@
+<h4>Seekers</h4>
+
+{% if object_list %}
+
+  {% if object_list.has_other_pages %}
+  {% include "base/elements/paginator.html" %}
+  {% endif %}
+
+  <table class="table table-hover table-sm">
+    <tr>
+      <th>#</th>
+      <th>name</th>
+      <th>center</th>
+      <th class="text-right">status</th>
+      {% if object_list.0.add_link or object_list.0.add_member_link%}
+      <th></th>
+      {% endif %}
+    </tr>
+    {% for obj in object_list %}
+      <tr {%if obj.status == 'RST' %}class="text-danger"{% endif %}
+        {% if obj.click_link %}
+          {% if obj.center == request.user.person.center or request.user.is_superuser %}
+            onclick="location.href='{{ obj.click_link }}';"
+          {% endif %}
+        {% endif %}>
+        <th>{{ forloop.counter }}</th>
+        <td>
+          {{ obj.name }}
+          <small class="text-{%if obj.status == 'RST' %}danger{% else %}muted{% endif %}">
+            <em>
+              &nbsp;&nbsp;
+              {{ obj.city }} - {{ obj.state }} ({{ obj.country }})
+            </em>
+          </small>
+          {% if not obj.is_active %}
+            &nbsp;&nbsp;
+            <small class="badge-pill badge-danger">inactive</small>
+          {% endif %}
+        </td>
+        <td>
+          {{ obj.center }}
+          {% if obj.center != request.user.person.center %}
+            &nbsp;&nbsp;
+            <span class="badge badge-pill badge-danger">only view</span>
+          {% endif %}
+        </td>
+        <td class="text-right">
+          <span class="badge badge-pill badge-{% if obj.status == 'RST' %}danger{% else %}info{% endif %}">
+            {{ obj.get_status_display }}
+          </span>
+        </td>
+        {% if obj.add_link %}
+        <td class="text-right">
+          {% if obj.pk in pre_listeners %}
+            <span class="badge badge-pill badge-warning">inserted</span>
+          {% else %}
+            <a type="button" 
+              href="{{ obj.add_link }}?seek_pk={{ obj.pk }}"
+              class="btn btn-outline-light btn-sm text-success">
+              <i class="fas fa-plus"></i> <i class="fas fa-user"></i> 
+            </a>
+          {% endif %}
+        </td>
+        {% endif %}
+        {% if obj.add_member_link %}
+        <td class="text-right">
+          {% if obj.publicworkgroup_set.count %}
+            <span class="badge badge-pill badge-warning">in group</span>
+          {% else %}
+            <a type="button" 
+              href="{{ obj.add_member_link }}?seek_pk={{ obj.pk }}"
+              class="btn btn-outline-light btn-sm text-success">
+              <i class="fas fa-plus"></i> <i class="fas fa-user"></i> 
+            </a>
+          {% endif %}
+        </td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </table>
+
+  {% if object_list.has_other_pages %}
+  {% include "base/elements/paginator.html" %}
+  {% endif %}
+
+{% else %}
+
+  <div class="alert alert-secondary">
+    <h4 class="alert-heading">
+      {% if init %}
+      choose your search terms
+      {% else %}
+      seekers not found
+      {% endif %}
+    </h4> 
+  </div>  
+
+{% endif %}

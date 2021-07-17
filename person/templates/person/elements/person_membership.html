@@ -1,52 +1,58 @@
 {% if object_list %} 
 
-{% if object_list.has_other_pages %} 
-{% include "base/elements/paginator.html" %} 
-{% endif %}
+  {% if object_list.has_other_pages %} 
+  {% include "base/elements/paginator.html" %} 
+  {% endif %}
 
-<table class="table table-hover table-sm">
-  <thead>
-    <tr>
-      <th width="30%">workgroup</th>
-      <th>role</th>
-      <th>observations</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for wg_member in object_list %}
-    <tr
-      onclick="location.href='{% url 'membership_ps_update' person.id wg_member.pk %}';"
-    >
-      <td>{{ wg_member.workgroup.name }}</td>
-      <td>{{ wg_member.get_role_type_display }}</td>
-      <td>
-        {% if wg_member.observations %}
-        {{ wg_member.observations }}
-        {% endif %}
-      </td>
-      <td class="text-right">
-        <a
-          type="button"
-          href="{% url 'membership_ps_delete' person.id wg_member.pk %}"
-          class="btn btn-outline-light btn-sm"
-        >
-          <i class="fas fa-trash-alt text-danger"></i>
-        </a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <table class="table table-hover table-sm">
+    <thead>
+      <tr>
+        <th width="30%">workgroup</th>
+        <th>role</th>
+        <th>observations</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for wg_member in object_list %}
+      <tr
+        onclick="location.href='{% url 'membership_ps_update' person.id wg_member.pk %}';"
+      >
+        <td>{{ wg_member.workgroup.name }}</td>
+        <td>{{ wg_member.get_role_type_display }}</td>
+        <td>
+          {% if wg_member.observations %}
+          {{ wg_member.observations }}
+          {% endif %}
+        </td>
+        <td class="text-right">
+          <a
+            type="button"
+            href="{% url 'membership_ps_delete' person.id wg_member.pk %}"
+            class="btn btn-outline-light btn-sm"
+          >
+            <i class="fas fa-trash-alt text-danger"></i>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-{% if object_list.has_other_pages %} 
-{% include "base/elements/paginator.html" %} 
-{% endif %} 
+  {% if object_list.has_other_pages %} 
+  {% include "base/elements/paginator.html" %} 
+  {% endif %} 
 
 {% else %}
 
-<div class="alert alert-secondary" role="alert">
-  <h4 class="alert-heading">membership not found</h4>
+<div class="alert alert-secondary">
+  <h4 class="alert-heading">
+    {% if init %}
+    choose your search terms
+    {% else %}
+    membership not found
+    {% endif %}
+  </h4> 
 </div>
 
 {% endif %}

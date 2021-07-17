@@ -3,27 +3,31 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from django.http.response import Http404
 from django.urls import reverse
-from schooladmin.common import paginator, LECTURE_TYPES
+from schooladmin.common import paginator, LECTURE_TYPES, clear_session
 from base.searchs import search_lecture
 
 
 from ..forms import LectureForm
 from ..models import Lecture
 
-
+###############################################################################
 @login_required
 @permission_required("publicwork.view_lecture")
 def lecture_home(request):
-    queryset, page = search_lecture(request, Lecture)
-    object_list = paginator(queryset, page=page)
+    object_list = None
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_lecture(request, Lecture)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
         "title": "lecture home",
         "type_list": LECTURE_TYPES,
         "nav": "lc_home",
     }
-
     return render(request, "publicwork/lecture_home.html", context)
 
 
@@ -33,7 +37,11 @@ def lecture_detail(request, pk):
     lect_object = Lecture.objects.get(pk=pk)
     queryset = lect_object.listener_set.all().order_by("seeker__name_sa")
 
-    object_list = paginator(queryset, page=request.GET.get("page"))
+    object_list = paginator(queryset, 25, page=request.GET.get("page"))
+    # add action links
+    for item in object_list:
+        item.click_link = reverse("update_listener", args=[pk, item.pk])
+        item.del_link = reverse("remove_listener", args=[pk, item.pk])
 
     context = {
         "object": lect_object,

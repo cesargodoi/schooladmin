@@ -19,9 +19,9 @@ from ..models import Historic, Person
 @login_required
 @permission_required("person.view_person")
 def person_home(request):
+    object_list = None
     if request.GET.get("init"):
         clear_session(request, ["search"])
-        object_list = None
     else:
         queryset, page = search_person(request, Person)
         object_list = paginator(queryset, page=page)

@@ -35,7 +35,7 @@
 <div class="row-pg-initial">
   {% if request.user.is_superuser or request.user|has_group:"office" or request.user|has_group:"office_jr" %}
   <div class="col-lg-3 card-principal-col-lg-3"
-    onclick="location.href='{% url 'center_home' %}';">
+    onclick="location.href='{% url 'center_home' %}?init=on';">
       <div class="card h-100 card-principal-backimage ">
         <img src="{% static 'images/center.png' %}" class="card-img-top" alt="...">
       <div class="card-body">
@@ -45,7 +45,7 @@
   </div>
 
   <div class="col-lg-3 card-principal-col-lg-3"
-        onclick="location.href='{% url 'person_home' %}';">
+        onclick="location.href='{% url 'person_home' %}?init=on';">
     <div class="card h-100 card-principal-backimage ">
       <img src="{% static 'images/persons.png' %}" class="card-img-top" alt="...">
       <div class="card-body">
@@ -54,7 +54,7 @@
     </div>
   </div>
   <div class="col-lg-3 card-principal-col-lg-3"
-        onclick="location.href='{% url 'event_home' %}';">
+        onclick="location.href='{% url 'event_home' %}?init=on';">
     <div class="card h-100 card-principal-backimage ">
       <img src="{% static 'images/events.png' %}" class="card-img-top" alt="...">
       <div class="card-body">
@@ -63,7 +63,7 @@
     </div>
   </div>
   <div class="col-lg-3 card-principal-col-lg-3"
-        onclick="location.href='{% url 'workgroup_home' %}';">
+        onclick="location.href='{% url 'workgroup_home' %}?init=on';">
     <div class="card h-100 card-principal-backimage ">
       <img src="{% static 'images/workgroups.png' %}" class="card-img-top" alt="...">
       <div class="card-body">

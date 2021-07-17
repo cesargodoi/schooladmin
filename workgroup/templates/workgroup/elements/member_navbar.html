@@ -39,7 +39,7 @@
 
       {% if nav == "detail" %}
         {% if tab == "frequencies" and object.is_active %}
-        <a class="btn btn-light btn-sm" href="{% url 'membership_add_frequency' group_pk object.id %}">
+        <a class="btn btn-light btn-sm" href="{% url 'membership_add_frequency' group_pk object.id %}?init=on">
           <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
           Add frequency
         </a>

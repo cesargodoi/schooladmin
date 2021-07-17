@@ -12,9 +12,9 @@ from .models import Center
 @login_required
 @permission_required("center.view_center")
 def center_home(request):
+    object_list = None
     if request.GET.get("init"):
         clear_session(request, ["search"])
-        object_list = None
     else:
         queryset, page = search_center(request, Center)
         object_list = paginator(queryset, page=page)

@@ -18,13 +18,13 @@
       </li>
       <li class="nav-item">
         <a class="nav-link {% if nav == 'lc_home' %}active{% endif %}" 
-          href="{% url 'lecture_home' %}">
+          href="{% url 'lecture_home' %}?init=on">
           Lectures
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link {% if nav == 'gp_home' %}active{% endif %}" 
-          href="{% url 'group_home' %}">
+          href="{% url 'group_home' %}?init=on">
           Groups
         </a>
       </li>

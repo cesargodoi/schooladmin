@@ -17,7 +17,7 @@ urlpatterns = [
 # historic
 urlpatterns += [
     path(
-        "<uuid:person_id>/historic",
+        "<uuid:person_id>/historic/",
         historic.person_historic,
         name="person_historic",
     ),
@@ -41,12 +41,12 @@ urlpatterns += [
 # frequency_ps
 urlpatterns += [
     path(
-        "<uuid:person_id>/frequencies",
+        "<uuid:person_id>/frequencies/",
         frequency_ps.frequency_ps_list,
         name="frequency_ps_list",
     ),
     path(
-        "<uuid:person_id>/frequency_insert",
+        "<uuid:person_id>/frequency_insert/",
         frequency_ps.frequency_ps_insert,
         name="frequency_ps_insert",
     ),

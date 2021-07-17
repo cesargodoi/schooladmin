@@ -42,7 +42,10 @@
           <td>{{ obj.date|date:'d/m/Y'}}</td>
           <td>
             {{ obj.activity.name }}
-            <small class="text-muted">{{ obj.center }}</small>
+            &nbsp;&nbsp;<small class="text-muted">{{ obj.center }}</small>
+            {% if not obj.is_active %}
+            &nbsp;&nbsp;<span class="badge badge-pill badge-danger">inactive</span>
+            {% endif %}
           </td>
           <td class="text-right">
             {% if obj.pk not in pre_freqs %}

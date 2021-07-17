@@ -130,7 +130,7 @@ def adjust_status_or_aspect(historic):
                 historic.person.aspect = aspect[1][0]
                 historic.person.aspect_date = aspect[1][1]
                 historic.person.save()
-            except:
+            except Exception:
                 historic.person.aspect = "--"
                 historic.person.aspect_date = None
                 historic.person.save()
@@ -141,6 +141,6 @@ def adjust_status_or_aspect(historic):
             try:
                 historic.person.status = status[1][0]
                 historic.person.save()
-            except:
+            except Exception:
                 historic.person.status = "---"
                 historic.person.save()

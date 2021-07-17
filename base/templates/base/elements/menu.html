@@ -8,22 +8,22 @@
   <a class="nav-link" href="{% url 'person_home' %}?init=on">Persons</a>
 </li>
 <li class="nav-item">
-  <a class="nav-link" href="{% url 'event_home' %}">Events</a>
+  <a class="nav-link" href="{% url 'event_home' %}?init=on">Events</a>
 </li>
 <li class="nav-item">
-  <a class="nav-link" href="{% url 'workgroup_home' %}">Workgroups</a>
+  <a class="nav-link" href="{% url 'workgroup_home' %}?init=on">Workgroups</a>
 </li>
 {% endif %}
 
 {% if request.user.is_superuser or request.user|has_group:"mentoring" %}
 <li class="nav-item">
-  <a class="nav-link" href="{% url 'mentoring_home' %}">Mentoring</a>
+  <a class="nav-link" href="{% url 'mentoring_home' %}?init=on">Mentoring</a>
 </li>
 {% endif %}
 
 {% if request.user.is_superuser or request.user|has_group:"publicwork" or request.user|has_group:"publicwork_jr" %}
 <li class="nav-item">
-  <a class="nav-link" href="{% url 'publicwork_home' %}">Public Work</a>
+  <a class="nav-link" href="{% url 'publicwork_home' %}?init=on">Public Work</a>
 </li>
 {% endif %}
 

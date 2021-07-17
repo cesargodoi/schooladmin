@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from schooladmin.common import ACTIVITY_TYPES, paginator
+from schooladmin.common import ACTIVITY_TYPES, paginator, clear_session
 from base.searchs import search_event
 
 from person.models import Person
@@ -34,6 +34,11 @@ def mentoring_group_detail(request, pk):
     queryset = workgroup.membership_set.all().order_by("person__name_sa")
 
     object_list = paginator(queryset, 25, request.GET.get("page"))
+    # add action links
+    for member in object_list:
+        member.click_link = reverse(
+            "mentoring_member_detail", args=[pk, member.person.pk]
+        )
 
     context = {
         "object": workgroup,
@@ -134,12 +139,17 @@ def membership_add_frequency(request, group_pk, person_pk):
             request, "workgroup/elements/confirm_add_frequency.html", context
         )
 
-    queryset, page = search_event(request, Event)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_event(request, Event)
+        object_list = paginator(queryset, page=page)
 
     context = {
         "object": person,
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
         "title": "insert frequencies",
         "type_list": ACTIVITY_TYPES,
         "pre_freqs": [obj.event.pk for obj in person.frequency_set.all()],
@@ -231,11 +241,18 @@ def mentoring_add_frequencies(request, group_pk):
                 Frequency.objects.create(**new_freq)
         return redirect("mentoring_group_detail", pk=group_pk)
 
-    queryset, page = search_event(request, Event)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_event(request, Event)
+        object_list = paginator(queryset, page=page)
+
     context = {
         "object": workgroup,
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("group_detail", args=[group_pk]),
         "title": "workgroup add members",
         "nav": "detail",
         "tab": "add_frequencies",

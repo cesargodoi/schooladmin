@@ -1,8 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
+from django.urls import reverse
+
 from person.models import Person
-from schooladmin.common import ASPECTS, STATUS, paginator
+from schooladmin.common import ASPECTS, STATUS, paginator, clear_session
 
 from ..forms import MembershipForm
 from ..models import Membership, Workgroup
@@ -34,12 +36,17 @@ def membership_insert(request, workgroup_id):
             "workgroup/elements/confirm_to_insert_membership.html",
             context,
         )
-
-    queryset, page = search_person(request, Person)
-    object_list = paginator(queryset, 25, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_person(request, Person)
+        object_list = paginator(queryset, 25, page=page)
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("membership_insert", args=[workgroup.pk]),
         "aspect_list": ASPECTS,
         "status_list": STATUS,
         "form": MembershipForm(initial={"workgroup": workgroup}),

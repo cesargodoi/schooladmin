@@ -1,5 +1,4 @@
 <div class="form-row align-items-center">
-
   <div class="col-sm-3 mb-1">
     <div class="input-group">
       <input name="name"
@@ -7,9 +6,15 @@
              id="name"
              placeholder="group name"
              {% if request.session.search.name %}value={{ request.session.search.name }}{% endif %}>
+      {% if request.session.search.name %}
+      <div class="input-group-text">
+        <a href="{{ goback_link }}?init=on" class="text-secondary">
+          <i class="fas fa-backspace"></i>
+        </a>
+      </div>
+      {% endif %}
     </div>
   </div>
-
   <div class="col-sm-2 mb-1">
     <select class="form-control" name="center">
       {% for cnt in centers %}
@@ -20,7 +25,6 @@
       {% endfor %}
     </select>
   </div>
-
   <div class="col-sm-3 mb-1">
     <div class="input-group">
       <div class="form-check form-check-inline m-1">
@@ -37,5 +41,4 @@
       </button>
     </div>
   </div>
-  
 </div>

@@ -9,55 +9,7 @@
 <article class="media content-section">
   <div class="media-body">
 
-    <h4 class="mb-4">Listeners</h4>
-
-    {% if object_list %}
-
-    {% if object_list.has_other_pages %}
-    {% include "base/elements/paginator.html" %}
-    {% endif %}
-
-    {% for freq in object_list %}
-    <div class="row border-top border-secondary mt-2 pt-2"
-         onclick="location.href='{% url 'update_listener' object.pk freq.pk %}';">
-      <div class="col-sm-4">
-        {{ freq.seeker.name }}
-        <small class="text-muted">({{ freq.seeker.center }})</small>
-        {% if not freq.seeker.is_active %}
-        &nbsp;&nbsp;
-        <small class="badge-pill badge-danger">inactive</small>
-        {% endif %}
-      </div>
-      <div class="col-sm-1">
-        {% if freq.ranking > 0 %}
-          {{ freq.ranking }}
-          <i class="fas fa-star"></i>
-        {% endif %}
-      </div>
-      <div class="col-sm-6">
-        <small>
-          {{ freq.observations }}
-        </small>
-      </div>
-      <div class="col-sm-1 text-right">
-        <a type="button" 
-          href="{% url 'remove_listener' object.pk freq.pk %}"
-          class="btn btn-outline-light btn-sm">
-          <i class="fas fa-trash-alt text-danger"></i>
-        </a>
-      </div>
-    </div>
-    {% endfor %}
-
-    {% if object_list.has_other_pages %}
-    {% include "base/elements/paginator.html" %}
-    {% endif %}
-
-    {% else %}
-    <div class="alert alert-secondary" role="alert">
-      <h4 class="alert-heading">no listeners found</h4>
-    </div>
-    {% endif %}
+    {% include 'publicwork/elements/listeners.html' %}
 
   </div>
 </article>
