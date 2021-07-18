@@ -78,7 +78,7 @@ def group_create(request):
             pw_group_form.save()
             message = f"The Group '{request.POST['name']}' has been created!"
             messages.success(request, message)
-            return redirect("group_home")
+            return redirect(reverse("group_home") + "?init=on")
 
     context = {
         "form": GroupForm(
@@ -137,7 +137,7 @@ def group_delete(request, pk):
             pw_group.save()
         else:
             pw_group.delete()
-        return redirect("group_home")
+        return redirect(reverse("group_home") + "?init=on")
 
     context = {"object": pw_group, "title": "confirm to delete"}
     return render(request, "base/confirm_delete.html", context)
@@ -150,7 +150,7 @@ def group_reinsert(request, pk):
     if request.method == "POST":
         pw_group.is_active = True
         pw_group.save()
-        return redirect("group_home")
+        return redirect(reverse("group_home") + "?init=on")
 
     context = {"object": pw_group, "title": "confirm to reinsert"}
     return render(

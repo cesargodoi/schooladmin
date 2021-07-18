@@ -52,7 +52,7 @@ def center_create(request):
             form.save()
             message = f"The Center '{request.POST['name']}' has been created!"
             messages.success(request, message)
-            return redirect("center_home")
+            return redirect(reverse("center_home") + "?init=on")
 
     context = {
         "form": CenterForm(initial={"made_by": request.user}),
@@ -101,7 +101,7 @@ def center_delete(request, pk):
                 person.save()
         center.is_active = False
         center.save()
-        return redirect("center_home")
+        return redirect(reverse("center_home") + "?init=on")
 
     context = {
         "object": center,
@@ -118,7 +118,7 @@ def center_reinsert(request, pk):
     if request.method == "POST":
         center.is_active = True
         center.save()
-        return redirect("center_home")
+        return redirect(reverse("center_home") + "?init=on")
 
     context = {"object": center, "title": "confirm to reinsert"}
     return render(request, "center/confirm_reinsert.html", context)

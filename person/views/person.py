@@ -96,7 +96,7 @@ def person_create(request):
             return redirect("person_detail", id=new_user.person.pk)
         else:
             message = "Enter a valid email!"
-            messages.success(request, message)
+            messages.warning(request, message)
 
     user_form = UserForm()
     profile_form = ProfileForm()
@@ -183,7 +183,7 @@ def person_delete(request, id):
             add_historic(person, "REM", request.user)
         else:
             person.user.delete()
-        return redirect("person_home")
+        return redirect(reverse("person_home") + "?init=on")
 
     context = {"object": person, "title": "confirm to delete"}
     return render(request, "base/confirm_delete.html", context)
@@ -200,7 +200,7 @@ def person_reinsert(request, id):
         person.status = "ACT"
         person.save()
         add_historic(person, "ACT", request.user)
-        return redirect("person_home")
+        return redirect(reverse("person_home") + "?init=on")
 
     context = {"object": person, "title": "confirm to reinsert"}
     return render(

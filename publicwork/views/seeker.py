@@ -71,7 +71,7 @@ def seeker_create(request):
             seeker_form.save()
             message = f"The Seeker '{request.POST['name']}' has been created!"
             messages.success(request, message)
-            return redirect("seeker_home")
+            return redirect(reverse("seeker_home") + "?init=on")
 
     context = {
         "form": SeekerForm(
@@ -145,7 +145,7 @@ def seeker_reinsert(request, pk):
     if request.method == "POST":
         seeker.is_active = True
         seeker.save()
-        return redirect("seeker_home")
+        return redirect(reverse("seeker_home") + "?init=on")
 
     context = {"object": seeker, "title": "confirm to reinsert"}
     return render(

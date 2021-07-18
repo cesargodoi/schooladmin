@@ -65,7 +65,7 @@ def lecture_create(request):
                 f"The lecture '{request.POST['theme']}' has been created!"
             )
             messages.success(request, message)
-            return redirect("lecture_home")
+            return redirect(reverse("lecture_home") + "?init=on")
 
     lecture_form = LectureForm(
         initial={
@@ -127,7 +127,7 @@ def lecture_delete(request, pk):
         lect_object.delete()
         message = "The lecture has been deleted!"
         messages.success(request, message)
-        return redirect("lecture_home")
+        return redirect(reverse("lecture_home") + "?init=on")
 
     context = {
         "object": lect_object,

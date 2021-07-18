@@ -60,8 +60,7 @@ def workgroup_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, "The Workgroup has been created!")
-
-        return redirect("workgroup_home")
+        return redirect(reverse("workgroup_home") + "?init=on")
 
     context = {
         "form": WorkgroupForm(initial={"made_by": request.user}),
@@ -107,7 +106,7 @@ def workgroup_delete(request, pk):
         if workgroup.members:
             workgroup.members.clear()
         workgroup.delete()
-        return redirect("workgroup_home")
+        return redirect(reverse("workgroup_home") + "?init=on")
 
     context = {
         "object": workgroup,

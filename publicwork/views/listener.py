@@ -1,7 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
-from schooladmin.common import paginator, clear_session, SEEKER_STATUS
+from schooladmin.common import (
+    paginator,
+    clear_session,
+    SEEKER_STATUS,
+    LECTURE_TYPES,
+)
 from django.urls import reverse
 
 from center.models import Center
@@ -152,6 +157,7 @@ def add_frequency(request, pk):
         "init": True if request.GET.get("init") else False,
         "goback_link": reverse("seeker_home"),
         "title": "add frequency",
+        "type_list": LECTURE_TYPES,
         "pre_freqs": [lect.pk for lect in seeker.lecture_set.all()],
         "tab": "frequencies",
         "add": True,

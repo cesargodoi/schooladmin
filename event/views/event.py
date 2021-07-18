@@ -56,7 +56,7 @@ def event_create(request):
             form.save()
             message = "The Event has been created!"
             messages.success(request, message)
-            return redirect(reverse("event_home") + "?d30=on&lastNext=last")
+            return redirect(reverse("event_home") + "?init=on")
 
     context = {
         "form": EventForm(initial={"made_by": request.user}),
@@ -109,7 +109,7 @@ def event_delete(request, pk):
         object.delete()
         message = "The Event has been deleted!"
         messages.success(request, message)
-        return redirect("event_home")
+        return redirect(reverse("event_home") + "?init=on")
 
     context = {
         "object": object,

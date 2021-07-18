@@ -14,10 +14,9 @@
     <h3>
       {{ object.name }} &nbsp;&nbsp; {% if object.conf_center %}
       <small class="text-muted">
-        <em
-          >{{ object.conf_center.name }} ({{
-          object.conf_center.get_country_display }})</em
-        >
+        <em>
+          {{ object.conf_center.name }} ({{object.conf_center.get_country_display }})
+        </em>
       </small>
       {% endif %}
     </h3>
