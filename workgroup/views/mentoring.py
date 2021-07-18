@@ -109,6 +109,7 @@ def mentoring_member_historic(request, group_pk, person_pk):
 @login_required
 @permission_required("workgroup.view_workgroup")
 def membership_add_frequency(request, group_pk, person_pk):
+    object_list = None
     person = Person.objects.get(pk=person_pk)
 
     if request.GET.get("pk"):
@@ -130,7 +131,7 @@ def membership_add_frequency(request, group_pk, person_pk):
             )
 
         context = {
-            "person": person,
+            "object": person,
             "form": MentoringFrequencyForm,
             "insert_to": f"{event.activity.name} {event.center}",
             "title": "confirm to insert",
@@ -141,10 +142,14 @@ def membership_add_frequency(request, group_pk, person_pk):
 
     if request.GET.get("init"):
         clear_session(request, ["search"])
-        object_list = None
     else:
         queryset, page = search_event(request, Event)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for member in object_list:
+            member.add_link = reverse(
+                "membership_add_frequency", args=[group_pk, person_pk]
+            )
 
     context = {
         "object": person,

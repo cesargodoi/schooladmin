@@ -1,0 +1,83 @@
+<h4>Lectures</h4>
+
+{% if object_list %}
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+<table class="table table-hover table-sm">
+  <thead>
+    <tr>
+      <th width="10%">date</th>
+      <th>theme</th>
+      <th>type</th>
+      <th class="text-right">listener</th>
+      {% if object_list.0.add_link %}
+      <th></th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for obj in object_list %}
+    <tr
+      {% if obj.click_link %}
+        {% if obj.center == request.user.person.center or request.user.is_superuser %}
+          onclick="location.href='{{ obj.click_link }}';"
+        {% endif %}
+      {% endif %}>
+      <td>{{ obj.date|date:'d/m/y'}}</td>
+      <td>
+        {{ obj.theme }}
+        &nbsp;&nbsp;
+        <small class="text-muted">
+          {{ obj.center }}
+        </small>
+        {% if not obj.is_active %}
+          &nbsp;&nbsp;
+          <small class="badge-pill badge-danger">inactive</small>
+        {% endif %}
+      </td>
+      <td>
+        {{ obj.get_type_display }}
+      </td>
+      <td class="text-right">
+        {% if obj.listeners.all|length > 0 %}
+          <span class="badge badge-pill badge-info">{{ obj.listeners.all|length }}</span>
+        {% endif %}
+      </td>
+      {% if obj.add_link %}
+      <td class="text-right">
+        {% if obj.pk in pre_freqs %}
+          <span class="badge badge-pill badge-warning">inserted</span>
+        {% else %}
+          <a type="button" 
+            href="{{ obj.add_link}}?lect_pk={{ obj.pk }}"
+            class="btn btn-outline-light btn-sm text-success">
+            <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
+          </a>
+        {% endif %}
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if object_list.has_other_pages %}
+{% include "base/elements/paginator.html" %}
+{% endif %}
+
+{% else %}
+
+<div class="alert alert-secondary">
+    <h4 class="alert-heading">
+      {% if init %}
+      choose your search terms
+      {% else %}
+      lectures not found
+      {% endif %}
+    </h4> 
+  </div> 
+
+{% endif %}

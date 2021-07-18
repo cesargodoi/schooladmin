@@ -20,6 +20,9 @@ def lecture_home(request):
     else:
         queryset, page = search_lecture(request, Lecture)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.click_link = reverse("lecture_detail", args=[item.pk])
 
     context = {
         "object_list": object_list,

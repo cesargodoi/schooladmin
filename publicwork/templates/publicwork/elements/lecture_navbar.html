@@ -51,7 +51,7 @@
         {% endif %}
 
         {% if tab == "frequencies" %}
-        <a class="btn btn-light btn-sm" href="{% url 'add_frequency' object.id %}">
+        <a class="btn btn-light btn-sm" href="{% url 'add_frequency' object.id %}?init=on">
           <i class="fas fa-plus"></i> 
           Add frequency
         </a>

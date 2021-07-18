@@ -137,12 +137,20 @@ def add_frequency(request, pk):
             context,
         )
 
-    queryset, page = search_lecture(request, Lecture)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_lecture(request, Lecture)
+        object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.add_link = reverse("add_frequency", args=[pk])
 
     context = {
         "object": seeker,
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("seeker_home"),
         "title": "add frequency",
         "pre_freqs": [lect.pk for lect in seeker.lecture_set.all()],
         "tab": "frequencies",

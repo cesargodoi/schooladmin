@@ -26,7 +26,7 @@ def frequency_delete(request, pk, person_id):
 @login_required
 @permission_required(["event.change_event", "person.change_person"])
 def frequencies_add(request, pk):
-    object = Event.objects.get(pk=pk)
+    obj = Event.objects.get(pk=pk)
 
     if request.method == "POST":
         from_request = set(
@@ -37,9 +37,9 @@ def frequencies_add(request, pk):
             try:
                 person = Person.objects.get(reg=reg)
                 # object.frequencies.add(person)
-                object.frequency_set.create(
+                obj.frequency_set.create(
                     person=person,
-                    event=object,
+                    event=obj,
                     aspect=person.aspect,
                 )
                 regs.append(reg)
@@ -57,7 +57,7 @@ def frequencies_add(request, pk):
         return redirect("event_detail", pk=pk)
 
     context = {
-        "object": object,
+        "object": obj,
         "form": FrequenciesAddForm(),
         "title": "insert frequencies",
     }

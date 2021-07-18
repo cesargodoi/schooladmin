@@ -30,7 +30,6 @@ def seeker_home(request):
         # add action links
         for item in object_list:
             item.click_link = reverse("seeker_detail", args=[item.pk])
-            # item.del_link = reverse("remove_listener", args=[pk, item.pk])
 
     context = {
         "object_list": object_list,

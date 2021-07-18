@@ -59,6 +59,9 @@ def frequency_ps_insert(request, person_id):
     else:
         queryset, page = search_event(request, Event)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for member in object_list:
+            member.add_link = reverse("frequency_ps_insert", args=[person_id])
 
     context = {
         "object_list": object_list,

@@ -10,10 +10,12 @@
       {% csrf_token %}
       {% include "base/searchs/lecture.html" %}
     </form>
+    <br>
+    {% include 'publicwork/elements/lectures.html' %}
   </div>
 </article>
 
-{% if object_list %}
+<!-- {% if object_list %}
 
   {% if object_list.has_other_pages %}
   {% include "base/elements/paginator.html" %}
@@ -39,6 +41,6 @@
     </h4> 
   </div>
 
-{% endif %}
+{% endif %} -->
 
 {% endblock %}
