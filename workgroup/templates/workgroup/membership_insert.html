@@ -20,55 +20,8 @@
       {% csrf_token %}
       {% include "base/searchs/person.html" %}
     </form>
-
-    {% if object_list %}
-
-    {% if object_list.has_other_pages %}
-    {% include "base/elements/paginator.html" %}
-    {% endif %}
-
-    <table class="table table-hover table-sm">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>person</th>
-          <th>center</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for obj in object_list %}
-        <tr>
-          <th>{{ forloop.counter }}</th>
-          <td>
-            {{ obj.name }} &nbsp;&nbsp;
-            <small class="text-muted"><em>{{ obj.get_aspect_display }}</em></small>
-          </td>
-          <td>{{ obj.center }}</td>
-          <td class="text-right">
-            <a type="button" 
-              href="{% url 'membership_insert' object.pk %}?pk={{ obj.pk }}"
-              class="btn btn-outline-light btn-sm text-success">
-              <i class="fas fa-plus"></i> <i class="fas fa-user"></i> 
-              Insert
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    {% if object_list.has_other_pages %}
-    {% include "base/elements/paginator.html" %}
-    {% endif %}
-
-    {% else %}
-
-    <div class="alert alert-secondary" role="alert">
-      <h4 class="alert-heading">workgroup not found</h4>
-    </div>
-
-    {% endif %}
+    <br>
+    {% include 'person/elements/persons.html' %}
 
   </div>
 </article>

@@ -1,28 +1,28 @@
 <div class="form-row align-items-center">
   <div class="col-sm-2 mb-1">
     <div class="input-group">
-      <input name="term"
+      <input name="wg_term"
              class="dateinput form-control"
-             id="term"
+             id="wg_term"
              placeholder="workgroup"
-             {% if request.session.search.term %}value={{ request.session.search.term }}{% endif %}>
-      {% if request.session.search.term %}
-      <div class="input-group-text">
-        <a href="{{ goback_link }}?init=on" class="text-secondary">
-          <i class="fas fa-backspace"></i>
-        </a>
+             {% if request.session.search.wg_term %}value={{ request.session.search.wg_term }}{% endif %}>
+      <div class="input-group-append">
+        <div class="input-group-text">
+          <a href="?wg_term=+" class="text-secondary">
+            <i class="fas fa-backspace"></i>
+          </a>
+        </div>
       </div>
-      {% endif %}
     </div>
   </div>
   <div class="col-sm-2 mb-1">
-    <select class="form-control" name="type">
+    <select class="form-control" name="wg_type">
       <option value="all"
-              {% if request.session.search.type == 'all' %}selected{% endif %}>
+              {% if request.session.search.wg_type == 'all' %}selected{% endif %}>
               all types
       </option>
       {% for wgtp in workgroup_types %}
-        <option value="{{ wgtp.0 }}" {% if wgtp.0 == request.session.search.type %}selected{% endif %}>{{ wgtp.1 }}</option>
+        <option value="{{ wgtp.0 }}" {% if wgtp.0 == request.session.search.wg_type %}selected{% endif %}>{{ wgtp.1 }}</option>
       {% endfor %}
     </select>
   </div>

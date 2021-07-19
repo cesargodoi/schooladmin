@@ -68,7 +68,7 @@
         {% elif nav == 'add_mentor' or nav == 'add_member' %}
         {% url 'group_detail' object.pk %}
         {% else %}
-        {% url 'group_home' %}?init=on
+        {% url 'group_home' %}
         {% endif %}
         ">
         <i class="fas fa-chevron-left"></i> 

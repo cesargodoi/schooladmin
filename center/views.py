@@ -18,6 +18,9 @@ def center_home(request):
     else:
         queryset, page = search_center(request, Center)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.click_link = reverse("center_detail", args=[item.pk])
 
     context = {
         "object_list": object_list,

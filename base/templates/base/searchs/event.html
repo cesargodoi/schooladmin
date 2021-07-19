@@ -24,14 +24,14 @@
     </div>
   </div>
   <div class="col-sm-2 mb-1">
-    <select class="form-control" name="type">
+    <select class="form-control" name="ev_type">
       <option value="all"
-              {% if request.session.search.type == 'all' %}selected{% endif %}>
+              {% if request.session.search.ev_type == 'all' %}selected{% endif %}>
               all types
       </option>
       {% for tp in type_list %}
       <option value="{% if tp.0 != '---' %}{{ tp.0 }}{% endif %}"
-              {% if tp.0 == request.session.search.type %}selected{% endif %}>
+              {% if tp.0 == request.session.search.ev_type %}selected{% endif %}>
         {% if tp.0 == "---" %}type{% else %}{{ tp.1 }}{% endif %}
       </option>
       {% endfor %}

@@ -14,6 +14,7 @@ from base.searchs import search_person
 @login_required
 @permission_required("workgroup.add_membership")
 def membership_insert(request, workgroup_id):
+    object_list = None
     workgroup = Workgroup.objects.get(pk=workgroup_id)
 
     if request.GET.get("pk"):
@@ -38,10 +39,15 @@ def membership_insert(request, workgroup_id):
         )
     if request.GET.get("init"):
         clear_session(request, ["search"])
-        object_list = None
     else:
         queryset, page = search_person(request, Person)
-        object_list = paginator(queryset, 25, page=page)
+        object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.add_link = (
+                reverse("membership_insert", args=[workgroup_id])
+                + f"?pk={ item.pk }"
+            )
 
     context = {
         "object_list": object_list,
@@ -52,8 +58,8 @@ def membership_insert(request, workgroup_id):
         "form": MembershipForm(initial={"workgroup": workgroup}),
         "title": "create membership",
         "object": workgroup,
+        "flag": "membership",
     }
-
     return render(request, "workgroup/membership_insert.html", context)
 
 

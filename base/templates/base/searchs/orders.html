@@ -25,23 +25,30 @@
   </div>
   <div class="col-sm-2 mb-1">
     <div class="input-group">
-      <input name="name" 
-        class="form-control" 
-        id="name"
-        placeholder="person"
-        {% if request.session.search.name %}value={{ request.session.search.name }}{% endif %}>
+      <input name="od_name" 
+            class="form-control" 
+            id="od_name"
+            placeholder="person"
+            {% if request.session.search.od_name %}value={{ request.session.search.od_name }}{% endif %}>
+      <div class="input-group-append">
+        <div class="input-group-text">
+          <a href="?od_name=+" class="text-secondary">
+            <i class="fas fa-backspace"></i>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
   <div class="col-sm-2 mb-1">
-    <select class="form-control" name="status" id="status">
+    <select class="form-control" name="od_status" id="od_status">
       <option value="all"
-              {% if request.session.search.status == 'all' %}selected{% endif %}>
+              {% if request.session.search.od_status == 'all' %}selected{% endif %}>
         all status
       </option>
       {% for stt in status_list %}
       <option 
         value="{{ stt.0 }}" 
-        {% if stt.0 == request.session.search.status %}selected{% endif %}>
+        {% if stt.0 == request.session.search.od_status %}selected{% endif %}>
         {{ stt.1 }}
       </option>
       {% endfor %}

@@ -20,6 +20,9 @@ def event_home(request):
     else:
         queryset, page = search_event(request, Event)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.click_link = reverse("event_detail", args=[item.pk])
 
     context = {
         "object_list": object_list,

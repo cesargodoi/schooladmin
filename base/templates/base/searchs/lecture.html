@@ -24,14 +24,14 @@
     </div>
   </div>
   <div class="col-sm-2 mb-1">
-    <select class="form-control" name="type">
+    <select class="form-control" name="lc_type">
       <option value="all"
-              {% if request.session.search.type == 'all' %}selected{% endif %}>
+              {% if request.session.search.lc_type == 'all' %}selected{% endif %}>
               types
       </option>
       {% for key, value in type_list %}
       <option value="{{ key }}"
-              {% if key == request.session.search.type %}selected{% endif %}>
+              {% if key == request.session.search.lc_type %}selected{% endif %}>
         {{ value }}
       </option>
       {% endfor %}

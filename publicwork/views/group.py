@@ -45,7 +45,7 @@ def group_home(request):
     context = {
         "object_list": object_list,
         "init": True if request.GET.get("init") else False,
-        "goback_link": reverse("person_home"),
+        "goback_link": reverse("group_home"),
         "title": "public work - groups",
         "centers": [[str(cnt.pk), str(cnt)] for cnt in Center.objects.all()],
         "nav": "gp_home",
@@ -354,6 +354,12 @@ def group_add_mentor(request, pk):
     else:
         queryset, page = search_person(request, Person)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.add_link = (
+                reverse("group_add_mentor", args=[pk])
+                + f"?person_pk={ item.pk }"
+            )
 
     context = {
         "object": pw_group,
@@ -366,6 +372,7 @@ def group_add_mentor(request, pk):
         "nav": "add_mentor",
         "goback": reverse("group_detail", args=[pk]),
         "pk": pk,
+        "flag": "group",
     }
     return render(request, "publicwork/groups/detail.html", context)
 

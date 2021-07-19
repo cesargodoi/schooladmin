@@ -25,15 +25,18 @@ def person_home(request):
     else:
         queryset, page = search_person(request, Person)
         object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.click_link = reverse("person_detail", args=[item.id])
 
     context = {
         "object_list": object_list,
         "init": True if request.GET.get("init") else False,
-        "goback_link": reverse("person_home"),
         "aspect_list": ASPECTS,
         "status_list": STATUS,
         "title": "person home",
         "nav": "home",
+        "flag": "person",
     }
     return render(request, "person/person_home.html", context)
 

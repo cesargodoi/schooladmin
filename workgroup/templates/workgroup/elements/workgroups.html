@@ -1,9 +1,9 @@
-<h4>Events</h4>
+<h4>Workgroups</h4>
 
 {% if object_list %}
 
   {% if object_list.has_other_pages %}
-  {% include "base/paginator.html" %}
+  {% include "base/elements/paginator.html" %}
   {% endif %}
 
   {% for obj in object_list %}
@@ -13,33 +13,33 @@
         onclick="location.href='{{ obj.click_link }}';"
       {% endif %}
     {% endif %}>
-    <div class="col-sm-1">
-      {{ obj.date|date:'d/m/y' }}
-    </div>
     <div class="col-sm-5">
-      <strong>{{ obj.activity.name }}</strong>
+      <strong>{{ obj.name }}</strong>
     </div>
     <div class="col-sm-2 small align-middle">
       <small><em>{{ obj.center }}</em></small>
     </div>
+    <div class="col-sm-1 small align-middle">
+      <small><em>{{ obj.get_workgroup_type_display }}</em></small>
+    </div>
     <div class="col-sm-2 text-right">
-      <strong>{{ obj.get_status_display }}</strong>
+      <strong>{{ obj.get_aspect_display }}</strong>
     </div>
     <div class="col-sm-2 text-right">
       {% if not nav == "home" %}
-        {% if obj.pk not in pre_freqs %}
+        {% if obj.pk not in pre_groups %}
           <a type="button" 
             href="{{ obj.add_link }}?pk={{ obj.pk }}"
             class="btn btn-outline-light btn-sm text-success">
             <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
           </a>
         {% else %}
-          <span class="badge badge-pill badge-warning">inserted</span>
+          <span class="badge badge-pill badge-warning">in</span>
         {% endif %}
       {% else %}
-        {% if obj.frequencies.all|length > 0 %}
-          <strong>{{ obj.frequencies.all|length }}</strong> 
-          <small>freqs.</small> 
+        {% if obj.members.all|length > 0 %}
+          <strong>{{ obj.members.all|length }}</strong> 
+          <small>memb.</small> 
         {% endif %}
       {% endif %}
     </div>
@@ -47,19 +47,19 @@
   {% endfor %}
 
   {% if object_list.has_other_pages %}
-  {% include "base/paginator.html" %}
+  {% include "base/elements/paginator.html" %}
   {% endif %}
 
 {% else %}
 
-<div class="alert alert-secondary">
-  <h4 class="alert-heading">
-    {% if init %}
-    choose your search terms
-    {% else %}
-    events not found
-    {% endif %}
-  </h4> 
-</div> 
+  <div class="alert alert-secondary">
+    <h4 class="alert-heading">
+      {% if init %}
+      choose your search terms
+      {% else %}
+      groups not found
+      {% endif %}
+    </h4> 
+  </div> 
 
 {% endif %}

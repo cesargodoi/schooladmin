@@ -65,7 +65,7 @@
          {% if request.session.pwg %}
          {% url 'group_detail' request.session.pwg %}
          {% else %}
-         {% url 'seeker_home' %}?init=on
+         {% url 'seeker_home' %}
          {% endif %}
          ">
         <i class="fas fa-chevron-left"></i> 

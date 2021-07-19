@@ -10,35 +10,9 @@
       {% csrf_token %}
       {% include "base/searchs/event.html" %}
     </form>
+    <br>
+    {% include 'event/elements/events.html' %}
   </div>
 </article>
-
-{% if object_list %}
-
-  {% if object_list.has_other_pages %}
-  {% include "base/elements/paginator.html" %}
-  {% endif %}
-
-  {% for object in object_list %}
-  {% include 'event/elements/event_card.html' %}
-  {% endfor %}
-
-  {% if object_list.has_other_pages %}
-  {% include "base/elements/paginator.html" %}
-  {% endif %}
-
-{% else %}
-
-  <div class="alert alert-secondary">
-    <h4 class="alert-heading">
-      {% if init %}
-      choose your search terms
-      {% else %}
-      events not found
-      {% endif %}
-    </h4> 
-  </div>  
-
-{% endif %}
 
 {% endblock %}

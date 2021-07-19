@@ -1,11 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-transp mb-1">
-  <a class="navbar-brand" href="
-  {% if nav == 'detail' %}
-  {% url 'person_detail' person.id %}
-  {% else %}
-  {% url 'person_home' %}?init=on
-  {% endif %}
-  ">{% if nav == 'home' %}Persons{% else %}Person{% endif %}</a>
+  <a class="navbar-brand" href="{% url 'person_detail' person.id %}">
+    {% if nav == 'home' %}Persons{% else %}Person{% endif %}
+  </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarProfile"
     aria-controls="navbarProfile" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -15,7 +11,6 @@
     <!-- menu items -->
     <ul class="navbar-nav mr-auto">
 
-      {% if nav == "detail" %}
       <li class="nav-item">
         <a class="nav-link {% if tab == 'historic' %}active{% endif %}" 
            href="{% url 'person_historic' person.id %}">
@@ -34,72 +29,56 @@
           Membership
         </a>
       </li>
-      {% endif %}
 
     </ul>
 
     <!-- controlers -->
     <div class="navbar-nav">
-      {% if nav == "home" %}
-      <a class="btn btn-light btn-sm" href="{% url 'person_create' %}">
-        <i class="fas fa-plus"></i> 
-        Add person
-      </a>
-      <a class="btn btn-light btn-sm" href="{% url 'home' %}">
-        <i class="fas fa-chevron-left"></i> 
-        Go back
-      </a>
-      {% endif %}
-
-      {% if nav == "detail" %}
-        {% if tab == "info" %}
+      {% if tab == "info" %}
         <a class="btn btn-light btn-sm" href="{% url 'person_update' object.id %}">
           <i class="fas fa-edit"></i> 
           Edit
         </a>
-          {% if object.user.is_active %}
+        {% if object.user.is_active %}
           <a class="btn btn-light btn-sm" href="{% url 'person_delete' object.id %}">
             <i class="fas fa-trash-alt"></i> 
             Delete
           </a>
-          {% else %}
+        {% else %}
           <a class="btn btn-light btn-sm" href="{% url 'person_reinsert' object.id %}">
             <i class="fas fa-sign-in-al"></i> 
             Reinsert
           </a>
-          {% endif %}
         {% endif %}
+      {% endif %}
 
-        {% if person.is_active %}
-
-          {% if tab == "historic" %}
+      {% if person.is_active %}
+        {% if tab == "historic" %}
           <a class="btn btn-light btn-sm" href="{% url 'historic_create' person.id %}">
             <i class="fas fa-plus"></i> 
             Add historic
           </a>
-          {% endif %}
+        {% endif %}
 
-          {% if tab == "frequencies" %}
-          <a class="btn btn-light btn-sm" href="{% url 'frequency_ps_insert' person.id %}?init=on">
+        {% if tab == "frequencies" %}
+          <a class="btn btn-light btn-sm" href="{% url 'frequency_ps_insert' person.id %}">
             <i class="fas fa-plus"></i> 
             Add frequency
           </a>
-          {% endif %}
+        {% endif %}
 
-          {% if tab == "membership" %}
-          <a class="btn btn-light btn-sm" href="{% url 'membership_ps_create' person.id %}?init=on">
+        {% if tab == "membership" %}
+          <a class="btn btn-light btn-sm" href="{% url 'membership_ps_create' person.id %}">
             <i class="fas fa-plus"></i> 
             Add membership
           </a>
-          {% endif %}
-
         {% endif %}
-        <a class="btn btn-light btn-sm" href="{% url 'person_home' %}?init=on">
-          <i class="fas fa-chevron-left"></i> 
-          Go back
-        </a>
       {% endif %}
-      
+
+      <a class="btn btn-light btn-sm" href="{% url 'person_home' %}">
+        <i class="fas fa-chevron-left"></i> 
+        Go back
+      </a>
     </div>
   </div>
 </nav>
