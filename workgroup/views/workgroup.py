@@ -109,7 +109,7 @@ def workgroup_delete(request, pk):
         if workgroup.members:
             workgroup.members.clear()
         workgroup.delete()
-        return redirect(reverse("workgroup_home") + "?init=on")
+        return redirect("workgroup_home")
 
     context = {
         "object": workgroup,

@@ -39,50 +39,9 @@
         id="pills-frequencies" 
         role="tabpanel"
         aria-labelledby="pills-frequencies-tab">
-        <h4>Frequencies</h4>
 
-        {% if object_list %}
+        {% include 'event/elements/frequencies.html' %}
 
-        {% if object_list.has_other_pages %}
-        {% include "base/elements/paginator.html" %}
-        {% endif %}
-
-        <table class="table table-hover table-sm">
-          <thead>
-            <th>reg</th>
-            <th>person</th>
-            <th>aspect</th>
-            <th></th>
-          </thead>
-          <tbody>
-            {% for freq in object_list %}
-            <tr>
-              <td>{{ freq.person.reg }}</td>
-              <td>{{ freq.person.name }}
-                <small class="text-muted">{{ freq.person.center }}</small>
-              </td>
-              <td>{{ freq.get_aspect_display }}</td>
-              <td class="text-right">
-                <a type="button" 
-                  href="{% url 'frequency_delete' object.pk freq.person.pk %}"
-                  class="btn btn-outline-light btn-sm">
-                  <i class="fas fa-trash-alt text-danger"></i>
-                </a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-
-        {% if object_list.has_other_pages %}
-        {% include "base/elements/paginator.html" %}
-        {% endif %}
-
-        {% else %}
-        <div class="alert alert-secondary" role="alert">
-          <h4 class="alert-heading">no frequencies found</h4>
-        </div>
-        {% endif %}
       </div>
       <div class="tab-pane fade" 
         id="pills-qr-code" 

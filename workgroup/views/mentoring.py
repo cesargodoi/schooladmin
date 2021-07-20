@@ -293,7 +293,7 @@ def preparing_the_session(request, persons, event):
                     listener = {
                         "person": {
                             "id": str(per.pk),
-                            "name": per.name,
+                            "name": per.short_name,
                             "center": str(per.center),
                         },
                         "frequency": "on",
@@ -306,7 +306,7 @@ def preparing_the_session(request, persons, event):
             listener = {
                 "person": {
                     "id": str(per.pk),
-                    "name": per.name,
+                    "name": per.short_name,
                     "center": str(per.center),
                 },
                 "frequency": "",

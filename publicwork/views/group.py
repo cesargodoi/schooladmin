@@ -59,12 +59,22 @@ def group_detail(request, pk):
     clear_session(request, ["search", "frequencies"])
     belongs_center(request, pk, PublicworkGroup)
     pw_group = PublicworkGroup.objects.get(pk=pk)
+    object_list = pw_group.members.all().order_by("name")
+    # add action links
+    for item in object_list:
+        item.click_link = (
+            reverse("seeker_detail", args=[item.pk]) + f"?pwg={pk}"
+        )
+        item.del_member_link = reverse(
+            "group_remove_member", args=[pk, item.pk]
+        )
 
     context = {
         "object": pw_group,
-        "object_list": pw_group.members.all().order_by("name"),
+        "object_list": object_list,
         "title": "group detail",
         "nav": "info",
+        "table_title": "Members",
     }
     return render(request, "publicwork/groups/detail.html", context)
 

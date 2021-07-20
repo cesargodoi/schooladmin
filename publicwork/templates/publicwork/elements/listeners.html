@@ -6,48 +6,52 @@
 {% include "base/elements/paginator.html" %}
 {% endif %}
 
-<table class="table table-hover table-sm">
-  <tr>
-    <th>#</th>
-    <th>seeker</th>
-    <th>rank</th>
-    <th>observations</th>
-    {% if object_list.0.del_link %}
-    <th></th>
-    {% endif %}
-  </tr>
-  {% for freq in object_list %}
-    <tr onclick="location.href='{{ freq.click_link }}';">
-      <th>{{ forloop.counter }}</th>
-      <td>{{ freq.seeker.name }}
-        &nbsp;&nbsp;
-        <small class="text-muted"><em>{{ freq.seeker.center }}</em></small>
-        {% if not freq.seeker.is_active %}
-          &nbsp;&nbsp;
-          <small class="badge-pill badge-danger">inactive</small>
-        {% endif %}
-      </td>
-      <td>
-        {% if freq.ranking > 0 %}
-          {{ freq.ranking }}
-          <i class="fas fa-star"></i>
-        {% endif %}
-      </td>
-      <td>
-        <small>{{ freq.observations }}</small>
-      </td>
-      {% if freq.del_link %}
-      <td class="text-right">
-        <a type="button" 
-          href="{{ freq.del_link }}"
-          class="btn btn-outline-light btn-sm">
-          <i class="fas fa-trash-alt text-danger"></i>
-        </a>
-      </td>
+
+{% for obj in object_list %}
+  <div class="row border-top border-secondary pb-2 pt-2 text-{% if not obj.seeker.is_active %}danger{% elif obj.seeker.center != request.user.person.center %}warning{% endif %}"
+    {% if obj.click_link %}
+      {% if obj.center == request.user.person.center or request.user.is_superuser %}
+        onclick="location.href='{{ obj.click_link }}';"
       {% endif %}
-    </tr>
+    {% endif %}>
+
+    <div class="col-sm-4">
+      <strong>{{ obj.seeker.name }}</strong>
+      &nbsp;&nbsp;
+      <small class="text-{% if not obj.seeker.is_active %}danger{% elif obj.seeker.center != request.user.person.center %}warning{% else %}muted{% endif %}">
+        <em>{{ obj.seeker.center }}</em>
+      </small>
+    </div>
+
+    <div class="col-sm-1 align-middle">
+      {% if not obj.seeker.is_active %}
+        <small class="badge-pill badge-danger">inactive</small>
+      {% endif %}
+    </div>
+
+    <div class="col-sm-1 align-middle">
+      {% if obj.ranking > 0 %}
+        {{ obj.ranking }}
+        <i class="fas fa-star"></i>
+      {% endif %}
+    </div>
+
+    <div class="col-sm-4 align-middle">
+      <small>{{ obj.observations }}</small>
+    </div>
+
+    <div class="col-sm text-right">
+      {% if obj.del_link %}
+        <a type="button" 
+          class="btn btn-outline-danger btn-sm"
+          href="{{ obj.del_link }}">
+          <i class="fas fa-trash-alt"></i>
+        </a>
+      {% endif %}
+    </div>
+    
+  </div>
   {% endfor %}
-</table>
 
 {% if object_list.has_other_pages %}
 {% include "base/elements/paginator.html" %}

@@ -6,63 +6,63 @@
 {% include "base/elements/paginator.html" %}
 {% endif %}
 
-<table class="table table-hover table-sm">
-  <thead>
-    <tr>
-      <th width="10%">date</th>
-      <th>theme</th>
-      <th>type</th>
-      <th class="text-right">listener</th>
-      {% if object_list.0.add_link %}
-      <th></th>
+{% for obj in object_list %}
+  <div class="row border-top border-secondary pb-2 pt-2 text-{% if not obj.is_active or obj.status == 'RST' %}danger{% elif obj.center != request.user.person.center %}warning{% endif %}"
+    {% if obj.click_link %}
+      {% if obj.center == request.user.person.center or request.user.is_superuser %}
+        onclick="location.href='{{ obj.click_link }}';"
       {% endif %}
-    </tr>
-  </thead>
-  <tbody>
-    {% for obj in object_list %}
-    <tr
-      {% if obj.click_link %}
-        {% if obj.center == request.user.person.center or request.user.is_superuser %}
-          onclick="location.href='{{ obj.click_link }}';"
-        {% endif %}
-      {% endif %}>
-      <td>{{ obj.date|date:'d/m/y'}}</td>
-      <td>
-        {{ obj.theme }}
+    {% endif %}>
+
+    <div class="col-sm-1">
+      <strong>{{ obj.date|date:'d/m/y' }}</strong>
+    </div>
+
+    <div class="col-sm-5">
+      {{ obj.theme }}
+      &nbsp;&nbsp;
+      <small class="text-{% if not obj.is_active %}danger{% elif obj.center != request.user.person.center %}warning{% else %}muted{% endif %}">
+        <em>{{ obj.center }}</em>
+      </small>
+      {% if obj.center != request.user.person.center %}
         &nbsp;&nbsp;
-        <small class="text-muted">
-          {{ obj.center }}
-        </small>
-        {% if not obj.is_active %}
-          &nbsp;&nbsp;
-          <small class="badge-pill badge-danger">inactive</small>
-        {% endif %}
-      </td>
-      <td>
-        {{ obj.get_type_display }}
-      </td>
-      <td class="text-right">
-        {% if obj.listeners.all|length > 0 %}
-          <span class="badge badge-pill badge-info">{{ obj.listeners.all|length }}</span>
-        {% endif %}
-      </td>
+        <span class="badge badge-pill badge-{% if not obj.is_active %}danger{% else %}warning{% endif %}">
+          only view
+        </span>
+      {% endif %}
+    </div>
+
+    <div class="col-sm-2 align-middle">
+      {% if not obj.is_active %}
+        <small class="badge-pill badge-danger">inactive</small>
+      {% endif %}
+    </div>
+
+    <div class="col-sm-2 align-middle">
+      {{ obj.get_type_display }}
+    </div>
+
+    <div class="col-sm text-right">
       {% if obj.add_link %}
-      <td class="text-right">
         {% if obj.pk in pre_freqs %}
-          <span class="badge badge-pill badge-warning">inserted</span>
+          <i class="fas fa-user-check mr-1"></i>
         {% else %}
           <a type="button" 
             href="{{ obj.add_link}}?lect_pk={{ obj.pk }}"
-            class="btn btn-outline-light btn-sm text-success">
-            <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
+            class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-plus"></i>
           </a>
         {% endif %}
-      </td>
+      {% else %}
+        {% if obj.listeners.all|length > 0 %}
+          <strong>{{ obj.listeners.all|length }}</strong> 
+          <i class="fas fa-users"></i>
+        {% endif %}
       {% endif %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    </div>
+    
+  </div>
+  {% endfor %}
 
 {% if object_list.has_other_pages %}
 {% include "base/elements/paginator.html" %}

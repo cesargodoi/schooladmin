@@ -7,20 +7,25 @@
   {% endif %}
 
   {% for obj in object_list %}
-  <div class="row border-top border-secondary pb-2 pt-2 {% if not obj.is_active %}text-danger{% elif obj.center != request.user.person.center %}text-warning{% endif %}"
+  <div class="row border-top border-secondary pb-2 pt-2 text-{% if not obj.is_active %}danger{% elif obj.center != request.user.person.center %}warning{% endif %}"
     {% if obj.click_link %}
       {% if obj.center == request.user.person.center or request.user.is_superuser %}
         onclick="location.href='{{ obj.click_link }}';"
       {% endif %}
     {% endif %}>
+
     <div class="col-sm-4">
       <strong>{{ obj.short_name }}</strong>
       &nbsp;&nbsp; 
-      <small><em>{{ obj.center }}</em></small>
+      <small class="text-{% if not obj.is_active %}danger{% elif obj.center != request.user.person.center %}warning{% else %}muted{% endif %}">
+        <em>{{ obj.center }}</em>
+      </small>
     </div>
+
     <div class="col-sm-2 small">
       {{ obj.get_aspect_display }}
     </div>
+
     <div class="col-sm-2 small align-middle">
       {% if obj.user.profile.phone_1 %}
         <i class="fas fa-phone"></i> {{ obj.user.profile.phone_1 }}
@@ -28,16 +33,18 @@
         <i class="fas fa-phone"></i> {{ obj.user.profile.phone_2 }}
       {% endif %}
     </div>
+
     <div class="col-sm-3 small align-middle">
       {% if obj.user.email %}
         <i class="fas fa-envelope"></i> {{ obj.user.email }}
       {% endif %}
     </div>
+
     <div class="col-sm-1 text-right">
       {% if flag == "group" and obj.publicworkgroup_set.count %}
-        <span class="badge badge-pill badge-warning"> in </span>
+        <i class="fas fa-user-check mr-1"></i>
       {% elif flag == "membership" and object in obj.workgroup_set.all %}
-        <span class="badge badge-pill badge-warning"> in </span>
+        <i class="fas fa-user-check mr-1"></i>
       {% elif flag == "person" %}
         <strong>
           {% if obj.status not in 'ACT,---' %}{{ obj.get_status_display }}{% endif %}
@@ -45,11 +52,12 @@
       {% elif obj.is_active %}
         <a type="button" 
           href="{{ obj.add_link }}"
-          class="btn btn-outline-light btn-sm text-success">
-          <i class="fas fa-plus"></i> <i class="fas fa-user"></i> 
+          class="btn btn-outline-primary btn-sm">
+          <i class="fas fa-plus"></i> 
         </a>
       {% endif %}
     </div>
+
   </div>
   {% endfor %}
 

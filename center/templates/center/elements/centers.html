@@ -13,18 +13,22 @@
         onclick="location.href='{{ obj.click_link }}';"
       {% endif %}
     {% endif %}>
-    <div class="col-sm-3">
+
+    <div class="col-sm-4">
       <strong>{{ obj.name }}</strong>
+      <small class="text-{% if not obj.is_active %}danger{% else %}muted{% endif %}">
+        &nbsp;&nbsp;
+        <em>{{ obj.get_center_type_display }}</em>
+      </small>
     </div>
-    <div class="col-sm-1 small align-middle">
-      <em>{{ obj.get_center_type_display }}</em>  
-    </div>
+
     <div class="col-sm-2 small align-middle">
       {% if obj.city and obj.state and obj.country %}
         &nbsp;&nbsp;
         {{ obj.city }} ({{ obj.state }}-{{ obj.country }})
       {% endif %}
     </div>
+
     <div class="col-sm-2 small align-middle">
       {% if obj.phone_1 %}
         <i class="fas fa-phone"></i> {{ obj.phone_1 }}
@@ -32,16 +36,21 @@
         <i class="fas fa-phone"></i> {{ obj.phone_2 }}
       {% endif %}
     </div>
+
     <div class="col-sm-3 small align-middle">
       {% if obj.email %}
         <i class="fas fa-envelope"></i> {{ obj.email }}
       {% endif %}
     </div>
+
     <div class="col-sm-1 text-right">
-      {% if not obj.is_active %} 
-        <strong>inactive</strong>
+      {% if obj.is_active %} 
+      <i class="fas fa-toggle-on"></i>
+      {% else %} 
+      <i class="fas fa-toggle-off text-muted"></i>
       {% endif %}
     </div>
+    
   </div>
   {% endfor %}
 

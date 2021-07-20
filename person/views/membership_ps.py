@@ -95,7 +95,7 @@ def membership_ps_update(request, person_id, pk):
         "title": "update membership",
         "person": membership.person,  # to header element
     }
-    return render(request, "person/membership_ps_update.html", context)
+    return render(request, "person/forms/membership.html", context)
 
 
 @login_required

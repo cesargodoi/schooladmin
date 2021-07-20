@@ -38,8 +38,8 @@
             {% if nav == 'info' %}
             <a type="button" 
               href="{% url 'group_remove_mentor' object.pk mentor.pk %}"
-              class="btn btn-outline-light btn-sm">
-              <i class="fas fa-trash-alt text-danger"></i>
+              class="btn btn-outline-danger btn-sm ml-1"> 
+              <i class="fas fa-trash-alt"></i>
             </a>
             {% endif %}
           {% endfor %}

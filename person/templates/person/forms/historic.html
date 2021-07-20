@@ -5,7 +5,7 @@
 
 <div class="text-right mb-3">
   <button 
-    class="btn btn-{% if to_create %}primary{% else %}warning{% endif %} mt-2"
+    class="btn btn-outline-{% if to_create %}primary{% else %}warning{% endif %} mt-2"
     onclick="document.getElementById('form').submit();">
     <i class="fas fa-check"></i> Save
   </button>
@@ -27,4 +27,5 @@
     </form>
   </div>
 </article>
+
 {% endblock %}
