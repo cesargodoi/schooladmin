@@ -53,6 +53,12 @@
             <i class="fas fa-plus"></i>
           </a>
         {% endif %}
+      {% elif obj.add_freqs_link %}
+        <a type="button" 
+          href="{{ obj.add_freqs_link }}"
+          class="btn btn-outline-primary btn-sm">
+          <i class="fas fa-plus"></i>
+        </a>
       {% else %}
         {% if obj.listeners.all|length > 0 %}
           <strong>{{ obj.listeners.all|length }}</strong> 

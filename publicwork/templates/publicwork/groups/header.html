@@ -34,7 +34,9 @@
       <div class="col-6 text-right pt-2">
         {% if object.mentors.count > 0 %}
           {% for mentor in object.mentors.all %}
-            &nbsp;&nbsp;{{ mentor.short_name }} 
+            &nbsp;&nbsp;
+            <i class="fas fa-user-graduate mr-1"></i> 
+            {{ mentor.short_name }} 
             {% if nav == 'info' %}
             <a type="button" 
               href="{% url 'group_remove_mentor' object.pk mentor.pk %}"

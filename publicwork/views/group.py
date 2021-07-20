@@ -202,6 +202,8 @@ def get_frequencies(ids):
         seeker = {
             "id": seek.id,
             "name": seek.name,
+            "is_active": seek.is_active,
+            "center": seek.center,
             "status": status[str(seek.status)],
             "date": seek.status_date,
             "rank": 0,
@@ -248,6 +250,11 @@ def group_add_frequencies(request, pk):
 
     queryset, page = search_lecture(request, Lecture)
     object_list = paginator(queryset, page=page)
+    # add action links
+    for item in object_list:
+        item.add_freqs_link = (
+            reverse("group_add_frequencies", args=[pk]) + f"?lect_pk={item.pk}"
+        )
 
     context = {
         "object": pw_group,
