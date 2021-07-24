@@ -1,11 +1,32 @@
 {% extends "base/base.html" %}
-
+{% load static %}
 {% block content %}
 <h1>404</h1>
 <article class="media content-section">
-    <div class="media-body">
-        <h2><a class="article-title" href="#">Page not found</a></h2>
-        <p class="article-content"><a href="{% url 'home' %}">go to home page</a></p>
+    <div class="media-body content-box" >
+        <aside>
+            <h1>Oops!</h1>
+            <h2>I think we lost this page.</h2>
+            <p>But, we can still help you...</p>
+            <p class="article-content"><strong>Click <a href="{% url 'home' %}">here</a> to return,</strong></p>
+            <p><strong>or contact our support:</strong></p>
+            <p>school@admin.com</p>
+        </aside>
+        <main>
+            mais que caralho
+            <img class="image-404" src="{% static 'images/404_error.png' %}" alt="Error 404">
+        </main>
     </div>
 </article>
+
+<style>
+    .content-box{
+        display: flex;
+        background: #f8f8f8;
+    }
+    .image-404{
+        max-width: 300px;
+    }
+
+</style>
 {% endblock content %}
