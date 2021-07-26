@@ -4,7 +4,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from schooladmin.common import paginator, belongs_center
+from schooladmin.common import (
+    paginator,
+    belongs_center,
+    clear_session,
+    SEEKER_STATUS,
+)
 
 from center.models import Center
 from base.searchs import search_seeker
@@ -16,15 +21,25 @@ from ..models import Seeker
 @login_required
 @permission_required("publicwork.view_seeker")
 def seeker_home(request):
-    queryset, page = search_seeker(request, Seeker)
-    object_list = paginator(queryset, page=page)
+    object_list = None
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_seeker(request, Seeker)
+        object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.click_link = reverse("seeker_detail", args=[item.pk])
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("seeker_home"),
+        "status_list": SEEKER_STATUS,
         "title": "seeker home",
         "centers": [[str(cnt.pk), str(cnt)] for cnt in Center.objects.all()],
+        "nav": "sk_home",
     }
-
     return render(request, "publicwork/seeker_home.html", context)
 
 
@@ -34,10 +49,13 @@ def seeker_detail(request, pk):
     belongs_center(request, pk, Seeker)
     seeker = Seeker.objects.get(pk=pk)
     age = (date.today() - seeker.birth).days // 365
+    if request.GET.get("pwg"):
+        request.session["pwg"] = request.GET["pwg"]
 
     context = {
         "object": seeker,
         "title": "seeker detail",
+        "nav": "seeker",
         "tab": "info",
         "age": age,
     }
@@ -53,7 +71,7 @@ def seeker_create(request):
             seeker_form.save()
             message = f"The Seeker '{request.POST['name']}' has been created!"
             messages.success(request, message)
-            return redirect("seeker_home")
+            return redirect(reverse("seeker_home") + "?init=on")
 
     context = {
         "form": SeekerForm(
@@ -107,10 +125,12 @@ def seeker_update(request, pk):
 def seeker_delete(request, pk):
     seeker = Seeker.objects.get(pk=pk)
     if request.method == "POST":
-        if seeker.listener_set.all():
+        if seeker.listener_set.count():
             seeker.is_active = False
             seeker.save()
         else:
+            if seeker.historicofseeker_set.count():
+                seeker.historicofseeker_set.all().delete()
             seeker.delete()
         return redirect("seeker_home")
 
@@ -125,7 +145,7 @@ def seeker_reinsert(request, pk):
     if request.method == "POST":
         seeker.is_active = True
         seeker.save()
-        return redirect("seeker_home")
+        return redirect(reverse("seeker_home") + "?init=on")
 
     context = {"object": seeker, "title": "confirm to reinsert"}
     return render(
@@ -148,6 +168,7 @@ def seeker_frequencies(request, pk):
         "object": seeker,
         "title": "seeker detail | frequencies",
         "object_list": paginator(frequencies, page=page),
+        "nav": "seeker",
         "tab": "frequencies",
         "ranking": ranking,
     }
@@ -155,21 +176,22 @@ def seeker_frequencies(request, pk):
     return render(request, "publicwork/seeker_detail.html", context)
 
 
-# seeker historics
+# seeker historic
 @login_required
 @permission_required("publicwork.view_seeker")
-def seeker_historics(request, pk):
+def seeker_historic(request, pk):
     belongs_center(request, pk, Seeker)
     page = request.GET["page"] if request.GET.get("page") else 1
 
     seeker = Seeker.objects.get(pk=pk)
-    historics = seeker.historic_of_seeker_set.all().order_by("-date")
+    historics = seeker.historicofseeker_set.all().order_by("-date")
 
     context = {
         "object": seeker,
-        "title": "seeker detail | historics",
+        "title": "seeker detail | historic",
         "object_list": paginator(historics, page=page),
-        "tab": "historics",
+        "nav": "seeker",
+        "tab": "historic",
     }
 
     return render(request, "publicwork/seeker_detail.html", context)

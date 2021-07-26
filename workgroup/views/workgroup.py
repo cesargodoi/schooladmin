@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from schooladmin.common import WORKGROUP_TYPES, paginator
+from schooladmin.common import WORKGROUP_TYPES, paginator, clear_session
 from base.searchs import search_workgroup
 
 from ..forms import WorkgroupForm
@@ -12,13 +12,23 @@ from ..models import Workgroup
 @login_required
 @permission_required("workgroup.view_workgroup")
 def workgroup_home(request):
-    queryset, page = search_workgroup(request, Workgroup)
-    object_list = paginator(queryset, page=page)
+    object_list = None
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_workgroup(request, Workgroup)
+        object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.click_link = reverse("workgroup_detail", args=[item.pk])
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("workgroup_home"),
         "title": "workgroups",
         "workgroup_types": WORKGROUP_TYPES,
+        "nav": "home",
     }
     return render(request, "workgroup/workgroup_home.html", context)
 
@@ -26,16 +36,21 @@ def workgroup_home(request):
 @login_required
 @permission_required("workgroup.view_workgroup")
 def workgroup_detail(request, pk):
-    object = Workgroup.objects.get(pk=pk)
+    obj = Workgroup.objects.get(pk=pk)
 
-    queryset = object.membership_set.all().order_by("person__name_sa")
+    queryset = obj.membership_set.all().order_by("person__name_sa")
 
     object_list = paginator(queryset, 25, request.GET.get("page"))
+    # add action links
+    for member in object_list:
+        member.click_link = reverse("membership_update", args=[pk, member.pk])
+        member.del_link = reverse("membership_delete", args=[pk, member.pk])
 
     context = {
-        "object": object,
+        "object": obj,
         "object_list": object_list,
         "title": "workgroup detail",
+        "nav": "detail",
     }
     return render(request, "workgroup/workgroup_detail.html", context)
 
@@ -48,8 +63,7 @@ def workgroup_create(request):
         if form.is_valid():
             form.save()
             messages.success(request, "The Workgroup has been created!")
-
-        return redirect("workgroup_home")
+        return redirect(reverse("workgroup_home") + "?init=on")
 
     context = {
         "form": WorkgroupForm(initial={"made_by": request.user}),

@@ -12,6 +12,11 @@
           {% endif %}
         </div>
         <div class="col text-right">
+          {% if not object.is_active %}
+            <span class="badge badge-pill badge-danger">
+              inactive
+            </span>
+          {% endif %}
           <span 
             class="badge badge-pill badge-{% if object.status == 'OPN' %}success{% else %}secondary{% endif %}">
             {{ object.get_status_display }}
@@ -30,7 +35,8 @@
       </div>
       <div class="col text-right">
         {% if object.frequencies.all|length > 0 %}
-        <span class="badge badge-pill badge-info">{{ object.frequencies.all|length }}</span>
+          <strong>{{ object.frequencies.all|length }}</strong> 
+          <i class="fas fa-users"></i>  
         {% endif %}
       </div>
     </div>

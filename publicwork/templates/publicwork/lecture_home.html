@@ -2,51 +2,45 @@
 
 {% block content %}
 
+{% include 'publicwork/elements/publicwork_navbar.html' %}
+
 <article class="media content-section mb-1">
   <div class="media-body">
-    <h2>Lectures</h2>
-    <form class="form-control-sm border-top" method="GET">
+    <form class="form-control-sm mt-1" method="GET">
       {% csrf_token %}
       {% include "base/searchs/lecture.html" %}
     </form>
+    <br>
+    {% include 'publicwork/elements/lectures.html' %}
   </div>
 </article>
 
-<div class="text-right mb-2">
-  <div class="btn-group-sm mt-2" role="group">
-    <a type="button" 
-      class="btn btn-light text-primary" 
-      href="{% url 'lecture_create' %}"> 
-      <i class="fas fa-plus"></i> 
-      Add
-    </a>
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'publicwork_home' %}">
-      <i class="fas fa-chevron-left "></i> 
-      Go back
-    </a>
-  </div>
-</div>
+<!-- {% if object_list %}
 
-{% if object_list %}
+  {% if object_list.has_other_pages %}
+  {% include "base/elements/paginator.html" %}
+  {% endif %}
 
-{% if object_list.has_other_pages %}
-{% include "base/elements/paginator.html" %}
-{% endif %}
+  {% for object in object_list %}
+  {% include 'publicwork/elements/lecture_card.html' %}
+  {% endfor %}
 
-{% for object in object_list %}
-{% include 'publicwork/elements/lecture_card.html' %}
-{% endfor %}
-
-{% if object_list.has_other_pages %}
-{% include "base/elements/paginator.html" %}
-{% endif %}
+  {% if object_list.has_other_pages %}
+  {% include "base/elements/paginator.html" %}
+  {% endif %}
 
 {% else %}
-<div class="alert alert-secondary" role="alert">
-  <h4 class="alert-heading">lectures not found</h4>
-</div>
-{% endif %}
+
+  <div class="alert alert-secondary">
+    <h4 class="alert-heading">
+      {% if init %}
+      choose your search terms
+      {% else %}
+      lectures not found
+      {% endif %}
+    </h4> 
+  </div>
+
+{% endif %} -->
 
 {% endblock %}

@@ -2,20 +2,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "workgroup/elements/member_header.html" %}
 
-{% block buttons %}
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      href="{% url 'mentoring_member_frequencies' group_pk object.pk %}" 
-      class="btn btn-light btn-sm text-info">
-      <i class="fas fa-chevron-left"></i>
-      Go back
-    </a>
-  </div>
+<div class="text-right mb-2 mt-4">
+  <a class="btn btn-light mt-2 mr-3"
+    href="{% url 'mentoring_member_frequencies' group_pk object.pk %}">
+    <i class="fas fa-chevron-left"></i> 
+    Go back
+  </a>
 </div>
-{% endblock %}
+
+{% include "workgroup/elements/member_header.html" %}
 
 <article class="media content-section mb-1">
   <div class="media-body">
@@ -26,55 +22,7 @@
     </form>
     <br>
 
-    {% if object_list %}
-
-    {% if object_list.has_other_pages %}
-    {% include "base/paginator.html" %}
-    {% endif %}
-
-    <table class="table table-hover table-sm">
-      <thead>
-        <tr>
-          <th width="15%">date</th>
-          <th>event</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for obj in object_list %}
-        <tr>
-          <td>{{ obj.date|date:'d/m/Y'}}</td>
-          <td>
-            {{ obj.activity.name }}
-            <small class="text-muted">{{ obj.center }}</small>
-          </td>
-          <td class="text-right">
-            {% if obj.pk not in pre_freqs %}
-              <a type="button" 
-                href="{% url 'membership_add_frequency' group_pk object.pk %}?pk={{ obj.pk }}"
-                class="btn btn-outline-light btn-sm text-primary">
-                <i class="fas fa-plus"></i> <i class="fas fa-user"></i> add
-              </a>
-            {% else %}
-              <span class="badge badge-pill badge-warning">inserted</span>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    {% if object_list.has_other_pages %}
-    {% include "base/paginator.html" %}
-    {% endif %}
-
-    {% else %}
-
-    <div class="alert alert-secondary" role="alert">
-      <h4 class="alert-heading">frequencies not found</h4>
-    </div>
-
-    {% endif %}
+    {% include 'event/elements/events.html' %}
 
   </div>
 </article>

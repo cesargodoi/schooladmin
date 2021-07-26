@@ -38,7 +38,8 @@ def treasury_home(request):
         "last_payments_total": last_payments_total,
         "self_payed": len(self_payed),
         "self_payed_total": self_payed_total,
-        "title": "Treasury",
+        "title": "treasury",
+        "nav": "home",
     }
     return render(request, "treasury/treasury_home.html", context)
 
@@ -46,27 +47,27 @@ def treasury_home(request):
 @login_required
 def cash_balance(request):
     search = search_dates(request)
-    date1 = (
-        datetime.strptime(request.GET["date1"], "%Y-%m-%d")
-        if request.GET.get("date1")
-        else datetime.strptime(search["date1"], "%Y-%m-%d")
+    dt1 = (
+        datetime.strptime(request.GET["dt1"], "%Y-%m-%d")
+        if request.GET.get("dt1")
+        else datetime.strptime(search["dt1"], "%Y-%m-%d")
     )
-    search["date1"] = date1.strftime("%Y-%m-%d")
-    date2 = (
-        datetime.strptime(request.GET["date2"], "%Y-%m-%d")
-        if request.GET.get("date2")
-        else datetime.strptime(search["date2"], "%Y-%m-%d")
+    search["dt1"] = dt1.strftime("%Y-%m-%d")
+    dt2 = (
+        datetime.strptime(request.GET["dt2"], "%Y-%m-%d")
+        if request.GET.get("dt2")
+        else datetime.strptime(search["dt2"], "%Y-%m-%d")
     )
-    search["date2"] = date2.strftime("%Y-%m-%d")
+    search["dt2"] = dt2.strftime("%Y-%m-%d")
     # get an object list
-    object_list = OrderByPeriod(request, date1, date2)
+    object_list = OrderByPeriod(request, dt1, dt2)
     last_payments, last_payments_total = object_list.summary("concluded")
 
     context = {
         "last_payments": last_payments,
         "last_payments_total": last_payments_total,
         "period": "from {} to {}".format(
-            date1.strftime("%d/%m/%y"), date2.strftime("%d/%m/%y")
+            dt1.strftime("%d/%m/%y"), dt2.strftime("%d/%m/%y")
         ),
         "object_list": object_list.all_payforms,
         "title": "Cash Balance",
@@ -77,27 +78,27 @@ def cash_balance(request):
 @login_required
 def period_payments(request):
     search = search_dates(request)
-    date1 = (
-        datetime.strptime(request.GET["date1"], "%Y-%m-%d")
-        if request.GET.get("date1")
-        else datetime.strptime(search["date1"], "%Y-%m-%d")
+    dt1 = (
+        datetime.strptime(request.GET["dt1"], "%Y-%m-%d")
+        if request.GET.get("dt1")
+        else datetime.strptime(search["dt1"], "%Y-%m-%d")
     )
-    search["date1"] = date1.strftime("%Y-%m-%d")
-    date2 = (
-        datetime.strptime(request.GET["date2"], "%Y-%m-%d")
-        if request.GET.get("date2")
-        else datetime.strptime(search["date2"], "%Y-%m-%d")
+    search["dt1"] = dt1.strftime("%Y-%m-%d")
+    dt2 = (
+        datetime.strptime(request.GET["dt2"], "%Y-%m-%d")
+        if request.GET.get("dt2")
+        else datetime.strptime(search["dt2"], "%Y-%m-%d")
     )
-    search["date2"] = date2.strftime("%Y-%m-%d")
+    search["dt2"] = dt2.strftime("%Y-%m-%d")
     # get an object list
-    object_list = OrderByPeriod(request, date1, date2)
+    object_list = OrderByPeriod(request, dt1, dt2)
     payments, payments_total = object_list.summary_of_payments()
 
     context = {
         "last_payments": payments,
         "last_payments_total": payments_total,
         "period": "from {} to {}".format(
-            date1.strftime("%d/%m/%y"), date2.strftime("%d/%m/%y")
+            dt1.strftime("%d/%m/%y"), dt2.strftime("%d/%m/%y")
         ),
         "object_list": object_list.all_payments,
         "title": "Period payments",
@@ -144,6 +145,7 @@ def payments_by_person(request):
         "title": "Payment by person",
         "object": person,
         "object_list": object_list,
+        "nav": "reports",
     }
     return render(request, "treasury/reports/payments_by_person.html", context)
 
@@ -166,9 +168,9 @@ def reports_search_person(request):
 def search_dates(request):
     if not request.session.get("search"):
         request.session["search"] = {
-            "date1": (timezone.now().date() - timedelta(30)).strftime(
+            "dt1": (timezone.now().date() - timedelta(30)).strftime(
                 "%Y-%m-%d"
             ),
-            "date2": timezone.now().date().strftime("%Y-%m-%d"),
+            "dt2": timezone.now().date().strftime("%Y-%m-%d"),
         }
     return request.session["search"]

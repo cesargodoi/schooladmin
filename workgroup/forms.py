@@ -11,7 +11,7 @@ class WorkgroupForm(forms.ModelForm):
         fields = "__all__"
         exclude = ["members"]
         widgets = {
-            "description": forms.Textarea(attrs={"rows": 2}),
+            "description": forms.Textarea(attrs={"rows": 4}),
         }
         widgets.update(HIDDEN_AUTH_FIELDS)
 

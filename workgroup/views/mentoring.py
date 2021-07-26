@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from schooladmin.common import ACTIVITY_TYPES, paginator
+from schooladmin.common import ACTIVITY_TYPES, paginator, clear_session
 from base.searchs import search_event
 
 from person.models import Person
@@ -19,7 +19,7 @@ def mentoring_home(request):
     groups = Membership.objects.filter(
         person=request.user.person, role_type="MTR"
     )
-    context = {"groups": groups, "title": "mentoring"}
+    context = {"groups": groups, "title": "mentoring", "nav": "home"}
     return render(request, "workgroup/mentoring/home.html", context)
 
 
@@ -34,11 +34,17 @@ def mentoring_group_detail(request, pk):
     queryset = workgroup.membership_set.all().order_by("person__name_sa")
 
     object_list = paginator(queryset, 25, request.GET.get("page"))
+    # add action links
+    for member in object_list:
+        member.click_link = reverse(
+            "mentoring_member_detail", args=[pk, member.person.pk]
+        )
 
     context = {
         "object": workgroup,
         "object_list": object_list,
         "title": "workgroup detail",
+        "nav": "detail",
         "tab": "members",
         "goback": reverse("mentoring_home"),
     }
@@ -53,6 +59,7 @@ def mentoring_member_detail(request, group_pk, person_pk):
     context = {
         "object": object,
         "title": "member detail",
+        "nav": "detail",
         "tab": "info",
         "age": age,
         "goback": reverse("mentoring_group_detail", args=[group_pk]),
@@ -72,6 +79,7 @@ def mentoring_member_frequencies(request, group_pk, person_pk):
         "object": object,
         "title": "member detail | frequencies",
         "object_list": paginator(object_list, page=page),
+        "nav": "detail",
         "tab": "frequencies",
         "ranking": ranking,
         "goback": reverse("mentoring_group_detail", args=[group_pk]),
@@ -82,15 +90,16 @@ def mentoring_member_frequencies(request, group_pk, person_pk):
 
 @login_required
 @permission_required("workgroup.view_workgroup")
-def mentoring_member_historics(request, group_pk, person_pk):
+def mentoring_member_historic(request, group_pk, person_pk):
     object = Person.objects.get(pk=person_pk)
     page = request.GET["page"] if request.GET.get("page") else 1
     object_list = object.historic_set.all().order_by("-date")
     context = {
         "object": object,
-        "title": "member detail | frequencies",
+        "title": "member detail | historic",
         "object_list": paginator(object_list, page=page),
-        "tab": "historics",
+        "nav": "detail",
+        "tab": "historic",
         "goback": reverse("mentoring_group_detail", args=[group_pk]),
         "group_pk": group_pk,
     }
@@ -100,6 +109,7 @@ def mentoring_member_historics(request, group_pk, person_pk):
 @login_required
 @permission_required("workgroup.view_workgroup")
 def membership_add_frequency(request, group_pk, person_pk):
+    object_list = None
     person = Person.objects.get(pk=person_pk)
 
     if request.GET.get("pk"):
@@ -121,7 +131,7 @@ def membership_add_frequency(request, group_pk, person_pk):
             )
 
         context = {
-            "person": person,
+            "object": person,
             "form": MentoringFrequencyForm,
             "insert_to": f"{event.activity.name} {event.center}",
             "title": "confirm to insert",
@@ -130,12 +140,21 @@ def membership_add_frequency(request, group_pk, person_pk):
             request, "workgroup/elements/confirm_add_frequency.html", context
         )
 
-    queryset, page = search_event(request, Event)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_event(request, Event)
+        object_list = paginator(queryset, page=page)
+        # add action links
+        for member in object_list:
+            member.add_link = reverse(
+                "membership_add_frequency", args=[group_pk, person_pk]
+            )
 
     context = {
         "object": person,
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
         "title": "insert frequencies",
         "type_list": ACTIVITY_TYPES,
         "pre_freqs": [obj.event.pk for obj in person.frequency_set.all()],
@@ -227,12 +246,20 @@ def mentoring_add_frequencies(request, group_pk):
                 Frequency.objects.create(**new_freq)
         return redirect("mentoring_group_detail", pk=group_pk)
 
-    queryset, page = search_event(request, Event)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+        object_list = None
+    else:
+        queryset, page = search_event(request, Event)
+        object_list = paginator(queryset, page=page)
+
     context = {
         "object": workgroup,
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("group_detail", args=[group_pk]),
         "title": "workgroup add members",
+        "nav": "detail",
         "tab": "add_frequencies",
         "goback": reverse("mentoring_group_detail", args=[group_pk]),
         "group_pk": group_pk,
@@ -247,6 +274,7 @@ def preparing_the_session(request, persons, event):
         [str(ev.person.pk), ev.person.aspect, ev.ranking, ev.observations]
         for ev in event.frequency_set.all()
     ]
+    inserteds_pks = [ins[0] for ins in inserteds]
     # adjust frequencies on session
     frequencies = request.session["frequencies"]
     # add event
@@ -259,32 +287,33 @@ def preparing_the_session(request, persons, event):
     # add listeners
     frequencies["listeners"] = []
     for per in persons:
-        for ins in inserteds:
-            if str(per.pk) == ins[0]:
-                listener = {
-                    "person": {
-                        "id": str(per.pk),
-                        "name": per.name,
-                        "center": str(per.center),
-                    },
-                    "frequency": "on",
-                    "aspect": ins[1],
-                    "ranking": ins[2],
-                    "observations": ins[3],
-                }
-                break
-            else:
-                listener = {
-                    "person": {
-                        "id": str(per.pk),
-                        "name": per.name,
-                        "center": str(per.center),
-                    },
-                    "frequency": "",
-                    "aspect": per.aspect,
-                    "ranking": 0,
-                    "observations": "",
-                }
+        if str(per.pk) in inserteds_pks:
+            for ins in inserteds:
+                if str(per.pk) == ins[0]:
+                    listener = {
+                        "person": {
+                            "id": str(per.pk),
+                            "name": per.short_name,
+                            "center": str(per.center),
+                        },
+                        "frequency": "on",
+                        "aspect": ins[1],
+                        "ranking": ins[2],
+                        "observations": ins[3],
+                    }
+                    break
+        else:
+            listener = {
+                "person": {
+                    "id": str(per.pk),
+                    "name": per.short_name,
+                    "center": str(per.center),
+                },
+                "frequency": "",
+                "aspect": per.aspect,
+                "ranking": 0,
+                "observations": "",
+            }
         frequencies["listeners"].append(listener)
     # save session
     request.session.modified = True

@@ -1,5 +1,4 @@
 <div class="form-row align-items-center">
-
   <div class="col-sm-3 mb-1">
     <div class="input-group">
       <div class="input-group-prepend">
@@ -12,7 +11,6 @@
             value="{{ request.session.search.dt1 }}">
     </div>
   </div>
-
   <div class="col-sm-3 mb-1">
     <div class="input-group">
       <div class="input-group-prepend">
@@ -25,31 +23,26 @@
              value="{{ request.session.search.dt2 }}">
     </div>
   </div>
-
   <div class="col-sm-2 mb-1">
-    <select class="form-control" name="type">
-      <option value="">all types</option>
-      {% for tp in type_list %}
-      <option value="{% if tp.0 != '---' %}{{ tp.0 }}{% endif %}"
-              {% if tp.0 == request.session.search.type %}selected{% endif %}>
-        {% if tp.0 == "---" %}type{% else %}{{ tp.1 }}{% endif %}
+    <select class="form-control" name="lc_type">
+      <option value="all"
+              {% if request.session.search.lc_type == 'all' %}selected{% endif %}>
+              types
+      </option>
+      {% for key, value in type_list %}
+      <option value="{{ key }}"
+              {% if key == request.session.search.lc_type %}selected{% endif %}>
+        {{ value }}
       </option>
       {% endfor %}
     </select>
   </div>
-
-  <div class="col-sm-3 mb-1">
-    <div class="input-group">
-      <div class="form-check form-check-inline m-1">
-        <input class="form-check-input"
-               type="checkbox"
-               id="all"
-               name="all"
-               {% if request.session.search.all %}checked{% endif %}>
-        <label class="form-check-label" for="all">all</label>
-      </div>
-      <button class="btn btn btn-outline-success ml-2" type="submit"><i class="fas fa-search"></i></button>
-    </div>
+  <div class="col-sm mb-1">
+    {% include 'base/elements/checkbox_all.html' %}
+    <button class="btn btn-outline-success" type="submit">
+      <i class="fas fa-search"></i>
+      Search
+    </button> 
   </div>
-  
 </div>
+

@@ -2,15 +2,9 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<article class="media content-section mb-1">
-  <div class="media-body">
-    <h2>{% if to_create %}Create{% else %}Update{% endif %} Order</h2>
-  </div>
-</article>
 
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    {% if request.session.order.total_payments != 0.0 %}
+<div class="text-right mb-2 mt-4">
+  {% if request.session.order.total_payments != 0.0 %}
     {% if request.session.order.total_payments == request.session.order.total_payforms %}
     <button 
       class="btn btn-primary" 
@@ -19,15 +13,20 @@
       Pay now
     </button>
     {% endif %}
-    {% endif %}
-    <a type="button" 
-      class="btn btn-light text-info"
-      href="{% if to_create %}{% url 'treasury_home' %}{% else %}{% url 'order_detail' request.session.order.id %}{% endif %}">
-      <i class="fas fa-chevron-left "></i> 
-      Go back
-    </a>
-  </div>
+  {% endif %}
+  <a type="button" 
+    class="btn btn-light mr-3"
+    href="{% if to_create %}{% url 'treasury_home' %}{% else %}{% url 'order_detail' request.session.order.id %}{% endif %}">
+    <i class="fas fa-chevron-left "></i> 
+    Go back
+  </a>
 </div>
+
+<article class="media content-section mb-1">
+  <div class="media-body">
+    <h2>{% if to_create %}Create{% else %}Update{% endif %} Order</h2>
+  </div>
+</article>
 
 <article class="media content-section">
   <div class="media-body">
@@ -40,7 +39,7 @@
         <h5>{{ request.session.order.person.name }}</h5>
         {% endif %}
       </div>
-      <div class="floating-right">
+      <div class="floating-right col-sm-4">
         <form class="form-control-sm" method="GET" onsubmit="return isFormOk()">
           {% csrf_token %}
           {% include "treasury/elements/search_person.html" %}
@@ -183,6 +182,10 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+{% load static %}
+<script type="text/javascript" src="{% static 'js/order_create.js' %}"></script>
+
 {% endblock %}
 
 {% block scripts %}

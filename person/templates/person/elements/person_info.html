@@ -61,11 +61,15 @@
               </tr>
               <tr>
                 <th>email</th>
-                <td>{{ email }}</td>
+                <td>{{ person.user.email }}</td>
               </tr>
               <tr>
                 <th>birth</th>
-                <td>{{ person.birth|date:"d/m/Y" }}</td>
+                <td>
+                  {{ person.birth|date:"d/m/Y" }}
+                  &nbsp;&nbsp; <small class="text-mute">age</small> &nbsp;&nbsp;
+                  {{ age }} years
+                </td>
               </tr>
               <tr>
                 <th>id card</th>

@@ -2,6 +2,28 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+
+<div class="text-right mb-2 mt-4">
+  {% if not request.session.order.self_payed %}
+  <a class="btn btn-light" 
+    href="{% url 'order_update' request.session.order.id %}">
+    <i class="fas fa-edit"></i> 
+    Edit
+  </a>
+  {% endif %}
+  <a class="btn btn-light" 
+    href="{% url 'order_delete' request.session.order.id %}">
+    <i class="fas fa-trash-alt"></i> 
+    Delete
+  </a>
+  <a type="button" 
+    class="btn btn-light mr-3" 
+    href="{% url 'orders' %}?d30=on">
+    <i class="fas fa-chevron-left "></i> 
+    Go back
+  </a>
+</div>
+
 <article class="media content-section mb-1">
   <div class="media-body">
     <h2>
@@ -12,28 +34,6 @@
     </h2>
   </div>
 </article>
-
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    {% if not request.session.order.self_payed %}
-    <a class="btn btn-light text-warning" 
-      href="{% url 'order_update' request.session.order.id %}">
-      <i class="fas fa-edit"></i> 
-      Edit
-    </a>
-    {% endif %}
-    <a class="btn btn-light text-danger" 
-      href="{% url 'order_delete' request.session.order.id %}">
-      <i class="fas fa-trash-alt"></i> 
-      Delete
-    </a>
-    <a type="button" 
-      class="btn btn-light text-info" href="{% url 'orders' %}?d30=on">
-      <i class="fas fa-chevron-left "></i> 
-      Go back
-    </a>
-  </div>
-</div>
 
 <article class="media content-section">
   <div class="media-body">
@@ -99,7 +99,6 @@
           </tr>
         </table>
 
-        {% if request.session.order.self_payed %}
         <br>
         <div class="float-right">
           <form class="form-inline"
@@ -114,7 +113,7 @@
             </button>
           </form>
         </div>
-        {% endif %}
+
 
       </div>
     </div>

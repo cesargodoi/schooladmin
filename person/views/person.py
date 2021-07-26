@@ -1,13 +1,14 @@
+from datetime import date
+
 from django.contrib import messages
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Q
 from django.http.response import Http404
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.urls import reverse
 
-from schooladmin.common import ASPECTS, STATUS, paginator
+from schooladmin.common import ASPECTS, STATUS, paginator, clear_session
 from user.models import User
 from base.searchs import search_person
 
@@ -18,16 +19,25 @@ from ..models import Historic, Person
 @login_required
 @permission_required("person.view_person")
 def person_home(request):
-    queryset, page = search_person(request, Person)
-    object_list = paginator(queryset, page=page)
+    object_list = None
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_person(request, Person)
+        object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.click_link = reverse("person_detail", args=[item.id])
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
         "aspect_list": ASPECTS,
         "status_list": STATUS,
         "title": "person home",
+        "nav": "home",
+        "flag": "person",
     }
-
     return render(request, "person/person_home.html", context)
 
 
@@ -42,12 +52,15 @@ def person_detail(request, id):
     ]
     if id not in center_persons and not request.user.is_superuser:
         raise Http404
-    person = get_object_or_404(Person, id=id)
+    person = Person.objects.get(id=id)
+    age = (date.today() - person.birth).days // 365
 
     context = {
         "object": person,
         "title": "person detail",
         "person": person,  # to header element
+        "age": age,
+        "nav": "detail",
         "tab": "info",
         "date": timezone.now().date(),
     }
@@ -60,29 +73,33 @@ def person_create(request):
     if request.method == "POST":
         # creating a new user
         password = BaseUserManager().make_random_password()
-        email = request.POST["email"]
-        new_user = User.objects.create_user(
-            email=email,
-            password=password,
-        )
-        # updating the user.profile
-        profile_form = ProfileForm(
-            request.POST, request.FILES, instance=new_user.profile
-        )
-        if profile_form.is_valid():
-            profile_form.save()
-        # updating the user.person
-        person_form = PersonForm(request.POST, instance=new_user.person)
-        if person_form.is_valid():
-            person_form.save()
-        # add password in observations
-        new_user.person.observations += f"\nfirst password: {password}"
-        # the center is the same as the center of the logged in user
-        new_user.person.center = request.user.person.center
-        new_user.person.save()
-        message = f"The Person '{request.POST['name']}' has been created!"
-        messages.success(request, message)
-        return redirect("person_home")
+        if request.POST.get("email"):
+            email = request.POST["email"]
+            new_user = User.objects.create_user(
+                email=email,
+                password=password,
+            )
+            # updating the user.profile
+            profile_form = ProfileForm(
+                request.POST, request.FILES, instance=new_user.profile
+            )
+            if profile_form.is_valid():
+                profile_form.save()
+            # updating the user.person
+            person_form = PersonForm(request.POST, instance=new_user.person)
+            if person_form.is_valid():
+                person_form.save()
+            # add password in observations
+            new_user.person.observations += f"\nfirst password: {password}"
+            # the center is the same as the center of the logged in user
+            new_user.person.center = request.user.person.center
+            new_user.person.save()
+            message = f"The Person '{request.POST['name']}' has been created!"
+            messages.success(request, message)
+            return redirect("person_detail", id=new_user.person.pk)
+        else:
+            message = "Enter a valid email!"
+            messages.warning(request, message)
 
     user_form = UserForm()
     profile_form = ProfileForm()
@@ -113,7 +130,7 @@ def person_update(request, id):
     if id not in center_persons and not request.user.is_superuser:
         raise Http404
 
-    person = get_object_or_404(Person, id=id)
+    person = Person.objects.get(id=id)
     if request.method == "POST":
         # updating the user
         user_form = UserForm(request.POST, instance=person.user)
@@ -158,7 +175,7 @@ def person_update(request, id):
 @login_required
 @permission_required("person.delete_person")
 def person_delete(request, id):
-    person = get_object_or_404(Person, id=id)
+    person = Person.objects.get(id=id)
     if request.method == "POST":
         if person.historic_set.all():
             person.user.is_active = False
@@ -169,7 +186,7 @@ def person_delete(request, id):
             add_historic(person, "REM", request.user)
         else:
             person.user.delete()
-        return redirect("person_home")
+        return redirect(reverse("person_home") + "?init=on")
 
     context = {"object": person, "title": "confirm to delete"}
     return render(request, "base/confirm_delete.html", context)
@@ -178,7 +195,7 @@ def person_delete(request, id):
 @login_required
 @permission_required("person.add_person")
 def person_reinsert(request, id):
-    person = get_object_or_404(Person, id=id)
+    person = Person.objects.get(id=id)
     if request.method == "POST":
         person.user.is_active = True
         person.user.save()
@@ -186,7 +203,7 @@ def person_reinsert(request, id):
         person.status = "ACT"
         person.save()
         add_historic(person, "ACT", request.user)
-        return redirect("person_home")
+        return redirect(reverse("person_home") + "?init=on")
 
     context = {"object": person, "title": "confirm to reinsert"}
     return render(

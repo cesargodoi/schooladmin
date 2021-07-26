@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
+from django.urls import reverse
 
 from event.models import Event
 from base.searchs import search_event
-from schooladmin.common import paginator, ACTIVITY_TYPES
+from schooladmin.common import paginator, ACTIVITY_TYPES, clear_session
 
 from ..models import Person
 
@@ -20,6 +21,7 @@ def frequency_ps_list(request, person_id):
         "object_list": object_list,
         "title": "frequencies list",
         "person": person,  # to header element,
+        "nav": "detail",
         "tab": "frequencies",
     }
     return render(request, "person/person_detail.html", context)
@@ -28,6 +30,7 @@ def frequency_ps_list(request, person_id):
 @login_required
 @permission_required("person.change_person")
 def frequency_ps_insert(request, person_id):
+    object_list = None
     person = Person.objects.get(id=person_id)
 
     if request.GET.get("pk"):
@@ -51,11 +54,18 @@ def frequency_ps_insert(request, person_id):
             request, "person/elements/confirm_to_insert.html", context
         )
 
-    queryset, page = search_event(request, Event)
-    object_list = paginator(queryset, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_event(request, Event)
+        object_list = paginator(queryset, page=page)
+        # add action links
+        for member in object_list:
+            member.add_link = reverse("frequency_ps_insert", args=[person_id])
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
         "title": "insert frequencies",
         "person": person,  # to header element
         "type_list": ACTIVITY_TYPES,

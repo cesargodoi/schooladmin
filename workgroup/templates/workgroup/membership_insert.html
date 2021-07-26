@@ -2,20 +2,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% include "workgroup/elements/header.html" %}
 
-{% block buttons %}
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      href="{% url 'workgroup_detail' object.pk %}" 
-      class="btn btn-light btn-sm text-info">
-      <i class="fas fa-chevron-left"></i>
-      Go back
-    </a>
-  </div>
+<div class="text-right mb-2 mt-4">
+  <a class="btn btn-light mt-2 mr-3"
+    href="{% url 'workgroup_detail' object.pk %}">
+    <i class="fas fa-chevron-left"></i> 
+    Go back
+  </a>
 </div>
-{% endblock %}
+
+{% include "workgroup/elements/workgroup_header.html" %}
 
 <article class="media content-section">
   <div class="media-body">
@@ -24,54 +20,8 @@
       {% csrf_token %}
       {% include "base/searchs/person.html" %}
     </form>
-
-
-    {% if object_list %}
-
-    {% if object_list.has_other_pages %}
-    {% include "base/elements/paginator.html" %}
-    {% endif %}
-
-    <table class="table table-hover table-sm">
-      <thead>
-        <tr>
-          <th>person</th>
-          <th>center</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for obj in object_list %}
-        <tr>
-          <td>
-            {{ obj.name }} &nbsp;&nbsp;
-            <small class="text-muted"><em>{{ obj.get_aspect_display }}</em></small>
-          </td>
-          <td>{{ obj.center }}</td>
-          <td class="text-right">
-            <a type="button" 
-              href="{% url 'membership_insert' object.pk %}?pk={{ obj.pk }}"
-              class="btn btn-outline-light btn-sm text-success">
-              <i class="fas fa-plus"></i> <i class="fas fa-user"></i> 
-              Insert
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    {% if object_list.has_other_pages %}
-    {% include "base/elements/paginator.html" %}
-    {% endif %}
-
-    {% else %}
-
-    <div class="alert alert-secondary" role="alert">
-      <h4 class="alert-heading">workgroup not found</h4>
-    </div>
-
-    {% endif %}
+    <br>
+    {% include 'person/elements/persons.html' %}
 
   </div>
 </article>

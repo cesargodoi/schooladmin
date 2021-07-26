@@ -3,33 +3,28 @@
 
 {% block content %}
 
+<div class="text-right mb-3">
+  <a class="btn btn-warning mt-2" href="#"
+    onclick="document.getElementById('form').submit();">
+    <i class="fas fa-edit"></i> 
+    Update
+  </a>
+  <a class="btn btn-light mt-2 mr-3"
+    {% if seeker_side %}
+    href="{% url 'seeker_frequencies' object.pk %}" 
+    {% else %}
+    href="{% url 'lecture_detail' object.pk %}"
+    {% endif %}>
+    <i class="fas fa-chevron-left"></i> 
+    Go back
+  </a>
+</div>
+
 {% if seeker_side %}
 {% include "publicwork/elements/seeker_header.html" %}
 {% else %}
 {% include "publicwork/elements/lecture_header.html" %}
 {% endif %}
-
-{% block buttons %}
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <button 
-      class="btn btn-light text-warning"
-      onclick="document.getElementById('form').submit();">
-      <i class="fas fa-edit"></i> Update
-    </button>
-    <a type="button" 
-      {% if seeker_side %}
-      href="{% url 'seeker_frequencies' object.pk %}" 
-      {% else %}
-      href="{% url 'lecture_detail' object.pk %}" 
-      {% endif %}
-      class="btn btn-light btn-sm text-info">
-      <i class="fas fa-chevron-left"></i>
-      Go back
-    </a>
-  </div>
-</div>
-{% endblock %}
 
 <article class="media content-section">
   <div class="media-body">

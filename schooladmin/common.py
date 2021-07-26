@@ -1,10 +1,12 @@
 import re
-from django import forms
 from unicodedata import normalize
-from django.urls.base import reverse
+
+from django import forms
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.urls.resolvers import URLPattern
 from django.http.response import Http404
+from django.core.validators import RegexValidator
 
 
 # hidden auth fields
@@ -24,8 +26,6 @@ CENTER_TYPES = (
 )
 ASPECTS = (
     ("--", "--"),
-    ("PW", "Public Work"),
-    ("YW", "Youth Work"),
     ("A1", "1st. Aspect"),
     ("A2", "2nd. Aspect"),
     ("A3", "3rd. Aspect"),
@@ -93,16 +93,15 @@ COUNTRIES = (("BR", "Brasil"),)
 LECTURE_TYPES = (("CTT", "contact"), ("MET", "meeting"))
 SEEKER_STATUS = (
     ("NEW", "new"),
-    ("MT1", "meeting 1"),
-    ("MT2", "meeting 2"),
-    ("DNL", "did not like"),
-    ("REG", "regular"),
-    ("SVC", "service"),
-    ("CNF", "conference"),
+    ("MBR", "member"),
+    ("RCP", "reception"),
     ("INS", "installing"),
-    ("TKG", "thinking"),
     ("RST", "restriction"),
 )
+BR_REGIONS = {
+    "SP": ["SP"],
+    "RJ": ["RJ", "ES"],
+}
 
 
 def us_inter_char(txt, codif="utf-8"):
@@ -181,7 +180,14 @@ def cpf_format(num):
     return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
 
 
-def phone_format(num):
+phone_regex = RegexValidator(
+    regex=r"^\+?1?\d{9,15}$",
+    message="Phone number must be entered in the format: '+999999999'. \
+        Up to 15 digits allowed.",
+)
+
+
+def phone_format(num, country="BR"):
     num = (
         "+{}".format("".join(re.findall(r"\d", num)))
         if num.startswith("+")
@@ -191,26 +197,19 @@ def phone_format(num):
     if not num:
         return ""
 
-    if num.startswith("00") and len(num) in (14, 15):
-        num = (
-            f"+{num[2:4]} {num[4:6]} {num[6:11]}.{num[11:]}"
-            if len(num) == 15
-            else f"+{num[2:4]} {num[4:6]} {num[6:10]}.{num[10:]}"
-        )
-
-    elif num.startswith("+") and len(num) in (13, 14):
-        num = (
-            f"+{num[1:3]} {num[3:5]} {num[5:10]}.{num[10:]}"
-            if len(num) == 14
-            else f"+{num[1:3]} {num[3:5]} {num[5:9]}.{num[9:]}"
-        )
-
-    elif not num.startswith("+") and len(num) in (10, 11):
-        num = (
-            f"{num[:2]} {num[2:7]}.{num[7:]}"
-            if len(num) == 11
-            else f"{num[:2]} {num[2:6]}.{num[6:]}"
-        )
+    if country == "BR":
+        if num.startswith("+"):
+            num = (
+                f"+{num[1:3]} {num[3:5]} {num[5:10]}-{num[10:]}"
+                if len(num) == 14
+                else f"+{num[1:3]} {num[3:5]} {num[5:9]}-{num[9:]}"
+            )
+        elif len(num) in (10, 11):
+            num = (
+                f"+55 {num[:2]} {num[2:7]}-{num[7:]}"
+                if len(num) == 11
+                else f"+55 {num[:2]} {num[2:6]}-{num[6:]}"
+            )
 
     return num
 
@@ -227,10 +226,39 @@ def paginator(queryset, limit=10, page=1):
     return object_list
 
 
-def belongs_center(request, pk, Object):
+def belongs_center(request, pk, obj):
     object_list = [
         pk.pk
-        for pk in Object.objects.filter(center=request.user.person.center.id)
+        for pk in obj.objects.filter(center=request.user.person.center.id)
     ]
     if pk not in object_list and not request.user.is_superuser:
         raise Http404
+
+
+def clear_session(request, items):
+    for item in items:
+        if request.session.get(item):
+            del request.session[item]
+
+
+def send_email(
+    body_text,
+    body_html,
+    _subject,
+    _to,
+    _from="no-reply@rosacruzaurea.org.br",
+    _context={},
+):
+    text_content = render_to_string(body_text, _context)
+    html_content = render_to_string(body_html, _context)
+
+    subject = (f"Rosacruz Áurea - {_subject}",)
+
+    send_mail(
+        subject=subject,
+        from_email=_from,
+        message=text_content,
+        recipient_list=[_to],
+        html_message=html_content,
+        fail_silently=True,
+    )

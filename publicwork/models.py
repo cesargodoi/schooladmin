@@ -1,12 +1,53 @@
+import uuid
+
+from PIL import Image
 from django.conf import settings
+from django.utils import timezone
 from django.db import models
 from schooladmin.common import (
     us_inter_char,
     short_name,
+    phone_format,
     GENDER_TYPES,
     LECTURE_TYPES,
     SEEKER_STATUS,
+    COUNTRIES,
 )
+
+
+# Temporary Registration of Seeker
+class TempRegOfSeeker(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=80)
+    birth = models.DateField()
+    gender = models.CharField(max_length=1, choices=GENDER_TYPES, default="M")
+    image = models.ImageField(
+        default="default_profile.jpg", upload_to="seeker_pics", blank=True
+    )
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=2)
+    country = models.CharField(max_length=2, choices=COUNTRIES, default="BR")
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    solicited_on = models.DateTimeField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        self.state = str(self.state).upper()
+        self.phone = phone_format(self.phone)
+        super(TempRegOfSeeker, self).save(*args, **kwargs)
+        img = Image.open(self.image.path)
+        if img.height > 300 or img.width > 300:
+            img.thumbnail((300, 300))
+            img.save(self.image.path)
+
+    def __str__(self):
+        return "{} - {} ({}-{})".format(
+            self.name, self.city, self.state, self.country
+        )
+
+    class Meta:
+        verbose_name = "temporary registration of seeker"
+        verbose_name_plural = "temporary registration of seekers"
 
 
 # Seeker
@@ -23,12 +64,12 @@ class Seeker(models.Model):
     birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_TYPES, default="M")
     image = models.ImageField(
-        default="default_profile.jpg", upload_to="profile_pics"
+        default="default_profile.jpg", upload_to="seeker_pics", blank=True
     )
     city = models.CharField(max_length=50, blank=True)
     state = models.CharField("state", max_length=2, blank=True)
-    country = models.CharField(max_length=50, blank=True)
-    phone = models.CharField("phone", max_length=15, blank=True)
+    country = models.CharField(max_length=2, choices=COUNTRIES, default="BR")
+    phone = models.CharField("phone", max_length=20, blank=True)
     email = models.EmailField()
     status = models.CharField(max_length=3, choices=SEEKER_STATUS, blank=True)
     status_date = models.DateField(null=True, blank=True)
@@ -48,6 +89,7 @@ class Seeker(models.Model):
         self.name_sa = us_inter_char(self.name)
         self.short_name = short_name(self.name)
         self.state = str(self.state).upper()
+        self.phone = phone_format(self.phone)
         super(Seeker, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -59,10 +101,10 @@ class Seeker(models.Model):
 
 
 # Historic of seeker
-class Historic_of_seeker(models.Model):
+class HistoricOfSeeker(models.Model):
     seeker = models.ForeignKey(Seeker, on_delete=models.PROTECT)
     occurrence = models.CharField(
-        max_length=3, choices=SEEKER_STATUS, default="NEW"
+        max_length=3, choices=SEEKER_STATUS, default="MBR"
     )
     date = models.DateField(null=True, blank=True)
     description = models.CharField(max_length=100, null=True, blank=True)
@@ -130,3 +172,28 @@ class Listener(models.Model):
     class Meta:
         verbose_name = "listener"
         verbose_name_plural = "listeners"
+
+
+#  PublicworkGroup
+class PublicworkGroup(models.Model):
+    name = models.CharField(max_length=50)
+    center = models.ForeignKey("center.Center", on_delete=models.PROTECT)
+    description = models.CharField(max_length=200, null=True, blank=True)
+    mentors = models.ManyToManyField("person.Person", blank=True)
+    members = models.ManyToManyField(Seeker, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    made_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="made_by_publicwork_group",
+        on_delete=models.PROTECT,
+        blank=True,
+    )
+
+    def __str__(self):
+        return f"{self.name} - {self.center}"
+
+    class Meta:
+        verbose_name = "publicwork group"
+        verbose_name_plural = "publicwork groups"

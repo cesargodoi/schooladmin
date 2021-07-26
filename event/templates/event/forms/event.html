@@ -29,3 +29,6 @@
   {{ form.is_active | as_crispy_field }}
   {{ form.made_by | as_crispy_field }}
 </form>
+
+{% load static %}
+<script type="text/javascript" src="{% static 'js/event.js' %}"></script>

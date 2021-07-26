@@ -1,37 +1,10 @@
 {% extends "base/base.html" %}
 
 {% block content %}
-{% include "center/elements/header.html" %}
 
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    {% if request.user.is_superuser %}
-    <a type="button" 
-      class="btn btn-light text-warning" 
-      href="{% url 'center_update' object.id %}">
-      <i class="fas fa-edit"></i> Edit
-    </a>
-    {% if object.is_active %}
-    <a type="button" 
-      class="btn btn-light text-danger" 
-      href="{% url 'center_delete' object.id %}">
-      <i class="fas fa-trash-alt"></i> Delete
-    </a>
-    {% else %}
-    <a type="button" 
-      class="btn btn-light text-primary" 
-      href="{% url 'center_reinsert' object.id %}">
-      <i class="fas fa-sign-in-alt"></i> Reinsert
-    </a>
-    {% endif %}
-    {% endif %}
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'center_home' %}">
-      <i class="fas fa-chevron-left"></i> Go back
-    </a>
-  </div>
-</div>
+{% include "center/elements/center_navbar.html" %}
+
+{% include "center/elements/header.html" %}
 
 <article class="media content-section">
   <div class="media-body">

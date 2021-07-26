@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from schooladmin.common import paginator, ACTIVITY_TYPES
+from schooladmin.common import paginator, ACTIVITY_TYPES, clear_session
 from base.searchs import search_event
 
 from ..forms import EventForm
@@ -14,13 +14,22 @@ from ..models import Event
 @login_required
 @permission_required("event.view_event")
 def event_home(request):
-    queryset, page = search_event(request, Event)
-    object_list = paginator(queryset, page=page)
+    object_list = None
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_event(request, Event)
+        object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.click_link = reverse("event_detail", args=[item.pk])
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
         "title": "event home",
         "type_list": ACTIVITY_TYPES,
+        "nav": "home",
     }
     return render(request, "event/event_home.html", context)
 
@@ -36,6 +45,7 @@ def event_detail(request, pk):
         "object": object,
         "object_list": object_list,
         "title": "event detail",
+        "nav": "detail",
     }
     return render(request, "event/event_detail.html", context)
 
@@ -49,7 +59,7 @@ def event_create(request):
             form.save()
             message = "The Event has been created!"
             messages.success(request, message)
-            return redirect(reverse("event_home") + "?d30=on&lastNext=last")
+            return redirect(reverse("event_home") + "?init=on")
 
     context = {
         "form": EventForm(initial={"made_by": request.user}),
@@ -102,7 +112,7 @@ def event_delete(request, pk):
         object.delete()
         message = "The Event has been deleted!"
         messages.success(request, message)
-        return redirect("event_home")
+        return redirect(reverse("event_home") + "?init=on")
 
     context = {
         "object": object,

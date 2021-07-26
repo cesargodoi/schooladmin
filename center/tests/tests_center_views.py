@@ -1,279 +1,180 @@
-from django.contrib import auth
-from person.tests.dummy import PersonDummy
-from center.models import Center
-from django.shortcuts import get_object_or_404
+import pytest
+from django.urls import reverse
 
 
-class TestViewsFromDummies(PersonDummy):
-    # center_list
-    # office, treasury and treasuryjr can view center_list
-    # user cannot view center_list
-    def test_center_list_with_office_logged_in(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/center/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "center/center_home.html")
+center_home = reverse("center_home")
 
-    def test_center_list_with_treasury_logged_in(self):
-        # treasury can view the centers in center_list
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/center/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "center/center_home.html")
 
-    def test_center_list_with_treasuryjr_logged_in(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/center/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "center/center_home.html")
+"""
+unlogged person cannot access any page of center app
+"""
 
-    def test_center_list_with_user_logged_in(self):
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/center/")
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/user/login/?next=/center/")
 
-    # center_detail
-    # office, treasury and treasuryjr can view center_detail
-    # user cannot view center_detail
-    def test_center_detail_logged_out_is_redirect_login_page(self):
-            center = get_object_or_404(Center, name__icontains="Aquarius")  ######
-            response = self.client.get(f"/center/{center.id}/detail/")  ########
-            self.assertEqual(response.status_code, 302)
-            self.assertIn("login", response.url)
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "_type",
+    [("home"), ("detail"), ("create"), ("update"), ("delete")],
+)
+def test_unlogged_person_cannot_view_center_pages(
+    center_factory, client, _type
+):
+    center = center_factory.create()
+    page = f"center_{_type}"
+    if _type in ("update", "detail", "delete"):
+        url = reverse(page, args=[str(center.pk)])
+    else:
+        url = reverse(page)
+    response = client.get(url)
+    assert "login" in response.url
 
-    def test_center_detail_user_is_logged_in(self):
-        self.client.login(
-            email="user2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/detail/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/{center.id}/detail/")
 
-    def test_center_detail_office_is_logged_in(self):
-        self.client.login(
-            email="office2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/detail/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "center/center_detail.html")
+"""
+- user cannot access center home
+- office, treasury and treasury_jr can
+"""
 
-    def test_center_detail_treasury_is_logged_in(self):
-        self.client.login(
-            email="treasury2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/detail/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "center/center_detail.html")
 
-    def test_center_detail_treasuryjr_is_logged_in(self):
-        self.client.login(
-            email="treasuryjr2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/detail/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "center/center_detail.html")
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 200), ("treasury_jr", 200)],
+)
+def test_access_center_home_by_user_types(
+    center_factory, auto_login_user, get_group, user_type, status_code
+):
+    center_factory.create()
+    client, user = auto_login_user()
+    group = get_group(user_type)
+    user.groups.add(group)
+    url = reverse("center_home")
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    # center_update
-    # only superuser can edit center.
-    def test_center_update_by_user(self):
-        # user can not edit centers
-        self.client.login(
-            email="user2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/update/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/{center.id}/update/")
 
-    def test_center_update_by_office(self):
-        # office can not edit centers
-        self.client.login(
-            email="office2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/update/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/{center.id}/update/")
+"""
+- user cannot access center detail
+- office, treajury and treasury_jr can 
+"""
 
-    def test_center_update_by_treasury(self):
-        # office can not edit centers
-        self.client.login(
-            email="treasury2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/update/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/{center.id}/update/")
 
-    def test_center_update_by_treasuryjr(self):
-        # office can not edit centers
-        self.client.login(
-            email="treasuryjr2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/update/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/{center.id}/update/")
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 200), ("treasury_jr", 200)],
+)
+def test_access_center_detail_by_user_types(
+    center_factory, auto_login_user, get_group, user_type, status_code
+):
+    center = center_factory.create()
+    client, user = auto_login_user()
+    group = get_group(user_type)
+    user.groups.add(group)
+    url = reverse("center_detail", args=[center.pk])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    # center_create
-    # only superuser can create center.
-    def test_center_create_by_user(self):
-        # user can not create centers
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        response = self.client.get("/center/create/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/user/login/?next=/center/create/")
 
-    def test_center_create_by_office(self):
-        # office can not create centers
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        response = self.client.get("/center/create/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/user/login/?next=/center/create/")
+"""
+- user, treasury and treasury_jr cannot access center update
+"""
 
-    def test_center_create_by_treasury(self):
-        # office can not create centers
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        response = self.client.get("/center/create/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/user/login/?next=/center/create/")
 
-    def test_center_create_by_treasuryjr(self):
-        # office can not create centers
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        response = self.client.get("/center/create/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, "/user/login/?next=/center/create/")
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access_center_update_by_user_types(
+    center_factory, auto_login_user, get_group, user_type, status_code
+):
+    center = center_factory.create()
+    client, user = auto_login_user()
+    group = get_group(user_type)
+    user.groups.add(group)
+    url = reverse("center_update", args=[center.pk])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    # center_delete
-    # only superuser can delete center.
-    def test_center_delete_by_user(self):
-        # user can not delete centers
-        self.client.login(
-            email="user2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/delete/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/{center.id}/delete/")
 
-    def test_center_delete_by_office(self):
-        # office can not delete centers
-        self.client.login(
-            email="office2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/delete/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/{center.id}/delete/")
+"""
+- office can access center update of only own center
+"""
 
-    def test_center_delete_by_treasury(self):
-        # office can not delete centers
-        self.client.login(
-            email="treasury2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/delete/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/{center.id}/delete/")
 
-    def test_center_delete_by_treasuryjr(self):
-        # office can not delete centers
-        self.client.login(
-            email="treasuryjr2@rcad.min",
-            password="asdf1234",
-        )
-        center = get_object_or_404(Center, name__icontains="Campinas")  ######
-        response = self.client.get(f"/center/{center.id}/delete/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/{center.id}/delete/")
+@pytest.mark.django_db
+def test_access_center_update_by_offices_own_center(
+    center_factory, auto_login_user, get_group
+):
+    center = center_factory.create()
+    client, user = auto_login_user()
+    user.person.center = center
+    user.groups.add(get_group("office"))
+    url = reverse("center_update", args=[center.pk])
+    response = client.get(url)
+    assert response.status_code == 200
 
-    # center_search
-    # office, treasury and treasuryjr can use center_search
-    # user cannot view center_search
-    def test_center_is_searchable_for_treasury_group(self):
-        self.client.login(
-            email="treasury2@rcad.min",
-            password="asdf1234",
-        )
-        response = self.client.get("/center/?term=cAMp")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "center/center_home.html")
-        self.assertIn("Campinas", response.content.decode())
 
-    def test_center_is_searchable_for_treasuryjr_group(self):
-        self.client.login(
-            email="treasuryjr2@rcad.min",
-            password="asdf1234",
-        )
-        response = self.client.get("/center/?term=cAMp")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "center/center_home.html")
-        self.assertIn("Campinas", response.content.decode())
+"""
+- user, office, treasury and treasury_jr cannot access center update
+"""
 
-    def test_center_is_searchable_for_office_group(self):
-        self.client.login(
-            email="office2@rcad.min",
-            password="asdf1234",
-        )
-        response = self.client.get("/center/?term=cAMp")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "center/center_home.html")
-        self.assertIn("Campinas", response.content.decode())
 
-    def test_center_is_searchable_for_user_group(self):
-        self.client.login(
-            email="user2@rcad.min",
-            password="asdf1234",
-        )
-        response = self.client.get("/center/?term=cAMp")
-        self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, f"/user/login/?next=/center/?term=cAMp")
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 302), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access_center_create_by_user_types(
+    center_factory, auto_login_user, get_group, user_type, status_code
+):
+    center = center_factory.create()
+    client, user = auto_login_user()
+    group = get_group(user_type)
+    user.groups.add(group)
+    url = reverse("center_create")
+    response = client.get(url)
+    assert response.status_code == status_code
+
+
+"""
+- user, office, treasury and treasury_jr cannot access center delete
+"""
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 302), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access_center_delete_by_user_types(
+    center_factory, auto_login_user, get_group, user_type, status_code
+):
+    center = center_factory.create()
+    client, user = auto_login_user()
+    group = get_group(user_type)
+    user.groups.add(group)
+    url = reverse("center_delete", args=[center.pk])
+    response = client.get(url)
+    assert response.status_code == status_code
+
+
+"""
+- user cannot search center
+- office, treasury and treasury_jr can
+"""
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 200), ("treasury_jr", 200)],
+)
+def test_search_center_home_by_user_types(
+    auto_login_user, get_group, user_type, status_code
+):
+    client, user = auto_login_user()
+    group = get_group(user_type)
+    user.groups.add(group)
+    url = "/center/?term=Group"
+    response = client.get(url)
+    assert response.status_code == status_code

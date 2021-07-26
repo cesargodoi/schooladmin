@@ -1,5 +1,4 @@
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 from schooladmin.common import ORDER_STATUS, PAYFORM_TYPES
 
 from ..models import Order
@@ -87,17 +86,17 @@ class OrderByPeriod:
     def summary(self, status):
         summary, total = [], 0
         if status != "self_payed":
-            for object in self.all_payforms:
-                total += object[status]
+            for obj in self.all_payforms:
+                total += obj[status]
                 payment = (
-                    object["type"][1],
-                    len(object["items"]),
-                    object[status],
+                    obj["type"][1],
+                    len(obj["items"]),
+                    obj[status],
                 )
                 summary.append(payment)
         else:
-            for object in self.all_payforms:
-                for payment in object["items"]:
+            for obj in self.all_payforms:
+                for payment in obj["items"]:
                     if payment["self_payed"] and payment["status"] == "PND":
                         total += payment["value"]
                         summary.append(payment["payform_type"])
@@ -163,12 +162,12 @@ class OrderByPeriod:
 
     def summary_of_payments(self):
         summary, total = [], 0
-        for object in self.all_payments:
-            total += object["concluded"]
+        for obj in self.all_payments:
+            total += obj["concluded"]
             payment = (
-                object["type"],
-                len(object["items"]),
-                object["concluded"],
+                obj["type"],
+                len(obj["items"]),
+                obj["concluded"],
             )
             summary.append(payment)
         return summary, total
@@ -176,7 +175,7 @@ class OrderByPeriod:
 
 class OrderToJson:
     def __init__(self, order_id):
-        order = get_object_or_404(Order, id=order_id)
+        order = Order.objects.get(id=order_id)
         self.payforms = self.get_payforms(order.form_of_payments.all())
         self.payments = self.get_payments(order.payments.all())
         self.json = dict(

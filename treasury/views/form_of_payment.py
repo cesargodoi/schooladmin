@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from schooladmin.common import paginator
 
@@ -43,9 +43,9 @@ def form_of_payment_create(request):
 @login_required
 @permission_required("treasury.change_formofpayment")
 def form_of_payment_update(request, pk):
-    object = get_object_or_404(FormOfPayment, pk=pk)
+    form_of_payment = FormOfPayment.objects.get(pk=pk)
     if request.method == "POST":
-        form = FormOfPaymentForm(request.POST, instance=object)
+        form = FormOfPaymentForm(request.POST, instance=form_of_payment)
         if form.is_valid():
             form.save()
             message = "The Form of Payment has been updated!"
@@ -53,7 +53,7 @@ def form_of_payment_update(request, pk):
             return redirect("forms_of_payments")
 
     context = {
-        "form": FormOfPaymentForm(instance=object),
+        "form": FormOfPaymentForm(instance=form_of_payment),
         "form_name": "Paytype",
         "form_path": "treasury/forms/form_of_payment.html",
         "goback": reverse("forms_of_payments"),
@@ -65,13 +65,13 @@ def form_of_payment_update(request, pk):
 @login_required
 @permission_required("treasury.delete_formofpayment")
 def form_of_payment_delete(request, pk):
-    object = get_object_or_404(FormOfPayment, pk=pk)
+    form_of_payment = FormOfPayment.objects.get(pk=pk)
     if request.method == "POST":
-        if not object.order_set.all():
-            object.delete()
+        if not form_of_payment.order_set.all():
+            form_of_payment.delete()
             message = "The Form of Payment has been deleted!"
             messages.success(request, message)
         return redirect("forms_of_payments")
 
-    context = {"object": object, "title": "confirm to delete"}
+    context = {"object": form_of_payment, "title": "confirm to delete"}
     return render(request, "treasury/confirm_delete.html", context)

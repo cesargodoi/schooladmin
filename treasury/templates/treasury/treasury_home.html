@@ -2,22 +2,8 @@
 {% load static %}
 
 {% block content %}
-<article class="media content-section mb-1">
-  <div class="media-body">
-    <h2>Treasury &nbsp;<small class="text-muted">{{ user.person.center }}</small> </h2>
-  </div>
-</article>
 
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'home' %}">
-      <i class="fas fa-chevron-left "></i> 
-      Go back
-    </a>
-  </div>
-</div>
+{% include 'treasury/elements/treasury_navbar.html' %}
 
 <div class="row row-col-3">
   <div class="col-lg-4 mb-4">
@@ -29,7 +15,7 @@
       <ul class="list-group list-group-flush">
         <a type="button" 
           class="list-group-item-treasury-new list-group-item-action text-info" 
-          href="{% url 'orders' %}">
+          href="{% url 'orders' %}?init=on">
           <i class="fas fa-shopping-bag"></i> 
           Orders
         </a>

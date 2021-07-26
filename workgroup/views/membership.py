@@ -1,8 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect, render
+from django.urls import reverse
+
 from person.models import Person
-from schooladmin.common import ASPECTS, STATUS, paginator
+from schooladmin.common import ASPECTS, STATUS, paginator, clear_session
 
 from ..forms import MembershipForm
 from ..models import Membership, Workgroup
@@ -12,6 +14,7 @@ from base.searchs import search_person
 @login_required
 @permission_required("workgroup.add_membership")
 def membership_insert(request, workgroup_id):
+    object_list = None
     workgroup = Workgroup.objects.get(pk=workgroup_id)
 
     if request.GET.get("pk"):
@@ -34,19 +37,29 @@ def membership_insert(request, workgroup_id):
             "workgroup/elements/confirm_to_insert_membership.html",
             context,
         )
-
-    queryset, page = search_person(request, Person)
-    object_list = paginator(queryset, 25, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_person(request, Person)
+        object_list = paginator(queryset, page=page)
+        # add action links
+        for item in object_list:
+            item.add_link = (
+                reverse("membership_insert", args=[workgroup_id])
+                + f"?pk={ item.pk }"
+            )
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
+        "goback_link": reverse("membership_insert", args=[workgroup.pk]),
         "aspect_list": ASPECTS,
         "status_list": STATUS,
         "form": MembershipForm(initial={"workgroup": workgroup}),
         "title": "create membership",
         "object": workgroup,
+        "flag": "membership",
     }
-
     return render(request, "workgroup/membership_insert.html", context)
 
 

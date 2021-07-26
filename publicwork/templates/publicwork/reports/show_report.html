@@ -6,37 +6,9 @@
 
   {% include search %}
 
-  {% include "publicwork/elements/report_header.html" %}
+  {% include "publicwork/reports/navbar.html" %}
 
-  <div class="text-right mb-2">
-    <div class="btn-group btn-group-sm mt-1" role="group">
-      <a type="button" 
-        class="btn btn-light text-success controls-report" 
-        data-toggle="modal" data-target="#modal">
-        <i class="fas fa-chart-bar"></i> 
-        New search
-      </a>
-      <a type="button" 
-        class="btn btn-light text-warning controls-report" 
-        href="#"
-        onclick="window.print()">
-        <i class="fas fa-print"></i> 
-        To print
-      </a>
-      <a type="button" 
-        class="btn btn-light text-primary controls-report" 
-        href="#">
-        <i class="fas fa-file-csv"></i> 
-        To csv
-      </a>
-      <a type="button" 
-        class="btn btn-light text-info controls-report" 
-        href="{% url 'publicwork_home' %}">
-        <i class="fas fa-chevron-left "></i> 
-        Go back
-      </a>
-    </div>
-  </div>
+  {% include "publicwork/reports/header.html" %}
 
   {% if report_data %}
 

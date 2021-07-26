@@ -5,10 +5,10 @@
         <div class="input-group-text">from</div>
       </div>
       <input type="date" 
-        name="date1" 
+        name="dt1" 
         class="form-control dateinput" 
-        id="date1" 
-        {% if request.session.search.date1 %}value={{ request.session.search.date1 }}{% endif %}>
+        id="dt1" 
+        {% if request.session.search.dt1 %}value={{ request.session.search.dt1 }}{% endif %}>
     </div>
   </div>
   <div class="col-sm-3 mb-1">
@@ -17,10 +17,10 @@
         <div class="input-group-text">to</div>
       </div>
       <input type="date" 
-        name="date2" 
+        name="dt2" 
         class="form-control dateinput" 
-        id="date2" 
-        {% if request.session.search.date2 %}value={{ request.session.search.date2 }}{% endif %}>
+        id="dt2" 
+        {% if request.session.search.dt2 %}value={{ request.session.search.dt2 }}{% endif %}>
       <button 
         class="btn btn btn-outline-success ml-2" 
         type="submit">

@@ -1,7 +1,26 @@
 from django import forms
 from schooladmin.common import HIDDEN_AUTH_FIELDS
 
-from .models import Seeker, Lecture, Listener, Historic_of_seeker
+from .models import (
+    TempRegOfSeeker,
+    Seeker,
+    Lecture,
+    Listener,
+    HistoricOfSeeker,
+    PublicworkGroup,
+)
+
+
+class TempRegOfSeekerForm(forms.ModelForm):
+    class Meta:
+        model = TempRegOfSeeker
+        fields = "__all__"
+        widgets = {
+            "birth": forms.widgets.DateInput(
+                format="%Y-%m-%d", attrs={"type": "date"}
+            ),
+        }
+        widgets.update({"solicited_on": forms.HiddenInput()})
 
 
 class SeekerForm(forms.ModelForm):
@@ -42,7 +61,7 @@ class ListenerForm(forms.ModelForm):
 
 class HistoricForm(forms.ModelForm):
     class Meta:
-        model = Historic_of_seeker
+        model = HistoricOfSeeker
         exclude = ["listeners"]
         widgets = {
             "descriptions": forms.Textarea(attrs={"rows": 2}),
@@ -50,5 +69,15 @@ class HistoricForm(forms.ModelForm):
                 format="%Y-%m-%d", attrs={"type": "date"}
             ),
             "seeker": forms.HiddenInput(),
+        }
+        widgets.update(HIDDEN_AUTH_FIELDS)
+
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = PublicworkGroup
+        exclude = ["mentors", "members"]
+        widgets = {
+            "descriptions": forms.Textarea(attrs={"rows": 2}),
         }
         widgets.update(HIDDEN_AUTH_FIELDS)

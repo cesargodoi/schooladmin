@@ -3,7 +3,7 @@ from datetime import datetime
 from django import forms
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from event.models import Event
 from person.models import Person
@@ -12,6 +12,7 @@ from schooladmin.common import (
     PAYFORM_TYPES,
     paginator,
     short_name,
+    clear_session,
 )
 from base.searchs import search_order
 
@@ -22,16 +23,21 @@ from ..models import BankFlags, Order, PayTypes
 @login_required
 @permission_required("treasury.view_order")
 def orders(request):
+    object_list = None
     if request.session.get("order"):
         del request.session["order"]
-
-    queryset, page = search_order(request, Order)
-    object_list = paginator(queryset, 25, page=page)
+    if request.GET.get("init"):
+        clear_session(request, ["search"])
+    else:
+        queryset, page = search_order(request, Order)
+        object_list = paginator(queryset, 25, page=page)
 
     context = {
         "object_list": object_list,
+        "init": True if request.GET.get("init") else False,
         "status_list": ORDER_STATUS,
         "title": "Orders",
+        "nav": "order",
     }
     return render(request, "treasury/orders.html", context)
 
@@ -102,7 +108,7 @@ def order_add_payment(request):
             new["paytype"] = {"name": paytype.name, "id": paytype.id}
 
         if request.POST.get("person"):
-            person = get_object_or_404(Person, id=request.POST.get("person"))
+            person = Person.objects.get(id=request.POST.get("person"))
             new["person"] = {
                 "name": person.short_name,
                 "id": str(person.id),
@@ -114,7 +120,7 @@ def order_add_payment(request):
             new["ref_month"] = {"repr": _repr.strftime("%b/%y"), "ref": ref}
 
         if request.POST.get("event"):
-            event = get_object_or_404(Event, id=request.POST.get("event"))
+            event = Event.objects.get(id=request.POST.get("event"))
             _event = "{}... {} ({})".format(
                 event.activity.name[:4],
                 event.center,
@@ -245,9 +251,7 @@ def order_del_payform(request, pay_id):
 def order_register(request):
     if request.method == "POST":
         # get payer
-        payer = get_object_or_404(
-            Person, id=request.session["order"]["person"]["id"]
-        )
+        payer = Person.objects.get(id=request.session["order"]["person"]["id"])
 
         # create or update order
         if request.session["order"].get("id"):
@@ -307,7 +311,7 @@ def order_register(request):
 @login_required
 @permission_required("treasury.view_order")
 def order_detail(request, id):
-    order = get_object_or_404(Order, id=id)
+    order = Order.objects.get(id=id)
     _status = [o for o in ORDER_STATUS if o[0] == order.status]
     request.session["order"] = {
         "id": str(order.id),
@@ -402,9 +406,9 @@ def order_update(request, id):
 @login_required
 @permission_required("treasury.change_order")
 def order_update_status(request, id):
-    object = get_object_or_404(Order, id=id)
-    object.status = request.POST.get("status")
-    object.save()
+    order = Order.objects.get(id=id)
+    order.status = request.POST.get("status")
+    order.save()
 
     return redirect("orders")
 
@@ -412,12 +416,12 @@ def order_update_status(request, id):
 @login_required
 @permission_required("treasury.delete_order")
 def order_delete(request, id):
-    object = get_object_or_404(Order, id=id)
+    order = Order.objects.get(id=id)
     if request.method == "POST":
-        object.payments.all().delete()
-        object.form_of_payments.all().delete()
-        object.delete()
+        order.payments.all().delete()
+        order.form_of_payments.all().delete()
+        order.delete()
         return redirect("orders")
 
-    context = {"object": object, "title": "confirm to delete"}
+    context = {"object": order, "title": "confirm to delete"}
     return render(request, "treasury/confirm_delete.html", context)

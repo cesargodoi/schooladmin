@@ -1,10 +1,39 @@
 from django.urls import path
 
-from .views import seeker, lecture, listener, report, historic
+# from django.contrib.auth import views
+
+from .views import (
+    seeker,
+    lecture,
+    listener,
+    report,
+    historic,
+    group,
+    insert_yourself,
+)
 
 # publicwork
 urlpatterns = [
     path("", report.publicwork_home, name="publicwork_home"),
+]
+
+# insert yourself as a member
+urlpatterns += [
+    path(
+        "i-want-to-be-a-member/",
+        insert_yourself.insert_yourself,
+        name="insert_yourself",
+    ),
+    path(
+        "i-want-to-be-a-member/feedback/",
+        insert_yourself.feedback,
+        name="feedback",
+    ),
+    path(
+        "i-want-to-be-a-member/confirm-email/<uuid:token>/",
+        insert_yourself.confirm_email,
+        name="confirm_email",
+    ),
 ]
 
 # seeker
@@ -31,9 +60,9 @@ urlpatterns += [
         name="seeker_frequencies",
     ),
     path(
-        "seeker/<int:pk>/historics/",
-        seeker.seeker_historics,
-        name="seeker_historics",
+        "seeker/<int:pk>/historic/",
+        seeker.seeker_historic,
+        name="seeker_historic",
     ),
 ]
 
@@ -61,7 +90,7 @@ urlpatterns += [
 # listener
 urlpatterns += [
     path(
-        "lecture/<int:lect_pk>/add-listener",
+        "lecture/<int:lect_pk>/add-listener/",
         listener.add_listener,
         name="add_listener",
     ),
@@ -81,7 +110,7 @@ urlpatterns += [
         name="add_frequency",
     ),
     path(
-        "seeker/<int:seek_pk>/update-frequency/<int:freq_pk>",
+        "seeker/<int:seek_pk>/update-frequency/<int:freq_pk>/",
         listener.update_frequency,
         name="update_frequency",
     ),
@@ -100,14 +129,58 @@ urlpatterns += [
         name="create_historic",
     ),
     path(
-        "seeker/<int:seek_pk>/update-historic/<int:hist_pk>",
+        "seeker/<int:seek_pk>/update-historic/<int:hist_pk>/",
         historic.update_historic,
         name="update_historic",
     ),
     path(
-        "seeker/<int:seek_pk>/delete-historic/<int:hist_pk>",
+        "seeker/<int:seek_pk>/delete-historic/<int:hist_pk>/",
         historic.delete_historic,
         name="delete_historic",
+    ),
+]
+
+# groups
+urlpatterns += [
+    path("group/", group.group_home, name="group_home"),
+    path("group/<int:pk>/detail/", group.group_detail, name="group_detail"),
+    path("group/create/", group.group_create, name="group_create"),
+    path("group/<int:pk>/update/", group.group_update, name="group_update"),
+    path("group/<int:pk>/delete/", group.group_delete, name="group_delete"),
+    path(
+        "group/<int:pk>/reinsert/",
+        group.group_reinsert,
+        name="group_reinsert",
+    ),
+    path(
+        "group/<int:pk>/frequencies/",
+        group.group_frequencies,
+        name="group_frequencies",
+    ),
+    path(
+        "group/<int:pk>/frequencies/add/",
+        group.group_add_frequencies,
+        name="group_add_frequencies",
+    ),
+    path(
+        "group/<int:pk>/member/add/",
+        group.group_add_member,
+        name="group_add_member",
+    ),
+    path(
+        "group/<int:group_pk>/member/<int:member_pk>/remove/",
+        group.group_remove_member,
+        name="group_remove_member",
+    ),
+    path(
+        "group/<int:pk>/mentor/add/",
+        group.group_add_mentor,
+        name="group_add_mentor",
+    ),
+    path(
+        "group/<int:group_pk>/mentor/<uuid:mentor_pk>/remove/",
+        group.group_remove_mentor,
+        name="group_remove_mentor",
     ),
 ]
 

@@ -2,27 +2,20 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<article class="media content-section mb-1">
-  <div class="media-body">
-    <h2>Create Order</h2>
-  </div>
-</article>
 
-<div class="text-right mb-2">
-  <div class="btn-group btn-group-sm mt-1" role="group">
-    <button 
-      class="btn btn-primary" 
-      onclick="document.getElementById('form').submit();">
-      <i class="fas fa-plus"></i> 
-      Add payment
-    </button>
-    <a type="button" 
-      class="btn btn-light text-info" 
-      href="{% url 'order_create' %}">
-      <i class="fas fa-chevron-left "></i> 
-      Go back
-    </a>
-  </div>
+<div class="text-right mb-2 mt-4">
+  <button 
+    class="btn btn-primary" 
+    onclick="checkForm()">
+    <i class="fas fa-plus"></i> 
+    Add payment
+  </button>
+  <a type="button" 
+    class="btn btn-light mr-3" 
+    href="{% url 'order_create' %}">
+    <i class="fas fa-chevron-left "></i> 
+    Go back
+  </a>
 </div>
 
 <article class="media content-section">
@@ -54,4 +47,8 @@
     </form>
   </div>
 </article>
+
+{% load static %}
+<script type="text/javascript" src="{% static 'js/order_add_payment.js' %}"></script>
+
 {% endblock %}
