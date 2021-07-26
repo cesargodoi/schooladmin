@@ -1,10 +1,6 @@
-import os
-from datetime import datetime, timedelta
-
-# from django.http.response import Http404
+from django.http.response import Http404
 from django.http import JsonResponse
-from django.conf import settings
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from center.models import Center
 
