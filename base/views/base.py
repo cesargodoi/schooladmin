@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
-from django.http.response import Http404
+
+# from django.http.response import Http404
 from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
@@ -37,7 +38,11 @@ def change_color_scheme(request):
 
 
 def error_404(request, exception):
-    return render(request, "base/404.html")
+    return render(request, "base/404.html", status=404)
+
+
+def error_500(request):
+    return render(request, "base/500.html", status=500)
 
 
 def clear_session(request):

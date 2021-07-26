@@ -17,6 +17,7 @@ urlpatterns = [
 ]
 
 handler404 = "base.views.base.error_404"
+handler500 = "base.views.base.error_500"
 
 if settings.DEBUG:
     import debug_toolbar
