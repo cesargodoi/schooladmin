@@ -1,3 +1,5 @@
+{% load base_extras %}
+
 <h4>Centers</h4>
 
 {% if object_list %}
@@ -9,7 +11,7 @@
   {% for obj in object_list %}
   <div class="row border-top border-secondary pb-2 pt-2 {% if not obj.is_active %}text-danger{% endif %}"
     {% if obj.click_link %}
-      {% if obj == request.user.person.center or request.user.is_superuser %}
+      {% if request.user.is_superuser or request.user|has_group:"office" %}
         onclick="location.href='{{ obj.click_link }}';"
       {% endif %}
     {% endif %}>

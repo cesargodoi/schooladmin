@@ -4,6 +4,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from schooladmin.common import paginator, clear_session
 from base.searchs import search_center
+from django.http.response import Http404
+from person.models import Person
 
 from .forms import CenterForm, SelectNewCenterForm
 from .models import Center
@@ -35,7 +37,7 @@ def center_home(request):
 @permission_required("center.view_center")
 def center_detail(request, pk):
     center = Center.objects.get(pk=pk)
-    users = len([p.id for p in center.person_set.all() if p.is_active])
+    users = center.person_set.filter(is_active=True).count()
 
     context = {
         "object": center,
@@ -71,14 +73,21 @@ def center_create(request):
 @login_required
 @permission_required("center.change_center")
 def center_update(request, pk):
-    center = Center.objects.get(pk=pk)
-    if request.method == "POST":
-        form = CenterForm(request.POST, request.FILES, instance=center)
-        if form.is_valid():
-            form.save()
-            message = f"The Center '{request.POST['name']}' has been updated!"
-            messages.success(request, message)
-            return redirect("center_detail", pk=pk)
+    persons = [psn.id for psn in Person.objects.filter(center=pk)]
+    if request.user.person.pk in persons or request.user.is_superuser:
+        center = Center.objects.get(pk=pk)
+
+        if request.method == "POST":
+            form = CenterForm(request.POST, request.FILES, instance=center)
+            if form.is_valid():
+                form.save()
+                message = (
+                    f"The Center '{request.POST['name']}' has been updated!"
+                )
+                messages.success(request, message)
+                return redirect("center_detail", pk=pk)
+    else:
+        raise Http404
 
     context = {
         "form": CenterForm(instance=center),

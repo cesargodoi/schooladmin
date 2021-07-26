@@ -1,75 +1,63 @@
+import pytest
 from django.contrib import auth
-from .dummy import UserDummy
-from user.models import User, Profile
-from person.models import Person
+from user.models import User
 
 
-class TestUser(UserDummy):
-    
-    def test_user_dont_get_logged_in(self):
-        #usuário não existe e quer logar.
-        self.client.login(
-            email="superuser@rcad.min",
-            password="00000000",
-        )
-        user = auth.get_user(self.client)
-        self.assertFalse(user.is_authenticated) 
-
-    def test_user_get_logged_in(self):
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-
-    def test_user_get_logged_out(self):
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        assert user.is_authenticated
-        self.client.logout()
-        user = auth.get_user(self.client)
-        self.assertFalse(user.is_authenticated)
-
-    def test_list_profiles(self):
-        self.assertEqual(Profile.objects.count(), 8)
+@pytest.mark.django_db
+def test_user_dont_get_logged_in(client):
+    client.login(email="outsider@gmail.com", password="$536wen.")
+    user = auth.get_user(client)
+    assert user.is_authenticated is False
 
 
-    new_user = dict(
-        email="new_user@gmail.com",
-        password="$536wen.",
-    )
-    
-    def test_add_new_user(self):
-        User.objects.create_user(**self.new_user)
-        self.assertEqual(User.objects.count(), 9)
+@pytest.mark.django_db
+def test_add_new_user_and_try_to_login(client, auto_login_user):
+    client, user = auto_login_user()
+    assert user.is_authenticated
 
-    def test_add_new_user_and_verify_new_profile(self):
-        User.objects.create_user(**self.new_user)
-        self.assertEqual(Profile.objects.count(), 9)
 
-    def test_add_new_user_and_verify_new_person(self):
-        User.objects.create_user(**self.new_user)
-        self.assertEqual(Person.objects.count(), 9)
-        person = Person.objects.get(name__icontains="new_user")
-        self.assertEqual(person.name, "<<new_user>> REQUIRES ADJUSTMENTS")
+@pytest.mark.django_db
+def test_user_get_logged_out(client, auto_login_user):
+    client, user = auto_login_user()
+    client.logout()
+    user = auth.get_user(client)
+    assert user.is_authenticated is False
 
-    def test_edit_user(self):
-        User.objects.create_user(**self.new_user)
-        user = User.objects.last()
-        user.email = "new_user@hotmail.com"
-        user.save()
-        user_edited = User.objects.last()
-        self.assertEqual(user_edited.email, "new_user@hotmail.com")
 
-    def test_delete_user(self):
-        User.objects.create_user(**self.new_user)
-        self.assertEqual(User.objects.count(), 9)
+new_user = dict(email="new@user.com", password="secret")
 
-        user_delete = User.objects.last()
-        user_delete.delete()
 
-        self.assertEqual(User.objects.count(), 8)
+@pytest.mark.django_db
+def test_add_new_user(create_user):
+    create_user(**new_user)
+    assert User.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_verify_if_profile_is_created(create_user):
+    user = create_user(**new_user)
+    assert user.profile.social_name.startswith("<<")
+
+
+@pytest.mark.django_db
+def test_verify_if_person_is_created(create_user):
+    user = create_user(**new_user)
+    assert "new" in user.person.name
+
+
+@pytest.mark.django_db
+def test_edit_user(create_user):
+    create_user()
+    user = User.objects.last()
+    user.email = "edited@user.com"
+    user.save()
+    edited_user = User.objects.last()
+    assert edited_user.email == "edited@user.com"
+
+
+@pytest.mark.django_db
+def test_delete_user(create_user):
+    create_user(**new_user)
+    user = User.objects.last()
+    user.delete()
+    assert User.objects.count() == 0

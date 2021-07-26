@@ -1,3 +1,5 @@
+{% load base_extras %}
+
 <nav class="navbar navbar-expand-lg navbar-light bg-transp mb-1">
   <a class="navbar-brand" href="
   {% if nav == 'detail' %}
@@ -26,32 +28,41 @@
     <div class="navbar-nav">
 
       {% if nav == "home" %}
-      <a class="btn btn-light btn-sm" href="{% url 'center_create' %}">
-        <i class="fas fa-plus"></i> 
-        Add center
-      </a>
-      <a class="btn btn-light btn-sm" href="{% url 'home' %}">
-        <i class="fas fa-chevron-left"></i> 
-        Go back
-      </a>
+        {% if request.user.is_superuser %}
+          <a class="btn btn-light btn-sm" href="{% url 'center_create' %}">
+            <i class="fas fa-plus"></i> 
+            Add center
+          </a>
+        {% endif %}
+        <a class="btn btn-light btn-sm" href="{% url 'home' %}">
+          <i class="fas fa-chevron-left"></i> 
+          Go back
+        </a>
       {% endif %}
 
       {% if nav == "detail" %}
+        {% if request.user|has_group:"office" %}
+          <a class="btn btn-light btn-sm" href="{% url 'center_update' object.id %}">
+            <i class="fas fa-edit"></i> 
+            Edit
+          </a>
+        {% endif %}
+
         {% if request.user.is_superuser %}
-        <a class="btn btn-light btn-sm" href="{% url 'center_update' object.id %}">
-          <i class="fas fa-edit"></i> 
-          Edit
-        </a>
+          <a class="btn btn-light btn-sm" href="{% url 'center_update' object.id %}">
+            <i class="fas fa-edit"></i> 
+            Edit
+          </a>
           {% if object.is_active %}
-          <a class="btn btn-light btn-sm" href="{% url 'center_delete' object.id %}">
-            <i class="fas fa-trash-alt"></i> 
-            Delete
-          </a>
+            <a class="btn btn-light btn-sm" href="{% url 'center_delete' object.id %}">
+              <i class="fas fa-trash-alt"></i> 
+              Delete
+            </a>
           {% else %}
-          <a class="btn btn-light btn-sm" href="{% url 'center_reinsert' object.id %}">
-            <i class="fas fa-sign-in-al"></i> 
-            Reinsert
-          </a>
+            <a class="btn btn-light btn-sm" href="{% url 'center_reinsert' object.id %}">
+              <i class="fas fa-sign-in-al"></i> 
+              Reinsert
+            </a>
           {% endif %}
         {% endif %}
         <a class="btn btn-light btn-sm" href="{% url 'center_home' %}">

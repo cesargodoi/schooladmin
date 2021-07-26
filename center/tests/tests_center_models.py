@@ -1,36 +1,34 @@
-from user.models import User
+import pytest
 from center.models import Center
-from center.tests.dummy import CenterDummy
 
 
-class TestCenter(CenterDummy):
-    def test_list_center(self):
-        self.assertEqual(Center.objects.count(), 2)
+@pytest.mark.django_db
+def test_add_new_center(center_factory):
+    center_factory.create()
+    assert Center.objects.count() == 1
 
-    def test_add_new_center(self):
-        new_center = dict(
-            name="Pedra Angular",
-            city="Jarinu",
-            country="Brasil",
-        )
-        Center.objects.create(**new_center)
-        self.assertEqual(Center.objects.count(), 3)
 
-    def test_update_center_address_and_UF_format(self):
-        center = Center.objects.get(name="Campinas")
-        center.state = "ce"
-        center.save()
-        self.assertEqual(center.state, "CE")
+@pytest.mark.django_db
+def test_update_center_address_and_UF_format(center_factory):
+    center_factory.create()
+    center = Center.objects.last()
+    center.state = "ce"
+    center.save()
+    assert center.state == "CE"
 
-    def test_update_phone_and_phone_format(self):
-        center = Center.objects.get(name="Aquarius")
-        center.phone_1 = "(11)3208-8682"
-        center.phone_2 = "(11)987652143"
-        center.save()
-        self.assertEqual(center.phone_1, "11 3208.8682")
-        self.assertEqual(center.phone_2, "11 98765.2143")
 
-    def test_delete_center(self):
-        center = Center.objects.get(name="Campinas")
-        center.delete()
-        self.assertEqual(Center.objects.count(), 1)
+@pytest.mark.django_db
+def test_update_phone_and_phone_format(center_factory):
+    center_factory.create()
+    center = Center.objects.last()
+    center.phone_1 = "(11)987652143"
+    center.save()
+    assert center.phone_1 == "+55 11 98765-2143"
+
+
+@pytest.mark.django_db
+def test_delete_center(center_factory):
+    center_factory.create()
+    center = Center.objects.last()
+    center.delete()
+    assert Center.objects.count() == 0
