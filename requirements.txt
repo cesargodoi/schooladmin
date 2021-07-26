@@ -1,3 +1,4 @@
+# agora vai
 django
 dynaconf
 django-crispy-forms
