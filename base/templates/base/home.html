@@ -4,7 +4,8 @@
 
 {% block content %}
 
-<div class="content-section mb-1" onclick="location.href='{% url 'center_detail' object.pk %}'">
+<div class="content-section mb-1" 
+     onclick="location.href='{% url 'center_detail' object.pk %}?from=home'">
   <div class="article-metadata">Welcome to</div>
   <div class="row">
     <div class="col-lg-2">

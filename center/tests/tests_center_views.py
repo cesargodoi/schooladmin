@@ -1,13 +1,9 @@
 import pytest
 from django.urls import reverse
+from django.contrib.auth.models import Group, Permission
 
 
 center_home = reverse("center_home")
-
-
-"""
-unlogged person cannot access any page of center app
-"""
 
 
 @pytest.mark.django_db
@@ -15,9 +11,8 @@ unlogged person cannot access any page of center app
     "_type",
     [("home"), ("detail"), ("create"), ("update"), ("delete")],
 )
-def test_unlogged_person_cannot_view_center_pages(
-    center_factory, client, _type
-):
+def test_unlogged_person_cannot_access__center_(center_factory, client, _type):
+    """unlogged person cannot access any page of center app"""
     center = center_factory.create()
     page = f"center_{_type}"
     if _type in ("update", "detail", "delete"):
@@ -28,55 +23,40 @@ def test_unlogged_person_cannot_view_center_pages(
     assert "login" in response.url
 
 
-"""
-- user cannot access center home
-- office, treasury and treasury_jr can
-"""
-
-
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "user_type, status_code",
     [("user", 302), ("office", 200), ("treasury", 200), ("treasury_jr", 200)],
 )
-def test_access_center_home_by_user_types(
+def test_access__center_home__by_user_type(
     center_factory, auto_login_user, get_group, user_type, status_code
 ):
+    """only 'user' can't access center_home"""
     center_factory.create()
-    client, user = auto_login_user()
-    group = get_group(user_type)
-    user.groups.add(group)
+    client, user = auto_login_user(group=user_type)
     url = reverse("center_home")
     response = client.get(url)
     assert response.status_code == status_code
 
 
-"""
-- user cannot access center detail
-- office, treajury and treasury_jr can 
-"""
-
-
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "user_type, status_code",
     [("user", 302), ("office", 200), ("treasury", 200), ("treasury_jr", 200)],
 )
-def test_access_center_detail_by_user_types(
+def test_access__center_detail__by_user_type(
     center_factory, auto_login_user, get_group, user_type, status_code
 ):
+    """
+    only 'user' can't access center_detail
+    PS - Here we found a problem unsoved with 'treasury' and 'treasury_jr'.
+         In manual test, this problem do not appears.
+    """
     center = center_factory.create()
-    client, user = auto_login_user()
-    group = get_group(user_type)
-    user.groups.add(group)
+    client, user = auto_login_user(group=user_type)
     url = reverse("center_detail", args=[center.pk])
     response = client.get(url)
     assert response.status_code == status_code
-
-
-"""
-- user, treasury and treasury_jr cannot access center update
-"""
 
 
 @pytest.mark.django_db
@@ -84,84 +64,63 @@ def test_access_center_detail_by_user_types(
     "user_type, status_code",
     [("user", 302), ("treasury", 302), ("treasury_jr", 302)],
 )
-def test_access_center_update_by_user_types(
+def test_access__center_update__by_user_type(
     center_factory, auto_login_user, get_group, user_type, status_code
 ):
+    """'user', 'treasury' and 'treasury_jr' can't access center_update"""
     center = center_factory.create()
-    client, user = auto_login_user()
-    group = get_group(user_type)
-    user.groups.add(group)
+    client, user = auto_login_user(group=user_type)
     url = reverse("center_update", args=[center.pk])
     response = client.get(url)
     assert response.status_code == status_code
 
 
-"""
-- office can access center update of only own center
-"""
-
-
 @pytest.mark.django_db
-def test_access_center_update_by_offices_own_center(
-    center_factory, auto_login_user, get_group
+def test_access__center_update__by_offices_own_center(
+    center_factory, auto_login_user
 ):
+    """the 'office' can access center_update of only own center"""
     center = center_factory.create()
-    client, user = auto_login_user()
-    user.person.center = center
-    user.groups.add(get_group("office"))
+    client, user = auto_login_user(group="office", center=center)
     url = reverse("center_update", args=[center.pk])
     response = client.get(url)
     assert response.status_code == 200
 
 
-"""
-- user, office, treasury and treasury_jr cannot access center update
-"""
-
-
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "user_type, status_code",
     [("user", 302), ("office", 302), ("treasury", 302), ("treasury_jr", 302)],
 )
-def test_access_center_create_by_user_types(
+def test_access__center_create__by_user_type(
     center_factory, auto_login_user, get_group, user_type, status_code
 ):
+    """
+    'user', 'office', 'treasury' and treasury_jr can't access center_create
+    """
     center = center_factory.create()
-    client, user = auto_login_user()
-    group = get_group(user_type)
-    user.groups.add(group)
+    client, user = auto_login_user(group=user_type)
     url = reverse("center_create")
     response = client.get(url)
     assert response.status_code == status_code
 
 
-"""
-- user, office, treasury and treasury_jr cannot access center delete
-"""
-
-
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "user_type, status_code",
     [("user", 302), ("office", 302), ("treasury", 302), ("treasury_jr", 302)],
 )
-def test_access_center_delete_by_user_types(
+def test_access__center_delete__by_user_type(
     center_factory, auto_login_user, get_group, user_type, status_code
 ):
+    """
+    'user', 'office', 'treasury' and treasury_jr can't access center_delete
+    """
     center = center_factory.create()
-    client, user = auto_login_user()
-    group = get_group(user_type)
-    user.groups.add(group)
+    client, user = auto_login_user(group=user_type)
     url = reverse("center_delete", args=[center.pk])
     response = client.get(url)
     assert response.status_code == status_code
-
-
-"""
-- user cannot search center
-- office, treasury and treasury_jr can
-"""
 
 
 @pytest.mark.django_db
@@ -169,12 +128,11 @@ def test_access_center_delete_by_user_types(
     "user_type, status_code",
     [("user", 302), ("office", 200), ("treasury", 200), ("treasury_jr", 200)],
 )
-def test_search_center_home_by_user_types(
+def test_search__center_home__by_user_types(
     auto_login_user, get_group, user_type, status_code
 ):
-    client, user = auto_login_user()
-    group = get_group(user_type)
-    user.groups.add(group)
+    """the 'oficce', 'treasury' and 'treasury_jr' can search center"""
+    client, user = auto_login_user(group=user_type)
     url = "/center/?term=Group"
     response = client.get(url)
     assert response.status_code == status_code

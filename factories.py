@@ -13,6 +13,8 @@ get_gender = random.choice(["M", "F"])
 
 #  User
 class UserFactory(factory.django.DjangoModelFactory):
+    Faker.seed()
+
     class Meta:
         model = User
 
@@ -45,12 +47,12 @@ class CenterFactory(factory.django.DjangoModelFactory):
         model = Center
 
     name = f"Center {fake.pyint(min_value=1, max_value=9)}"
+    short_name = f"C-{name.split()[1]}"
     city = fake.city()
     state = fake.estado_sigla()
     country = fake.current_country_code()
     phone_1 = fake.phone_number()
     email = fake.email()
-    secretary = factory.SubFactory(UserFactory)
     center_type = "CNT"
 
 

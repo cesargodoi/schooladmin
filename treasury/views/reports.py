@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -17,6 +17,7 @@ def vue_get_order(request):
 
 
 @login_required
+@permission_required("treasury.view_order")
 def treasury_home(request):
     # clear session
     if request.session.get("order"):
@@ -45,6 +46,7 @@ def treasury_home(request):
 
 
 @login_required
+@permission_required("treasury.view_order")
 def cash_balance(request):
     search = search_dates(request)
     dt1 = (
@@ -76,6 +78,7 @@ def cash_balance(request):
 
 
 @login_required
+@permission_required("treasury.view_order")
 def period_payments(request):
     search = search_dates(request)
     dt1 = (
@@ -107,6 +110,7 @@ def period_payments(request):
 
 
 @login_required
+@permission_required("treasury.view_order")
 def payments_by_person(request):
     if not request.session.get("order"):
         request.session["order"] = {
