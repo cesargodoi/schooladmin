@@ -13,8 +13,7 @@
 {% if next %}
   {% if user.is_authenticated %}
   <div class="form-signin alert alert-danger" name="warnings">
-    {% translate "Your account doesn't have access to this page. To proceed, please login with an account that has
-    access." %}
+    {% translate "Your account doesn't have access to this page. To proceed, please login with an account that has access." %}
   </div>
   {% else %}
   <div class="form-signin alert alert-info" name="warnings">

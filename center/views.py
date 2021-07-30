@@ -38,12 +38,16 @@ def center_home(request):
 def center_detail(request, pk):
     center = Center.objects.get(pk=pk)
     users = center.person_set.filter(is_active=True).count()
+    goback = (
+        reverse("home") if request.GET.get("from") else reverse("center_home")
+    )
 
     context = {
         "object": center,
         "title": "center detail",
         "users": users,
         "nav": "detail",
+        "goback": goback,
     }
     return render(request, "center/center_detail.html", context)
 

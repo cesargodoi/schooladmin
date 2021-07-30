@@ -42,10 +42,12 @@
 
       {% if nav == "detail" %}
         {% if request.user|has_group:"office" %}
-          <a class="btn btn-light btn-sm" href="{% url 'center_update' object.id %}">
-            <i class="fas fa-edit"></i> 
-            Edit
-          </a>
+          {% if request.user.person.center_id == object.id %}
+            <a class="btn btn-light btn-sm" href="{% url 'center_update' object.id %}">
+              <i class="fas fa-edit"></i> 
+              Edit
+            </a>
+          {% endif %}
         {% endif %}
 
         {% if request.user.is_superuser %}
@@ -65,7 +67,7 @@
             </a>
           {% endif %}
         {% endif %}
-        <a class="btn btn-light btn-sm" href="{% url 'center_home' %}">
+        <a class="btn btn-light btn-sm" href="{{ goback }}">
           <i class="fas fa-chevron-left"></i> 
           Go back
         </a>

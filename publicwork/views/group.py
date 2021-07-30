@@ -35,6 +35,10 @@ def group_home(request):
 
     if request.GET.get("init"):
         clear_session(request, ["search"])
+        if request.user.groups.filter(name="publicwork_jr"):
+            object_list = request.user.person.publicworkgroup_set.all()
+            for item in object_list:
+                item.click_link = reverse("group_detail", args=[item.pk])
     else:
         queryset, page = search_pw_group(request, PublicworkGroup)
         object_list = paginator(queryset, page=page)

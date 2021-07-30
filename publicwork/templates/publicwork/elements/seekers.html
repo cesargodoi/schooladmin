@@ -1,3 +1,4 @@
+{% load base_extras %}
 <h4>{% if table_title %}{{ table_title }}{% else %}Seekers{% endif %}</h4>
 
 {% if object_list %}
@@ -62,11 +63,13 @@
           </a>
         {% endif %}
       {% elif obj.del_member_link %}
-        <a type="button" 
-          href="{{ obj.del_member_link }}"
-          class="btn btn-outline-danger btn-sm">
-          <i class="fas fa-trash"></i>
-        </a>
+        {% if not request.user|has_group:"publicwork_jr" %}
+          <a type="button" 
+            href="{{ obj.del_member_link }}"
+            class="btn btn-outline-danger btn-sm">
+            <i class="fas fa-trash"></i>
+          </a>
+        {% endif %}
       {% endif %}
     </div>
     

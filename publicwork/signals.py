@@ -19,12 +19,3 @@ def insert_historic(sender, instance, created, **kwargs):
             description="entered as a new seeker",
             made_by=instance.made_by,
         )
-
-
-@receiver(post_save, sender=HistoricOfSeeker)
-def insert_status(sender, instance, created, **kwargs):
-    if created:
-        seeker = Seeker.objects.get(pk=instance.seeker.pk)
-        seeker.status = instance.occurrence
-        seeker.status_date = instance.date
-        seeker.save()

@@ -1,606 +1,296 @@
-from django.shortcuts import get_object_or_404
-from django.test import TestCase
-from django.contrib import auth
-
-from person.models import Person
-from event.models import Event
-from event.tests.dummy import EventDummy
+import pytest
+from django.urls import reverse
 
 
-class TestViews(TestCase):
-    def test_user_logged_out_cannot_access_person(self):
-        user = auth.get_user(self.client)
-        self.assertFalse(user.is_authenticated)
-        response = self.client.get("/person/")
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+#  Person  ####################################################################
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "_type",
+    [("home"), ("detail"), ("create"), ("update"), ("delete"), ("reinsert")],
+)
+def test_unlogged_person_cannot_view_center_page(create_person, client, _type):
+    """unlogged person can't access any page of person app"""
+    person = create_person()
+    page = f"person_{_type}"
+    if _type in ("update", "detail", "delete", "reinsert"):
+        url = reverse(page, args=[str(person.pk)])
+    else:
+        url = reverse(page)
+    response = client.get(url)
+    assert "login" in response.url
 
 
-class TestViewsFromDummies(EventDummy):
-    # person_home
-    ## testes de acessos
-    def test_office_logged_in_can_access_person_home(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_home.html")
-        # self.assertIn("2nd. Aspect", response.content.decode())
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__person_home__by_user_type(
+    auto_login_user, get_group, user_type, status_code
+):
+    """only 'office' can access person_home"""
+    client, user = auto_login_user(group=user_type)
+    url = reverse("person_home")
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    def test_treasury_logged_in_can_access_person_home(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_home.html")
-        # self.assertIn("2nd. Aspect", response.content.decode())
 
-    def test_treasuryjr_logged_in_can_access_person_home(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_home.html")
-        # self.assertIn("2nd. Aspect", response.content.decode())
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__person_detail__by_user_type(
+    center_factory,
+    create_person,
+    auto_login_user,
+    user_type,
+    status_code,
+):
+    """only 'office' can access person_detail"""
+    center = center_factory.create()
+    client, user = auto_login_user(group=user_type, center=center)
+    person = create_person(center=center)
+    url = reverse("person_detail", args=[person.pk])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    def test_user_logged_in_cannot_access_person_home(self):
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/")
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
 
-    # person_detail
-    ## testes de acessos
-    def test_office_can_access_persons_detail_from_his_center(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        person = get_object_or_404(Person, name__icontains="User One")  ######
-        response = self.client.get(f"/person/{person.id}/detail/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_detail.html")
-        # self.assertIn("Super User", response.content.decode())
+@pytest.mark.skip
+@pytest.mark.django_db
+def test_access_office_cannot_access__person_detail__from_other_center(
+    center_factory, create_person, auto_login_user
+):
+    """the 'office' can't access person_detail from other center"""
+    # center, other_center = center_factory.create_batch(2)
+    # client, user = auto_login_user(group="office", center=center)
+    # person = create_person(center=other_center)
+    # url = reverse("person_detail", args=[person.pk])
+    # response = client.get(url)
+    # assert response.status_code == 404
+    ...
 
-    def test_office_can_not_access_person_detail_another_center(self):
-        """
-        If the "office" tries to access a person from another center,
-        they will get 404 status code.
-        """
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        person = get_object_or_404(Person, name__icontains="User Two")  ######
-        response = self.client.get(f"/person/{person.id}/detail/")  ########
-        self.assertIn("404", response.content.decode())
-    
-    def test_treasury_can_access_persons_detail_from_his_center(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        person = get_object_or_404(Person, name__icontains="User One")  ######
-        response = self.client.get(f"/person/{person.id}/detail/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_detail.html")
-        # self.assertIn("Super User", response.content.decode())
 
-    def test_treasury_can_not_access_person_detail_another_center(self):
-        """
-        If the "treasury" tries to access a person from another center,
-        they will get 404 status code.
-        """
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        person = get_object_or_404(Person, name__icontains="User Two")  ######
-        response = self.client.get(f"/person/{person.id}/detail/")  ########
-        self.assertIn("404", response.content.decode())
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__person_create__by_user_type(
+    center_factory,
+    create_person,
+    auto_login_user,
+    user_type,
+    status_code,
+):
+    """only 'office' can access person_create"""
+    center = center_factory.create()
+    client, user = auto_login_user(group=user_type, center=center)
+    url = reverse("person_create")
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    def test_treasuryjr_can_access_persons_detail_from_his_center(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        person = get_object_or_404(Person, name__icontains="User One")  ######
-        response = self.client.get(f"/person/{person.id}/detail/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_detail.html")
-        # self.assertIn("Super User", response.content.decode())
 
-    def test_treasuryjr_can_not_access_person_detail_another_center(self):
-        """
-        If the "treasuryjr" tries to access a person from another center,
-        they will get 404 status code.
-        """
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        person = get_object_or_404(Person, name__icontains="User Two")  ######
-        response = self.client.get(f"/person/{person.id}/detail/")  ########
-        self.assertIn("404", response.content.decode())
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__person_update__by_user_type(
+    center_factory,
+    create_person,
+    auto_login_user,
+    user_type,
+    status_code,
+):
+    """only 'office' can access person_update"""
+    center = center_factory.create()
+    client, user = auto_login_user(group=user_type, center=center)
+    person = create_person(center=center)
+    url = reverse("person_update", args=[person.pk])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    def test_user_can_not_view_person_detail(self):
-        # verificar! User não pode ver nada além de seu profile. Então user não pode ver person_detail!
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/detail/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
 
-    # person_create
-    ## testes de acessos
-    ### Only 'superuser' and 'office' can create a new 'person'.
-    ### To create a new 'person', we need to create a new 'user'.
-    ### When we create an 'user', a new 'profile' and 'person' are
-    ### also created. So, we can use the 'user.profile' and 'user.person'
-    ### relationship to update the 'profile' and 'person' instances.
-    def test_office_is_logged_in_can_access_person_create(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/create/")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_form.html")
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__person_delete__by_user_type(
+    center_factory,
+    create_person,
+    auto_login_user,
+    user_type,
+    status_code,
+):
+    """only 'office' can access person_delete view"""
+    center = center_factory.create()
+    client, user = auto_login_user(group=user_type, center=center)
+    person = create_person(center=center)
+    url = reverse("person_delete", args=[person.pk])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    def test_treasury_logged_in_can_not_access_person_create(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/create/")
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
 
-    def test_treasuryjr_logged_in_can_not_access_person_create(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/create/")
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_search_persons_by_user_type(
+    auto_login_user, get_group, user_type, status_code
+):
+    """only 'office' can search persons"""
+    client, user = auto_login_user(group=user_type)
+    url = "/person/?ps_term=cesar&all=on"
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    def test_user_logged_in_can_not_access_person_create(self):
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/create/")
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
 
-    # person_update
-    ## testes de acessos
-    def test_office_logged_in_can_access_person_update(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
-        response = self.client.get(f"/person/{person.id}/update/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_form.html")
-    
-    def test_treasury_logged_in_can_not_access_person_update(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/update/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__person_reinsert__by_user_type(
+    center_factory,
+    create_person,
+    auto_login_user,
+    user_type,
+    status_code,
+):
+    """only 'office' can access person_reinsert view"""
+    center = center_factory.create()
+    client, user = auto_login_user(group=user_type, center=center)
+    person = create_person(center=center)
+    url = reverse("person_reinsert", args=[person.pk])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    def test_treasuryjr_logged_in_can_not_access_person_update(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/update/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
 
-    def test_user_logged_in_can_not_access_person_update(self):
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/update/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+#  Historic  ##################################################################
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__person_historic__by_user_type(
+    center_factory,
+    create_person,
+    auto_login_user,
+    user_type,
+    status_code,
+):
+    """only 'office' can access person_historic"""
+    center = center_factory.create()
+    client, user = auto_login_user(group=user_type, center=center)
+    person = create_person(center=center)
+    url = reverse("person_historic", args=[person.pk])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    # person_delete
-    ## testes de acessos
-    def test_office_logged_in_can_delete_person(self):
-        ## office pode apagar totalmente apenas users que não tem relações com outras tabelas.
-        ## essa restrição é tratada por outras views.
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="User One")  ######
-        response = self.client.get(f"/person/{person.id}/delete/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "base/confirm_delete.html")
 
-    def test_treasury_logged_in_cannot_delete_person(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/delete/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__historic_create__by_user_type(
+    center_factory,
+    create_person,
+    auto_login_user,
+    user_type,
+    status_code,
+):
+    """only 'office' can access historic_create"""
+    center = center_factory.create()
+    client, user = auto_login_user(group=user_type, center=center)
+    person = create_person(center=center)
+    url = reverse("historic_create", args=[person.pk])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    def test_treasuryjr_logged_in_cannot_delete_person(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/delete/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
 
-    def test_user_logged_in_cannot_delete_person(self):
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/delete/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__historic_update__by_user_type(
+    center_factory,
+    create_person,
+    create_historic,
+    auto_login_user,
+    user_type,
+    status_code,
+):
+    """only 'office' can access historic_update"""
+    center = center_factory.create()
+    client, user = auto_login_user(group=user_type, center=center)
+    person = create_person(center=center)
+    create_historic(person)
+    url = reverse("historic_update", args=[person.pk, 1])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    # person_search
-    ## testes de acessos
-    def test_office_can_see_person_for_any_centers_by_search(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/?term=user")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_home.html")
-        self.assertIn("User", response.content.decode())
 
-    def test_treasury_can_see_person_for_any_centers_by_search(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/?term=user")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_home.html")
-        self.assertIn("User", response.content.decode())
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "user_type, status_code",
+    [("user", 302), ("office", 200), ("treasury", 302), ("treasury_jr", 302)],
+)
+def test_access__historic_delete__by_user_type(
+    center_factory,
+    create_person,
+    create_historic,
+    auto_login_user,
+    user_type,
+    status_code,
+):
+    """only 'office' can access historic_delete"""
+    center = center_factory.create()
+    client, user = auto_login_user(group=user_type, center=center)
+    person = create_person(center=center)
+    create_historic(person)
+    url = reverse("historic_delete", args=[person.pk, 1])
+    response = client.get(url)
+    assert response.status_code == status_code
 
-    def test_treasuryjr_can_see_person_for_any_centers_by_search(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/?term=user")
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/person_home.html")
-        self.assertIn("User", response.content.decode())
 
-    def test_user_cannot_see_person_for_any_centers_by_search(self):
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        response = self.client.get("/person/?term=office")
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+#  frequency_ps_view ##########################################################
+@pytest.mark.skip
+@pytest.mark.django_db
+def test_only_office_logged_in_can_access_frequency_list_in_person():
+    ...
 
-    # person_reinsert
-    ## testes de acessos
-    def test_office_logged_in_can_reinsert_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="User One")  ######
-        response = self.client.get(f"/person/{person.id}/reinsert/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/elements/confirm_to_reinsert_person.html")
 
-    def test_treasury_logged_in_can_not_reinsert_person(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="User One")  ######
-        response = self.client.get(f"/person/{person.id}/reinsert/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+@pytest.mark.skip
+@pytest.mark.django_db
+def test_only_office_logged_in_can_access_frequency_create_in_person():
+    ...
 
-    def test_treasuryjr_logged_in_can_not_reinsert_person(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="User One")  ######
-        response = self.client.get(f"/person/{person.id}/reinsert/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
 
-    def test_user_logged_in_can_not_reinsert_person(self):
-        self.client.login(
-            email="user1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury Junior One")  ######
-        response = self.client.get(f"/person/{person.id}/reinsert/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+@pytest.mark.skip
+@pytest.mark.django_db
+def test_only_office_logged_in_can_access_frequency_delete_in_person():
+    ...
 
-    ###########################################################################
-    #historic_view
 
-    def test_office_logged_in_can_access_historic_list_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
-        response = self.client.get(f"/person/{person.id}/historic")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/historic_list.html")
-    
-    def test_treasury_logged_in_can_not_access_historic_list_in_person(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/historic")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
+#  membership_ps_view  ########################################################
+@pytest.mark.skip
+@pytest.mark.django_db
+def test_only_office_logged_in_can_access_membership_list_in_person():
+    ...
 
-    def test_treasuryjr_logged_in_can_not_access_historic_list_in_person(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/historic")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
 
-    def test_office_logged_in_can_access_historic_create_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
-        response = self.client.get(f'/person/{person.id}/historic/create/')  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/historic_form.html")
+@pytest.mark.skip
+@pytest.mark.django_db
+def test_only_office_logged_in_can_access_membership_create_in_person():
+    ...
 
-    def test_office_logged_in_can_access_historic_update_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
-        response = self.client.get(f'/person/{person.id}/historic/1/update/')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/historic_form.html")  
 
-    def test_office_logged_in_can_access_historic_delete_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
-        response = self.client.get(f'/person/{person.id}/historic/1/delete/')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "base/confirm_delete.html")
-
-    ###########################################################################
-    #frequency_ps_view
-
-    def test_office_logged_in_can_access_frequency_list_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
-        response = self.client.get(f"/person/{person.id}/frequencies")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/frequency_list.html")
-    
-    def test_treasury_logged_in_can_not_access_frequency_list_in_person(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/frequencies")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
-
-    def test_treasuryjr_logged_in_can_not_access_frequency_list_in_person(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/frequencies")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
-
-    def test_office_logged_in_can_access_frequency_create_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
-        response = self.client.get(f'/person/{person.id}/frequency_insert')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/frequency_insert.html")
-
-    def test_office_logged_in_can_access_frequency_delete_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")
-        event = get_object_or_404(Event, id=1)
-        response = self.client.get(f'/person/{person.id}/frequency/{event.id}/delete/')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/elements/confirm_to_delete_freq.html")
-
-    ###########################################################################
-    #membership_ps_view
-
-    def test_office_logged_in_can_access_membership_list_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="User One")  ######
-        response = self.client.get(f"/person/{person.id}/membership_ps/")  ########
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/membership_ps_list.html")
-    
-    def test_treasury_logged_in_can_not_access_membership_list_in_person(self):
-        self.client.login(
-            email="treasury1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/membership_ps/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
-
-    def test_treasuryjr_logged_in_can_not_access_membership_list_in_person(self):
-        self.client.login(
-            email="treasuryjr1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Office One")  ######
-        response = self.client.get(f"/person/{person.id}/membership_ps/")  ########
-        self.assertEqual(response.status_code, 302)
-        self.assertIn("login", response.url)
-
-    def test_office_logged_in_can_access_membership_create_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")  ######
-        response = self.client.get(f'/person/{person.id}/membership_ps/create/')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/membership_ps_insert.html")
-
-    def test_office_logged_in_can_access_membership_delete_in_person(self):
-        self.client.login(
-            email="office1@rcad.min",
-            password="asdf1234",
-        )
-        user = auth.get_user(self.client)
-        self.assertTrue(user.is_authenticated)
-        person = get_object_or_404(Person, name__icontains="Treasury One")
-        response = self.client.get(f'/person/{person.id}/membership_ps/{self.workgroup_membership_1.id}/delete/')
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "person/elements/confirm_to_delete_member.html")
+@pytest.mark.skip
+@pytest.mark.django_db
+def test_only_office_logged_in_can_access_membership_delete_in_person():
+    ...

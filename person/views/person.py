@@ -44,16 +44,15 @@ def person_home(request):
 @login_required
 @permission_required("person.view_person")
 def person_detail(request, id):
-    center_persons = [
-        person.id
-        for person in Person.objects.filter(
-            center=request.user.person.center.id
-        )
+    persons = [
+        psn.id
+        for psn in Person.objects.filter(center=request.user.person.center.id)
     ]
-    if id not in center_persons and not request.user.is_superuser:
+    if id in persons or request.user.is_superuser:
+        person = Person.objects.get(id=id)
+        age = (date.today() - person.birth).days // 365
+    else:
         raise Http404
-    person = Person.objects.get(id=id)
-    age = (date.today() - person.birth).days // 365
 
     context = {
         "object": person,

@@ -1,4 +1,6 @@
+import random
 import pytest
+
 from pytest_factoryboy import register
 from django.contrib.auth.models import Group, Permission
 from factories import (
@@ -8,6 +10,8 @@ from factories import (
     TempRegOfSeeker,
     SeekerFactory,
 )
+from person.models import Person, Historic
+from schooladmin.common import ASPECTS, STATUS, OCCURRENCES
 
 register(UserFactory)
 register(CenterFactory)
@@ -31,22 +35,58 @@ def create_user(db, django_user_model, get_password):
 
 
 @pytest.fixture
-def auto_login_user(db, client, create_user, get_password):
-    def make_auto_login(user=None):
-        if user is None:
-            user = create_user()
-        client.login(email=user.email, password=get_password)
-        return client, user
+def auto_login_user(db, client, create_user, get_password, get_group):
+    def make_auto_login(user=None, group=None, center=None):
+        new_user = user if user else create_user()
+        if group:
+            new_user.groups.add(get_group(group))
+        if center:
+            center.person_set.add(new_user.person)
+        client.login(email=new_user.email, password=get_password)
+        return client, new_user
 
     return make_auto_login
+
+
+@pytest.fixture
+def create_person(db, create_user, center_factory):
+    def make_person(center=None, name=None):
+        user = create_user()
+        person = Person.objects.get(user=user)
+        person.name = name if name else fake.name()
+        person.center = center if center else center_factory.create()
+        person.birth = fake.date_of_birth(maximum_age=80)
+        person.aspect = random.choice(ASPECTS)
+        person.aspect_date = fake.date_between(
+            start_date="-10y", end_date="today"
+        )
+        person.status = random.choice(STATUS)
+        person.save()
+        return person
+
+    return make_person
+
+
+@pytest.fixture
+def create_historic(db):
+    def make_historic(person, occur=None):
+        new_occur = dict(
+            person=person,
+            occurrence=occur if occur else random.choice(OCCURRENCES),
+            date=fake.date_between(start_date="-1y", end_date="today"),
+        )
+        historic = Historic.objects.create(**new_occur)
+        return historic
+
+    return make_historic
 
 
 #  Groups and Permissions
 @pytest.fixture
 def get_group(db, get_perms):
-    def make_group(name):
-        group = Group.objects.create(name=name)
-        perms = get_perms[name]
+    def make_group(_name):
+        group = Group.objects.create(name=_name)
+        perms = get_perms[_name]
         group.permissions.set(perms)
         group.save()
         return group
@@ -97,8 +137,6 @@ def get_perms(db):
         "treasury": [
             # center
             Permission.objects.get(codename="view_center"),
-            # person
-            Permission.objects.get(codename="view_person"),
             # order
             Permission.objects.get(codename="add_order"),
             Permission.objects.get(codename="change_order"),
@@ -108,8 +146,6 @@ def get_perms(db):
         "treasury_jr": [
             # center
             Permission.objects.get(codename="view_center"),
-            # person
-            Permission.objects.get(codename="view_person"),
             # order
             Permission.objects.get(codename="add_order"),
             Permission.objects.get(codename="view_order"),

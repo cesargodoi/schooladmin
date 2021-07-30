@@ -60,7 +60,6 @@ ACTIVITY_TYPES = (
     ("SRV", "service"),
     ("CNF", "conference"),
     ("MET", "meeting"),
-    ("CTT", "contact"),
     ("OTH", "other"),
 )
 ORDER_STATUS = (
@@ -92,6 +91,7 @@ PROFILE_PAYFORM_TYPES = (
 COUNTRIES = (("BR", "Brasil"),)
 LECTURE_TYPES = (("CTT", "contact"), ("MET", "meeting"))
 SEEKER_STATUS = (
+    ("OBS", "observation"),
     ("NEW", "new"),
     ("MBR", "member"),
     ("RCP", "reception"),

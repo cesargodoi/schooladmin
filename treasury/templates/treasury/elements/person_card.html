@@ -40,5 +40,22 @@
     {% if object.user.email %}
     <i class="fas fa-envelope"></i> {{ object.user.email }}
     {% endif %}
+    <hr>
+    <address>
+      {{ object.user.profile.address }}, {{ object.user.profile.number }}
+      {% if object.user.profile.complement %}
+        &nbsp;&nbsp;
+        <small class="text-muted">
+          <em>{{ object.user.profile.complement }}</em>
+        </small>
+      {% endif %}
+      <br>
+      {{ object.user.profile.district }} -
+      {{ object.user.profile.city }} -
+      {{ object.user.profile.state }}
+      <br>
+      {{ object.user.profile.country }} -
+      {{ object.user.profile.zip_code }}
+    </address>
   </div>
 </article>
