@@ -1,6 +1,5 @@
 //fields
 const nameCenter = document.getElementById("id_name");
-const confCenter = document.getElementById("id_conf_center");
 const phoneCenter = document.getElementById("id_phone_1");
 const emailCenter = document.getElementById("id_email");
 const secretaryCenter = document.getElementById("id_secretary");
@@ -16,10 +15,6 @@ function checkForm() {
   let message = "Don't forget this field.";
   if (nameCenter.value == "" || nameCenter.value === null) {
     alertField("id_name", message);
-    return false;
-  }
-  if (confCenter.item(0).selected) {
-    alertField("id_conf_center", message);
     return false;
   }
   if (
