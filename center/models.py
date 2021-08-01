@@ -3,7 +3,22 @@ import uuid
 from django.conf import settings
 from django.db import models
 from PIL import Image
-from schooladmin.common import CENTER_TYPES, COUNTRIES, phone_format
+from schooladmin.common import (
+    get_filename,
+    phone_format,
+    CENTER_TYPES,
+    COUNTRIES,
+)
+
+
+def center_pics(instance, filename):
+    filename = get_filename(instance)
+    return f"center_pics/{filename}"
+
+
+def center_pix_pics(instance, filename):
+    filename = get_filename(instance, field="pix_key")
+    return f"center_pix_pics/{filename}"
 
 
 # Center
@@ -30,10 +45,10 @@ class Center(models.Model):
         blank=True,
     )
     image = models.ImageField(
-        default="default_center.jpg", upload_to="center_pics", blank=True
+        default="default_center.jpg", upload_to=center_pics, blank=True
     )
     pix_image = models.ImageField(
-        default="default_center.jpg", upload_to="center_pix_pics", blank=True
+        default="default_center_pix.jpg", upload_to=center_pix_pics, blank=True
     )
     pix_key = models.CharField(
         max_length=50, unique=True, null=True, blank=True
@@ -61,14 +76,16 @@ class Center(models.Model):
         self.phone_1 = phone_format(self.phone_1)
         self.phone_2 = phone_format(self.phone_2)
         super(Center, self).save(*args, **kwargs)
-        img = Image.open(self.image.path)
-        if img.height > 300 or img.width > 300:
-            img.thumbnail((300, 300))
-            img.save(self.image.path)
-        pix_img = Image.open(self.pix_image.path)
-        if pix_img.height > 300 or pix_img.width > 300:
-            pix_img.thumbnail((300, 300))
-            pix_img.save(self.pix_image.path)
+        if self.image and self.image.name != "default_center.jpg":
+            img = Image.open(self.image.path)
+            if img.height > 300 or img.width > 300:
+                img.thumbnail((300, 300))
+                img.save(self.image.path)
+        if self.pix_image and self.image.name != "default_center_pix.jpg":
+            pix_img = Image.open(self.pix_image.path)
+            if pix_img.height > 300 or pix_img.width > 300:
+                pix_img.thumbnail((300, 300))
+                pix_img.save(self.pix_image.path)
 
     def __str__(self):
         return f"{self.short_name} ({self.country})"

@@ -108,7 +108,6 @@ def event_delete(request, pk):
         return render(request, "base/action_not_allowed.html", context)
 
     if request.method == "POST":
-        os.remove(object.qr_code.path)
         object.delete()
         message = "The Event has been deleted!"
         messages.success(request, message)

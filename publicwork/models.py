@@ -8,11 +8,17 @@ from schooladmin.common import (
     us_inter_char,
     short_name,
     phone_format,
+    get_filename,
     GENDER_TYPES,
     LECTURE_TYPES,
     SEEKER_STATUS,
     COUNTRIES,
 )
+
+
+def seeker_pics(instance, filename):
+    filename = get_filename(instance)
+    return f"seeker_pics/{filename}"
 
 
 # Temporary Registration of Seeker
@@ -22,7 +28,7 @@ class TempRegOfSeeker(models.Model):
     birth = models.DateField()
     gender = models.CharField(max_length=1, choices=GENDER_TYPES, default="M")
     image = models.ImageField(
-        default="default_profile.jpg", upload_to="seeker_pics", blank=True
+        default="default_profile.jpg", upload_to=seeker_pics, blank=True
     )
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=2)
@@ -64,7 +70,7 @@ class Seeker(models.Model):
     birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_TYPES, default="M")
     image = models.ImageField(
-        default="default_profile.jpg", upload_to="seeker_pics", blank=True
+        default="default_profile.jpg", upload_to=seeker_pics, blank=True
     )
     city = models.CharField(max_length=50, blank=True)
     state = models.CharField("state", max_length=2, blank=True)
@@ -91,6 +97,10 @@ class Seeker(models.Model):
         self.state = str(self.state).upper()
         self.phone = phone_format(self.phone)
         super(Seeker, self).save(*args, **kwargs)
+        img = Image.open(self.image.path)
+        if img.height > 300 or img.width > 300:
+            img.thumbnail((300, 300))
+            img.save(self.image.path)
 
     def __str__(self):
         return "{} - {}".format(self.name, self.center)

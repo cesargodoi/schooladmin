@@ -1,4 +1,6 @@
-from django.db.models.signals import post_save
+import os
+
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
@@ -19,3 +21,9 @@ def insert_historic(sender, instance, created, **kwargs):
             description="entered as a new seeker",
             made_by=instance.made_by,
         )
+
+
+@receiver(post_delete, sender=Seeker)
+def delete_seeker_image(sender, instance, **kwargs):
+    if instance.image.name != "default_profile.jpg":
+        os.remove(instance.image.path)

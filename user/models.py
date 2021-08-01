@@ -7,7 +7,12 @@ from django.contrib.auth.models import (
     PermissionsMixin,
     BaseUserManager,
 )
-from schooladmin.common import phone_format, GENDER_TYPES, COUNTRIES
+from schooladmin.common import (
+    phone_format,
+    get_filename,
+    GENDER_TYPES,
+    COUNTRIES,
+)
 
 
 class UserManager(BaseUserManager):
@@ -72,13 +77,18 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _("users")
 
 
+def profile_pics(instance, filename):
+    filename = get_filename(instance, field="social_name")
+    return f"profile_pics/{filename}"
+
+
 # Profile
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     social_name = models.CharField(max_length=80)
     gender = models.CharField(max_length=1, choices=GENDER_TYPES, default="M")
     image = models.ImageField(
-        default="default_profile.jpg", upload_to="profile_pics"
+        default="default_profile.jpg", upload_to=profile_pics
     )
     profession = models.CharField(max_length=40, blank=True)
     marital_status = models.CharField(max_length=40, blank=True)

@@ -62,9 +62,14 @@ def center_create(request):
             message = f"The Center '{request.POST['name']}' has been created!"
             messages.success(request, message)
             return redirect(reverse("center_home") + "?init=on")
+        else:
+            message = "There are some errors in the form, please correct them."
+            messages.warning(request, message)
 
     context = {
-        "form": CenterForm(initial={"made_by": request.user}),
+        "form": CenterForm(
+            request.POST or None, initial={"made_by": request.user}
+        ),
         "form_name": "Center",
         "form_path": "center/forms/center.html",
         "goback": reverse("center_home"),
