@@ -34,15 +34,15 @@
       {% if tab == "add_frequencies" and obj.is_active %}
         <a type="button" 
           href="{% url 'mentoring_add_frequencies' group_pk %}?event_pk={{ obj.pk }}"
-          class="btn btn-outline-success btn-sm">
-          <i class="fas fa-check"></i>
+          class="btn btn-outline-primary btn-sm">
+          <i class="fas fa-plus"></i>
         </a>
       {% elif not nav == "home" and obj.is_active %}
         {% if obj.pk not in pre_freqs %}
           <a type="button" 
             href="{{ obj.add_link }}?pk={{ obj.pk }}"
-            class="btn btn-outline-success btn-sm">
-            <i class="fas fa-plus"></i> <i class="fas fa-user"></i>
+            class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-plus"></i>
           </a>
         {% else %}
           <i class="fas fa-user-check mr-1"></i>

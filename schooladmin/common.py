@@ -252,7 +252,7 @@ def send_email(
     text_content = render_to_string(body_text, _context)
     html_content = render_to_string(body_html, _context)
 
-    subject = (f"Rosacruz Áurea - {_subject}",)
+    subject = f"Rosacruz Áurea - {_subject}"
 
     send_mail(
         subject=subject,
@@ -262,3 +262,20 @@ def send_email(
         html_message=html_content,
         fail_silently=True,
     )
+
+
+def get_filename(instance, field=None):
+    if field:
+        if field == "pix_key":
+            temp = "{} {}".format(
+                us_inter_char(instance.short_name),
+                instance.__getattribute__(field),
+            )
+        else:
+            temp = us_inter_char(instance.__getattribute__(field))
+        _name = re.sub(r"[^\w\s]", "", temp)
+    else:
+        _name = us_inter_char(instance.name)
+    ext = instance.image.name.split(".")[-1]
+    name = "-".join(_name.split())
+    return f"{name}.{ext}"

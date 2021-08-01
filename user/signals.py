@@ -1,4 +1,6 @@
-from django.db.models.signals import post_save
+import os
+
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from .models import User, Profile
@@ -18,3 +20,9 @@ def save_profile(sender, instance, **kwargs):
         instance.person.is_active = instance.is_active
         instance.person.save()
     instance.profile.save()
+
+
+@receiver(post_delete, sender=Profile)
+def delete_profile_image(sender, instance, **kwargs):
+    if instance.image.name != "default_profile.jpg":
+        os.remove(instance.image.path)
